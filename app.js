@@ -74,7 +74,7 @@ function initEventListeners() {
 }
 
 /**
- * Universal View Switcher
+ * View Management
  */
 function showView(viewId) {
     // Hide all views
@@ -165,134 +165,201 @@ function populateResultUI(data, health) {
 }
 
 /**
- * FULL SVG DRAWING LOGIC (PORTED FROM SITE)
+ * FULL SVG DRAWING LOGIC (STRICTLY FROM original matrix.js)
  */
 function drawFullMatrixSVG(data) {
     const svg = document.getElementById('matrixSvg');
     svg.innerHTML = '';
     const reduce = MatrixLogic.reduce;
-    const cx = 350, cy = 350, radius = 270, innerRadius = 230, innerRadius2 = 197;
-    const angles = [Math.PI, Math.PI * 1.25, Math.PI * 1.5, Math.PI * 1.75, 0, Math.PI * 0.25, Math.PI * 0.5, Math.PI * 0.75];
+    const cx = 350, cy = 350, radius = 270;
+
+    const isMobile = true; // TMA is always mobile context
+    const rScale = 1.25;
+    const tScale = 1.20;
+
+    const innerRadius = 220; // isMobile ? 220
+    const innerRadius2 = 178.75; // isMobile ? 178.75
+
+    const angles = [
+        Math.PI,           // 0: Left
+        Math.PI * 5 / 4,   // 1: Top-Left
+        Math.PI * 3 / 2,   // 2: Top
+        Math.PI * 7 / 4,   // 3: Top-Right
+        0,                 // 4: Right
+        Math.PI / 4,       // 5: Bottom-Right
+        Math.PI / 2,       // 6: Bottom
+        Math.PI * 3 / 4    // 7: Bottom-Left
+    ];
 
     const outerPoints = angles.map(a => ({ x: cx + radius * Math.cos(a), y: cy + radius * Math.sin(a) }));
     const uPoints = angles.map(a => ({ x: cx + innerRadius2 * Math.cos(a), y: cy + innerRadius2 * Math.sin(a) }));
-    const yPoints = angles.map(a => ({ x: cx + innerRadius * Math.cos(a), y: cy + innerRadius * Math.sin(a) }));
 
-    const lineLayer = createSVGElement('g', { stroke: 'rgba(0,0,0,0.15)', 'stroke-width': 1.5 });
+    const lineLayer = createSVGElement('g', { stroke: 'rgba(0,0,0,0.15)', 'stroke-width': 2 });
     const nodeLayer = createSVGElement('g');
     const textLayer = createSVGElement('g');
     svg.append(lineLayer, nodeLayer, textLayer);
 
-    const drawNode = (x, y, r, fill, val, txtCol, fontSize = 20, stroke = "#000") => {
-        nodeLayer.append(createSVGElement('circle', { cx: x, cy: y, r: r, fill: fill, stroke: stroke, 'stroke-width': 1.5 }));
-        const t = createSVGElement('text', { x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: txtCol, 'font-weight': 'bold', 'font-size': fontSize });
+    function drawGenericLine(p1, p2, col, width = 2, opacity = 0.5) {
+        lineLayer.append(createSVGElement('line', { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, stroke: col, 'stroke-width': width, opacity }));
+    }
+
+    function connectNodes(idx1, idx2, pts, offsetR = 22, col = "#888", width = 2, opacity = 0.5) {
+        const p1 = pts[idx1], p2 = pts[idx2];
+        const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+        const start = { x: p1.x + offsetR * Math.cos(angle), y: p1.y + offsetR * Math.sin(angle) };
+        const end = { x: p2.x - offsetR * Math.cos(angle), y: p2.y - offsetR * Math.sin(angle) };
+        drawGenericLine(start, end, col, width, opacity);
+    }
+
+    function drawNode(x, y, r, fill, stroke, val, txtCol, fontSize = 25) {
+        const scaledR = r * rScale;
+        const scaledFS = fontSize * tScale;
+        nodeLayer.append(createSVGElement('circle', { cx: x, cy: y, r: scaledR, fill: fill, stroke: stroke, 'stroke-width': 2 }));
+        const t = createSVGElement('text', { x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: txtCol, 'font-weight': 'bold', 'font-size': scaledFS });
         t.textContent = val;
         textLayer.append(t);
-    };
+    }
 
-    const connect = (p1, p2, opacity = 0.5) => {
-        lineLayer.append(createSVGElement('line', { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, opacity }));
-    };
+    // 1. Personal Square (Diamond): 0-2-4-6
+    connectNodes(0, 2, outerPoints); connectNodes(2, 4, outerPoints);
+    connectNodes(4, 6, outerPoints); connectNodes(6, 0, outerPoints);
 
-    // Squares (Moving inward by one row as requested)
-    // 1. Personal Square (Now connects Row 2 - yPoints 0, 2, 4, 6)
-    [0, 2, 4, 6].forEach((i, idx, arr) => connect(yPoints[i], yPoints[arr[(idx + 1) % 4]]));
+    // 2. Ancestral Square: 1-3-5-7
+    connectNodes(1, 3, outerPoints); connectNodes(3, 5, outerPoints);
+    connectNodes(5, 7, outerPoints); connectNodes(7, 1, outerPoints);
 
-    // 2. Ancestral Square (Now connects Row 3 - uPoints 1, 3, 5, 7)
-    [1, 3, 5, 7].forEach((i, idx, arr) => connect(uPoints[i], uPoints[arr[(idx + 1) % 4]]));
-
-    // Main Axes (Now connecting Row 2 to Center for cleaner look, or Row 1 to Center)
-    connect(outerPoints[0], outerPoints[4]);
-    connect(outerPoints[2], outerPoints[6]);
+    // 2.5 MAIN AXES
+    connectNodes(0, 4, outerPoints);
+    connectNodes(2, 6, outerPoints);
 
     // Nodes (Outer)
     const values = data.values;
-    const outerCols = ["#9A71C9", "#ffffff", "#9A71C9", "#ffffff", "#F34B47", "#ffffff", "#F34B47", "#ffffff"];
-    outerPoints.forEach((p, i) => drawNode(p.x, p.y, 22, outerCols[i], values[i], i % 2 === 0 ? '#fff' : '#000'));
+    const outerColors = ["#9A71C9", "#ffffff", "#9A71C9", "#ffffff", "#F34B47", "#ffffff", "#F34B47", "#ffffff"];
+    const outerTxtCols = ["#fff", "#000", "#FFF", "#000", "#FFF", "#000", "#FFF", "#000"];
+    outerPoints.forEach((p, i) => drawNode(p.x, p.y, 22, outerColors[i], "#000", values[i], outerTxtCols[i]));
 
     // Center
-    drawNode(cx, cy, 28, "#F4F866", data.points.centerValue, "#000", 22);
+    drawNode(cx, cy, 28, "#F4F866", "#000", data.points.centerValue, "#000", 18);
+    // ZK
+    const zkDotY = cy + 50;
+    nodeLayer.append(createSVGElement('circle', { cx: cx, cy: zkDotY, r: 10 * rScale, fill: "#F4F866", stroke: "#000", 'stroke-width': 1 }));
+    textLayer.append(createSVGElement('text', { x: cx, y: zkDotY, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: "#000", 'font-weight': 'bold', 'font-size': 10 * tScale, content: "ЗК" }));
+    // Note: 'content' is for later textContent assignment
+    svg.querySelectorAll('text').forEach(t => { if (t.getAttribute('content')) { t.textContent = t.getAttribute('content'); t.removeAttribute('content'); } });
 
-    // Inner Nodes (U & Y)
-    const uColors = ["#3EB4F0", "#fff", "#3EB4F0", "#fff", "#D88A4B", "#fff", "#D88A4B", "#fff"];
+    // Inner Nodes (Y and U)
     const Y = data.Y;
     const U = data.U;
+    const uColors = ["#3EB4F0", "#fff", "#3EB4F0", "#fff", "#D88A4B", "#fff", "#D88A4B", "#fff"];
+    const uTxtColors = ["#fff", "#000", "#fff", "#000", "#fff", "#000", "#fff", "#000"];
 
     for (let i = 0; i < 8; i++) {
         const px = cx + innerRadius * Math.cos(angles[i]);
         const py = cy + innerRadius * Math.sin(angles[i]);
-        drawNode(px, py, 18, (i === 0 || i === 2) ? "#3366CC" : "#fff", Y[i], (i === 0 || i === 2) ? "#fff" : "#000", 18);
-        drawNode(uPoints[i].x, uPoints[i].y, 15, uColors[i], U[i], i % 2 === 0 ? '#fff' : '#000', 14);
+        let fill = (i % 2 !== 0) ? "#fff" : "#fff";
+        if (i === 0 || i === 2) fill = "#3366CC";
+        drawNode(px, py, 18, fill, "#000", Y[i], (fill === "#3366CC") ? "#fff" : "#000", 20);
+
+        drawNode(uPoints[i].x, uPoints[i].y, 15, uColors[i], "#000", U[i], uTxtColors[i], 16);
     }
 
-    // Extra Icons (Heart, Dollar)
+    // Mids
+    const midU1 = reduce(U[0] + data.points.centerValue);
+    const midU2 = reduce(U[2] + data.points.centerValue);
+    const radMid = innerRadius2 / 2;
+    drawNode(cx + radMid * Math.cos(angles[0]), cy + radMid * Math.sin(angles[0]), 15, "#73b55f", "#000", midU1, "#fff", 14);
+    drawNode(cx + radMid * Math.cos(angles[2]), cy + radMid * Math.sin(angles[2]), 15, "#73b55f", "#000", midU2, "#fff", 14);
+
+    // Extra Icons Logic
     const innerA = reduce(U[4] + U[6]);
     const innerB = reduce(U[4] + innerA);
     const innerC = reduce(U[6] + innerA);
 
-    const drawExtra = (aIdx, ox, oy, val, let, lx, ly, col, dol, hrt) => {
-        const x = cx + innerRadius2 * 0.5 * Math.cos(angles[aIdx]) + ox;
-        const y = cy + innerRadius2 * 0.5 * Math.sin(angles[aIdx]) + oy;
-        drawNode(x, y, 12, "#fff", val, "#000", 12);
+    function drawExtra(angleIdx, offX, offY, val, letter, lOffX, lOffY, col, dol, hrt) {
+        const rad = innerRadius2 * 0.5;
+        const x = cx + rad * Math.cos(angles[angleIdx]) + offX;
+        const y = cy + rad * Math.sin(angles[angleIdx]) + offY;
+        drawNode(x, y, 12, col, "#000", val, "#000", 14);
+        // Letter Circle
+        nodeLayer.append(createSVGElement('circle', { cx: x + lOffX, cy: y + lOffY, r: 7 * rScale, fill: "#000" }));
+        textLayer.append(createSVGElement('text', { x: x + lOffX, y: y + lOffY, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: "#fff", 'font-weight': 'bold', 'font-size': 9 * tScale, content: letter }));
         if (dol) {
-            const t = createSVGElement('text', { x: x - 15, y: y - 37, fill: "#04dd00", 'font-weight': 'bold', 'font-size': 26 });
-            t.textContent = "$"; textLayer.append(t);
+            const d = createSVGElement('text', { x: x - 15, y: y - 37, fill: "#04dd00", 'font-weight': 'bold', 'font-size': 26 * tScale });
+            d.textContent = "$"; textLayer.append(d);
         }
         if (hrt) {
-            const p = createSVGElement('path', { d: `M ${x - 35} ${y - 35} c -5 -5, -15 0, -10 10 c 5 10, 15 10, 20 0 c 5 -10, -5 -15, -10 -10 Z`, fill: "#e84e42", stroke: "#000" });
+            const hx = x - 35, hy = y - 35;
+            const p = createSVGElement('path', { d: `M ${hx} ${hy} c ${-5 * rScale} ${-5 * rScale}, ${-15 * rScale} 0, ${-10 * rScale} ${10 * rScale} c ${5 * rScale} ${10 * rScale}, ${15 * rScale} ${10 * rScale}, ${20 * rScale} 0 c ${5 * rScale} ${-10 * rScale}, ${-5 * rScale} ${-15 * rScale}, ${-10 * rScale} ${-10 * rScale} Z`, fill: "#e84e42", stroke: "#000" });
             nodeLayer.append(p);
         }
-    };
-    drawExtra(5, 10, 10, innerA, 'К', -13, -13, "#fff", false, false);
-    drawExtra(5, 80, 10, innerB, 'О', -13, -13, "#fff", true, false);
-    drawExtra(5, 10, 80, innerC, 'Н', -13, -13, "#fff", false, true);
+    }
+    drawExtra(5, 10, 10, innerA, "К", -13, -13, "#fff", false, false);
+    drawExtra(5, 80, 10, innerB, "О", -13, -13, "#fff", true, false);
+    drawExtra(5, 10, 80, innerC, "Н", -13, -13, "#fff", false, true);
 
     // Diagonal Rays
-    const drawRay = (idx, col, txt, flip) => {
-        const pIn = uPoints[idx];
-        const line = createSVGElement('line', { x1: cx, y1: cy, x2: pIn.x, y2: pIn.y, stroke: col, 'stroke-width': 2 });
+    function drawRay(idx, col, txt, isFlip) {
+        const pInner = uPoints[idx];
+        const line = createSVGElement('line', { x1: cx, y1: cy, x2: pInner.x, y2: pInner.y, stroke: col, 'stroke-width': 2 });
         lineLayer.append(line);
         if (txt) {
-            const mx = (cx + pIn.x) / 2, my = (cy + pIn.y) / 2;
-            let deg = (angles[idx] * 180 / Math.PI) + (flip ? 180 : 0);
-            const t = createSVGElement('text', { x: mx, y: my, 'text-anchor': 'middle', 'font-size': 9, transform: `rotate(${deg} ${mx} ${my}) translate(0, -5)` });
+            const mx = (cx + pInner.x) / 2, my = (cy + pInner.y) / 2;
+            let deg = (angles[idx] * 180 / Math.PI) + (isFlip ? 180 : 0);
+            const t = createSVGElement('text', { x: mx, y: my, 'text-anchor': 'middle', 'font-size': 9 * tScale, transform: `rotate(${deg} ${mx} ${my}) translate(0, -5)` });
             t.textContent = txt; textLayer.append(t);
         }
-    };
+    }
     drawRay(1, "#3E67EE", "линия мужского рода", true);
     drawRay(3, "#F7494C", "линия женского рода", false);
     drawRay(5, "#3E67EE", "", false);
     drawRay(7, "#F7494C", "", true);
 
-    // Perimeter Dots & Labels
-    const drawPerimeter = (i1, i2, v1, v2) => {
+    // Detailed Perimeter (Strictly matching site config)
+    function drawPerimeter(i1, i2, v1, v2, config) {
         const p1 = outerPoints[i1], p2 = outerPoints[i2];
         const dx = p2.x - p1.x, dy = p2.y - p1.y, len = Math.sqrt(dx * dx + dy * dy);
-        const nx = -dy / len, ny = dx / len, ux = dx / len, uy = dy / len;
-        const offset = 18;
+        let nx = -dy / len, ny = dx / len;
+        const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
+        if (nx * (mx - cx) + ny * (my - cy) < 0) { nx = -nx; ny = -ny; }
+        const offset = 30; // isMobile ? 30
+        const extend = 15; // isMobile ? 15
+        const ux = dx / len, uy = dy / len;
+        drawGenericLine({ x: p1.x + nx * offset - ux * extend, y: p1.y + ny * offset - uy * extend }, { x: p2.x + nx * offset + ux * extend, y: p2.y + ny * offset + uy * extend }, "#000", 2, 0.7);
         const p4 = reduce(v1 + v2), p2_ = reduce(p4 + v1), p1_ = reduce(p2_ + v1), p3 = reduce(p2_ + p4), p6 = reduce(p4 + v2), p5 = reduce(p4 + p6), p7 = reduce(p6 + v2);
-        const dots = [null, p1_, p2_, p3, p4, p5, p6, p7];
-
+        const vals = [null, p1_, p2_, p3, p4, p5, p6, p7];
         for (let j = 1; j <= 7; j++) {
             const t = 0.5 + (j - 4) / 9;
             const tx = p1.x + ux * len * t + nx * offset, ty = p1.y + uy * len * t + ny * offset;
-            const d = createSVGElement('circle', { cx: tx, cy: ty, r: j === 4 ? 4 : 2, fill: "#cc3366" });
-            nodeLayer.append(d);
-            const l = createSVGElement('text', { x: tx - 8, y: ty, 'font-size': j === 4 ? 10 : 8 });
-            l.textContent = dots[j]; textLayer.append(l);
+            nodeLayer.append(createSVGElement('circle', { cx: tx, cy: ty, r: (j === 4 ? 5 : 2.5) * rScale, fill: "#cc3366", stroke: "#fff" }));
+            const l = createSVGElement('text', { x: tx + (config.shifts?.[j]?.x || -9), y: ty + (config.shifts?.[j]?.y || -1), 'text-anchor': 'middle', 'font-size': (j === 4 ? 11 : 9) * tScale });
+            l.textContent = vals[j]; textLayer.append(l);
         }
-    };
-    for (let i = 0; i < 8; i++) drawPerimeter(i, (i + 1) % 8, values[i], values[(i + 1) % 8]);
+    }
+    const pConfigs = [
+        { shifts: { 4: { x: -12, y: -1 } } }, // 0->1
+        { shifts: { 4: { x: -9, y: -9 } } },  // 1->2
+        { shifts: { 4: { x: 12, y: -7 } } },   // 2->3
+        { shifts: { 4: { x: 12, y: 1 } } },    // 3->4
+        { shifts: { 4: { x: 12, y: 15 } } },   // 4->5
+        { shifts: { 4: { x: 12, y: 15 } } },   // 5->6
+        { shifts: { 4: { x: -12, y: 15 } } },  // 6->7
+        { shifts: { 4: { x: -12, y: 10 } } }   // 7->0
+    ];
+    for (let i = 0; i < 8; i++) drawPerimeter(i, (i + 1) % 8, values[i], values[(i + 1) % 8], pConfigs[i]);
 
-    // Age Markers
-    const markers = ["A", "Д", "Б", "Е", "В", "Ж", "Г", "З"];
-    const ages = ["0 лет", "10 лет", "20 лет", "30 лет", "40 лет", "50 лет", "60 лет", "70 лет"];
+    // Age Markers (Outer labels)
+    const mLetters = ["A", "Д", "Б", "Е", "В", "Ж", "Г", "З"], mAges = ["0 лет", "10 лет", "20 лет", "30 лет", "40 лет", "50 лет", "60 лет", "70 лет"];
+    const mOffsets = [[-42.5, 0], [-30, -30], [0, -42.5], [30, -30], [42.5, 0], [30, 30], [0, 42.5], [-30, 30]];
+    const mAligns = ["end", "end", "start", "start", "start", "start", "start", "end"];
     outerPoints.forEach((p, i) => {
-        const mx = p.x + ([-35, -25, 0, 25, 35, 25, 0, -25][i]), my = p.y + ([0, -25, -35, -25, 0, 25, 35, 25][i]);
-        drawNode(mx, my, 12, (m) => (i % 2 === 0 ? "#a185c8" : "#000"), markers[i], "#fff", 12);
-        const at = createSVGElement('text', { x: mx + ([-12, -12, 12, 12, 12, 12, 12, -12][i]), y: my, 'text-anchor': i === 0 || i === 1 || i === 7 ? 'end' : 'start', 'font-size': 11, 'font-weight': 'bold' });
-        at.textContent = ages[i]; textLayer.append(at);
+        const mx = p.x + mOffsets[i][0], my = p.y + mOffsets[i][1];
+        nodeLayer.append(createSVGElement('circle', { cx: mx, cy: my, r: 12 * rScale, fill: (["В", "Г"].includes(mLetters[i]) ? "#e84e42" : (i % 2 !== 0 ? "#000" : "#a185c8")) }));
+        textLayer.append(createSVGElement('text', { x: mx, y: my, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: "#fff", 'font-weight': 'bold', 'font-size': 14 * tScale, content: mLetters[i] }));
+        textLayer.append(createSVGElement('text', { x: mx + (mAligns[i] === 'start' ? 15 : -15) * tScale, y: my, 'text-anchor': mAligns[i], 'dominant-baseline': 'central', fill: "#000", 'font-weight': "bold", 'font-size': 13 * tScale, content: mAges[i] }));
     });
+
+    // Final text content reassignment for safety
+    svg.querySelectorAll('text').forEach(t => { if (t.getAttribute('content')) { t.textContent = t.getAttribute('content'); t.removeAttribute('content'); } });
 }
 
 function createSVGElement(tag, attrs = {}) {
