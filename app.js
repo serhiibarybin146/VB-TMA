@@ -194,14 +194,14 @@ function drawFullMatrixSVG(data) {
         lineLayer.append(createSVGElement('line', { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, opacity }));
     };
 
-    // Squares
-    // 1. Personal Square (Outer 0, 2, 4, 6)
-    [0, 2, 4, 6].forEach((i, idx, arr) => connect(outerPoints[i], outerPoints[arr[(idx + 1) % 4]]));
+    // Squares (Moving inward by one row as requested)
+    // 1. Personal Square (Now connects Row 2 - yPoints 0, 2, 4, 6)
+    [0, 2, 4, 6].forEach((i, idx, arr) => connect(yPoints[i], yPoints[arr[(idx + 1) % 4]]));
 
-    // 2. Ancestral Square (Calculated Y-Points 1, 3, 5, 7 - One row inward)
-    [1, 3, 5, 7].forEach((i, idx, arr) => connect(yPoints[i], yPoints[arr[(idx + 1) % 4]]));
+    // 2. Ancestral Square (Now connects Row 3 - uPoints 1, 3, 5, 7)
+    [1, 3, 5, 7].forEach((i, idx, arr) => connect(uPoints[i], uPoints[arr[(idx + 1) % 4]]));
 
-    // Main Axes
+    // Main Axes (Now connecting Row 2 to Center for cleaner look, or Row 1 to Center)
     connect(outerPoints[0], outerPoints[4]);
     connect(outerPoints[2], outerPoints[6]);
 
