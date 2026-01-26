@@ -11,6 +11,7 @@ const userAvatar = document.getElementById('userAvatar');
 const lockedModal = document.getElementById('lockedModal');
 const closeModal = document.getElementById('closeModal');
 const lockedCards = document.querySelectorAll('.matrix-card.locked');
+const birthDateInput = document.getElementById('birthDateInput');
 
 // App State
 let currentState = {
@@ -23,31 +24,19 @@ let currentState = {
  */
 function initTMA() {
     tg.ready();
-    tg.expand(); // Make the app full screen
-
-    // Apply theme colors directly (extra safety)
-    body.style.backgroundColor = tg.backgroundColor;
+    tg.expand();
 
     // Get User Data
     const userData = tg.initDataUnsafe?.user;
     if (userData) {
         currentState.user = userData;
         userName.textContent = userData.first_name || 'Пользователь';
-
-        // If user has photo, set it
         if (userData.photo_url) {
             userAvatar.innerHTML = `<img src="${userData.photo_url}" alt="${userData.first_name}">`;
         }
     } else {
         userName.textContent = 'Гость';
     }
-
-    // Set Main Button (Initially hidden)
-    tg.MainButton.setParams({
-        text: 'ПРОДОЛЖИТЬ',
-        color: '#7c4dff',
-        text_color: '#ffffff'
-    });
 
     // Remove loading state
     body.classList.remove('loading');
@@ -59,6 +48,19 @@ function initTMA() {
  * Event Listeners
  */
 function initEventListeners() {
+    // Mask for Date Input (DD.MM.YYYY)
+    if (birthDateInput) {
+        birthDateInput.addEventListener('input', function (e) {
+            let v = this.value.replace(/\D/g, '');
+            if (v.length > 8) v = v.substring(0, 8);
+            let formatted = '';
+            if (v.length > 0) formatted += v.substring(0, 2);
+            if (v.length > 2) formatted += '.' + v.substring(2, 4);
+            if (v.length > 4) formatted += '.' + v.substring(4, 8);
+            this.value = formatted;
+        });
+    }
+
     // Locked Cards Click
     lockedCards.forEach(card => {
         card.addEventListener('click', () => {
@@ -67,255 +69,220 @@ function initEventListeners() {
         });
     });
 
-    // Modal Close
     closeModal.addEventListener('click', hideLockedModal);
     lockedModal.querySelector('.modal-overlay').addEventListener('click', hideLockedModal);
-
-    // Bottom Nav Click logic (already in HTML but can be enhanced here)
 }
 
 /**
- * Navigation View Switcher (Main Tabs)
+ * View Management
  */
+function showView(viewId) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(viewId).classList.add('active');
+}
+
 function switchTab(tabId, element) {
-    // Update Nav UI
     document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
     element.classList.add('active');
-
-    // Switch View
     showView(tabId + 'View');
-
     tg.HapticFeedback.selectionChanged();
 }
 
-/**
- * Universal View Switcher
- */
-function showView(viewId) {
-    // Hide all views
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-
-    // Show target view
-    const target = document.getElementById(viewId);
-    if (target) {
-        target.classList.add('active');
-    }
-}
-
-/**
- * Navigation between pages / deep views
- */
 function navigateTo(pageId) {
     tg.HapticFeedback.impactOccurred('light');
-
-    if (pageId === 'calculate') {
-        showView('calcView');
-    } else if (pageId === 'home') {
-        showView('homeView');
-    }
+    if (pageId === 'calculate') showView('calcView');
+    else if (pageId === 'home') showView('homeView');
 }
 
 /**
- * Perform Calculation and Show Result
+ * Perform Calculation
  */
 function performCalculation() {
-    const input = document.getElementById('birthDateInput');
-    const dateStr = input.value;
-
-    if (!dateStr) {
-        tg.showAlert('Пожалуйста, выберите дату рождения');
+    const val = birthDateInput.value;
+    const parts = val.split('.');
+    if (parts.length !== 3 || parts[2].length !== 4) {
+        tg.showAlert('Пожалуйста, введите дату в формате ДД.ММ.ГГГГ');
         return;
     }
 
-    // 1. Calculate Data using our shared logic
-    const baseData = MatrixLogic.calculateBase(dateStr);
+    const isoDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+    const baseData = MatrixLogic.calculateBase(isoDate);
     const healthData = MatrixLogic.calculateHealth(baseData);
 
-    // 2. Populate UI Text/Tables
     populateResultUI(baseData, healthData);
+    drawFullMatrixSVG(baseData);
 
-    // 3. Draw DETAILED SVG
-    drawMatrixSVG(baseData);
-
-    // 4. Show Result View
     showView('resultView');
     tg.HapticFeedback.notificationOccurred('success');
 }
 
-/**
- * Fill Result Text Fields and Tables
- */
 function populateResultUI(data, health) {
-    const { date, destiny, points } = data;
+    const { date, destiny } = data;
+    document.getElementById('resultDate').textContent = `${String(date.day).padStart(2, '0')}.${String(date.month).padStart(2, '0')}.${date.year}`;
 
-    // Header
-    const formattedDate = `${String(date.day).padStart(2, '0')}.${String(date.month).padStart(2, '0')}.${date.year}`;
-    document.getElementById('resultDate').textContent = formattedDate;
-
-    // Age calc
-    const today = new Date();
     const bDate = new Date(date.year, date.month - 1, date.day);
+    const today = new Date();
     let age = today.getFullYear() - bDate.getFullYear();
-    const m = today.getMonth() - bDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < bDate.getDate())) age--;
+    if (today.getMonth() < bDate.getMonth() || (today.getMonth() === bDate.getMonth() && today.getDate() < bDate.getDate())) age--;
     document.getElementById('resultAge').textContent = `${age} лет`;
 
-    // Destiny Summary
     const summary = document.getElementById('destinySummary');
     summary.innerHTML = `
-        <div class="destiny-item">
-            <span class="destiny-label">Небо</span>
-            <span class="destiny-value">${destiny.sky}</span>
-        </div>
-        <div class="destiny-item">
-            <span class="destiny-label">Земля</span>
-            <span class="destiny-value">${destiny.earth}</span>
-        </div>
-        <div class="destiny-item">
-            <span class="destiny-label">Личное</span>
-            <span class="destiny-value">${destiny.personal}</span>
-        </div>
-        <div class="destiny-item">
-            <span class="destiny-label">Социальное</span>
-            <span class="destiny-value">${destiny.social}</span>
-        </div>
+        <div class="destiny-item"><span class="destiny-label">Небо</span><span class="destiny-value">${destiny.sky}</span></div>
+        <div class="destiny-item"><span class="destiny-label">Земля</span><span class="destiny-value">${destiny.earth}</span></div>
+        <div class="destiny-item"><span class="destiny-label">Личное</span><span class="destiny-value">${destiny.personal}</span></div>
+        <div class="destiny-item"><span class="destiny-label">Социальное</span><span class="destiny-value">${destiny.social}</span></div>
     `;
 
-    // Populate Health Table (Chakras)
     const healthBody = document.getElementById('healthTableBody');
     if (healthBody) {
         healthBody.innerHTML = health.chakras.map(c => `
-            <tr class="row-${c.color}">
-                <td class="cell-name">${c.name}</td>
-                <td>${c.body}</td>
-                <td>${c.energy}</td>
-                <td>${c.emotion}</td>
-            </tr>
+            <tr class="row-${c.color}"><td class="cell-name">${c.name}</td><td>${c.body}</td><td>${c.energy}</td><td>${c.emotion}</td></tr>
         `).join('') + `
-            <tr class="row-total">
-                <td class="cell-name">ИТОГО</td>
-                <td>${health.totals.reducedBody}</td>
-                <td>${health.totals.reducedEnergy}</td>
-                <td>${health.totals.reducedEmotion}</td>
-            </tr>
+            <tr class="row-total"><td class="cell-name">ИТОГО</td><td>${health.totals.reducedBody}</td><td>${health.totals.reducedEnergy}</td><td>${health.totals.reducedEmotion}</td></tr>
         `;
     }
 }
 
 /**
- * Draw the DETAILED matrix SVG (Matches original site)
+ * FULL SVG DRAWING LOGIC (PORTED FROM SITE)
  */
-function drawMatrixSVG(data) {
+function drawFullMatrixSVG(data) {
     const svg = document.getElementById('matrixSvg');
     svg.innerHTML = '';
-
-    const cx = 350, cy = 350, outerRadius = 270, innerRadius2 = 197;
+    const reduce = MatrixLogic.reduce;
+    const cx = 350, cy = 350, radius = 270, innerRadius = 230, innerRadius2 = 197;
     const angles = [Math.PI, Math.PI * 1.25, Math.PI * 1.5, Math.PI * 1.75, 0, Math.PI * 0.25, Math.PI * 0.5, Math.PI * 0.75];
 
-    const outerPoints = angles.map(a => ({ x: cx + outerRadius * Math.cos(a), y: cy + outerRadius * Math.sin(a) }));
+    const outerPoints = angles.map(a => ({ x: cx + radius * Math.cos(a), y: cy + radius * Math.sin(a) }));
     const uPoints = angles.map(a => ({ x: cx + innerRadius2 * Math.cos(a), y: cy + innerRadius2 * Math.sin(a) }));
 
-    // Layers
-    const lineLayer = createSVGElement('g', { stroke: 'rgba(0,0,0,0.15)', 'stroke-width': 1.5 });
+    const lineLayer = createSVGElement('g', { stroke: 'rgba(0,0,0,0.2)', 'stroke-width': 1.5 });
     const nodeLayer = createSVGElement('g');
     const textLayer = createSVGElement('g');
     svg.append(lineLayer, nodeLayer, textLayer);
 
-    // Helpers
-    const connect = (p1, p2, opacity = 0.5) => {
-        lineLayer.append(createSVGElement('line', { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, opacity }));
-    };
-
-    const drawNode = (x, y, r, fill, val, txtCol, fontSize = 20) => {
-        nodeLayer.append(createSVGElement('circle', { cx: x, cy: y, r: r, fill: fill, stroke: '#000', 'stroke-width': 1.5 }));
+    const drawNode = (x, y, r, fill, val, txtCol, fontSize = 20, stroke = "#000") => {
+        nodeLayer.append(createSVGElement('circle', { cx: x, cy: y, r: r, fill: fill, stroke: stroke, 'stroke-width': 1.5 }));
         const t = createSVGElement('text', { x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: txtCol, 'font-weight': 'bold', 'font-size': fontSize });
         t.textContent = val;
         textLayer.append(t);
     };
 
-    // 1. DRAW SQUARES & AXES
-    // Personal Square
+    const connect = (p1, p2, opacity = 0.5) => {
+        lineLayer.append(createSVGElement('line', { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, opacity }));
+    };
+
+    // Squares
     [0, 2, 4, 6].forEach((i, idx, arr) => connect(outerPoints[i], outerPoints[arr[(idx + 1) % 4]]));
-    // Ancestral Square
     [1, 3, 5, 7].forEach((i, idx, arr) => connect(outerPoints[i], outerPoints[arr[(idx + 1) % 4]]));
-    // Main Axes
     connect(outerPoints[0], outerPoints[4]);
     connect(outerPoints[2], outerPoints[6]);
 
-    // 2. NODES
+    // Nodes (Outer)
     const values = data.values;
-    const colors = ["#9A71C9", "#ffffff", "#9A71C9", "#ffffff", "#F34B47", "#ffffff", "#F34B47", "#ffffff"];
-    const txtColors = ["#fff", "#000", "#fff", "#000", "#fff", "#000", "#fff", "#000"];
-
-    // Outer Points
-    outerPoints.forEach((p, i) => drawNode(p.x, p.y, 22, colors[i], values[i], txtColors[i]));
-
-    // Middle Points (U)
-    const uColors = ["#3EB4F0", "#fff", "#3EB4F0", "#fff", "#D88A4B", "#fff", "#D88A4B", "#fff"];
-    uPoints.forEach((p, i) => drawNode(p.x, p.y, 16, uColors[i], data.U[i], i % 2 === 0 ? '#fff' : '#000', 14));
+    const outerCols = ["#9A71C9", "#ffffff", "#9A71C9", "#ffffff", "#F34B47", "#ffffff", "#F34B47", "#ffffff"];
+    outerPoints.forEach((p, i) => drawNode(p.x, p.y, 22, outerCols[i], values[i], i % 2 === 0 ? '#fff' : '#000'));
 
     // Center
     drawNode(cx, cy, 28, "#F4F866", data.points.centerValue, "#000", 22);
 
-    // 3. PERIMETER AGE MARKERS
-    const markerData = [
-        { letter: "A", age: "0 лет", off: [-35, 0], align: "end" },
-        { letter: "Д", age: "10 лет", off: [-25, -25], align: "end" },
-        { letter: "Б", age: "20 лет", off: [0, -35], align: "start" },
-        { letter: "Е", age: "30 лет", off: [25, -25], align: "start" },
-        { letter: "В", age: "40 лет", off: [35, 0], align: "start" },
-        { letter: "Ж", age: "50 лет", off: [25, 25], align: "start" },
-        { letter: "Г", age: "60 лет", off: [0, 35], align: "start" },
-        { letter: "З", age: "70 лет", off: [-25, 25], align: "end" }
-    ];
+    // Inner Nodes (U & Y)
+    const uColors = ["#3EB4F0", "#fff", "#3EB4F0", "#fff", "#D88A4B", "#fff", "#D88A4B", "#fff"];
+    const Y = data.Y;
+    const U = data.U;
 
-    markerData.forEach((m, i) => {
-        const p = outerPoints[i];
-        const mx = p.x + m.off[0], my = p.y + m.off[1];
-        // Marker circle
-        nodeLayer.append(createSVGElement('circle', { cx: mx, cy: my, r: 10, fill: i % 2 === 0 ? '#a185c8' : '#000' }));
-        const lt = createSVGElement('text', { x: mx, y: my, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: '#fff', 'font-size': 9, 'font-weight': 'bold' });
-        lt.textContent = m.letter;
-        textLayer.append(lt);
-        // Age Text
-        const at = createSVGElement('text', { x: mx + (m.align === 'start' ? 12 : -12), y: my, 'text-anchor': m.align, 'dominant-baseline': 'central', fill: '#000', 'font-size': 10, 'font-weight': 'bold' });
-        at.textContent = m.age;
-        textLayer.append(at);
+    for (let i = 0; i < 8; i++) {
+        const px = cx + innerRadius * Math.cos(angles[i]);
+        const py = cy + innerRadius * Math.sin(angles[i]);
+        drawNode(px, py, 18, (i === 0 || i === 2) ? "#3366CC" : "#fff", Y[i], (i === 0 || i === 2) ? "#fff" : "#000", 18);
+        drawNode(uPoints[i].x, uPoints[i].y, 15, uColors[i], U[i], i % 2 === 0 ? '#fff' : '#000', 14);
+    }
+
+    // Extra Icons (Heart, Dollar)
+    const innerA = reduce(U[4] + U[6]);
+    const innerB = reduce(U[4] + innerA);
+    const innerC = reduce(U[6] + innerA);
+
+    const drawExtra = (aIdx, ox, oy, val, let, lx, ly, col, dol, hrt) => {
+        const x = cx + innerRadius2 * 0.5 * Math.cos(angles[aIdx]) + ox;
+        const y = cy + innerRadius2 * 0.5 * Math.sin(angles[aIdx]) + oy;
+        drawNode(x, y, 12, "#fff", val, "#000", 12);
+        if (dol) {
+            const t = createSVGElement('text', { x: x - 15, y: y - 37, fill: "#04dd00", 'font-weight': 'bold', 'font-size': 26 });
+            t.textContent = "$"; textLayer.append(t);
+        }
+        if (hrt) {
+            const p = createSVGElement('path', { d: `M ${x - 35} ${y - 35} c -5 -5, -15 0, -10 10 c 5 10, 15 10, 20 0 c 5 -10, -5 -15, -10 -10 Z`, fill: "#e84e42", stroke: "#000" });
+            nodeLayer.append(p);
+        }
+    };
+    drawExtra(5, 10, 10, innerA, 'К', -13, -13, "#fff", false, false);
+    drawExtra(5, 80, 10, innerB, 'О', -13, -13, "#fff", true, false);
+    drawExtra(5, 10, 80, innerC, 'Н', -13, -13, "#fff", false, true);
+
+    // Diagonal Rays
+    const drawRay = (idx, col, txt, flip) => {
+        const pIn = uPoints[idx];
+        const line = createSVGElement('line', { x1: cx, y1: cy, x2: pIn.x, y2: pIn.y, stroke: col, 'stroke-width': 2 });
+        lineLayer.append(line);
+        if (txt) {
+            const mx = (cx + pIn.x) / 2, my = (cy + pIn.y) / 2;
+            let deg = (angles[idx] * 180 / Math.PI) + (flip ? 180 : 0);
+            const t = createSVGElement('text', { x: mx, y: my, 'text-anchor': 'middle', 'font-size': 9, transform: `rotate(${deg} ${mx} ${my}) translate(0, -5)` });
+            t.textContent = txt; textLayer.append(t);
+        }
+    };
+    drawRay(1, "#3E67EE", "линия мужского рода", true);
+    drawRay(3, "#F7494C", "линия женского рода", false);
+    drawRay(5, "#3E67EE", "", false);
+    drawRay(7, "#F7494C", "", true);
+
+    // Perimeter Dots & Labels
+    const drawPerimeter = (i1, i2, v1, v2) => {
+        const p1 = outerPoints[i1], p2 = outerPoints[i2];
+        const dx = p2.x - p1.x, dy = p2.y - p1.y, len = Math.sqrt(dx * dx + dy * dy);
+        const nx = -dy / len, ny = dx / len, ux = dx / len, uy = dy / len;
+        const offset = 18;
+        const p4 = reduce(v1 + v2), p2_ = reduce(p4 + v1), p1_ = reduce(p2_ + v1), p3 = reduce(p2_ + p4), p6 = reduce(p4 + v2), p5 = reduce(p4 + p6), p7 = reduce(p6 + v2);
+        const dots = [null, p1_, p2_, p3, p4, p5, p6, p7];
+
+        for (let j = 1; j <= 7; j++) {
+            const t = 0.5 + (j - 4) / 9;
+            const tx = p1.x + ux * len * t + nx * offset, ty = p1.y + uy * len * t + ny * offset;
+            const d = createSVGElement('circle', { cx: tx, cy: ty, r: j === 4 ? 4 : 2, fill: "#cc3366" });
+            nodeLayer.append(d);
+            const l = createSVGElement('text', { x: tx - 8, y: ty, 'font-size': j === 4 ? 10 : 8 });
+            l.textContent = dots[j]; textLayer.append(l);
+        }
+    };
+    for (let i = 0; i < 8; i++) drawPerimeter(i, (i + 1) % 8, values[i], values[(i + 1) % 8]);
+
+    // Age Markers
+    const markers = ["A", "Д", "Б", "Е", "В", "Ж", "Г", "З"];
+    const ages = ["0 лет", "10 лет", "20 лет", "30 лет", "40 лет", "50 лет", "60 лет", "70 лет"];
+    outerPoints.forEach((p, i) => {
+        const mx = p.x + ([-35, -25, 0, 25, 35, 25, 0, -25][i]), my = p.y + ([0, -25, -35, -25, 0, 25, 35, 25][i]);
+        drawNode(mx, my, 12, (m) => (i % 2 === 0 ? "#a185c8" : "#000"), markers[i], "#fff", 12);
+        const at = createSVGElement('text', { x: mx + ([-12, -12, 12, 12, 12, 12, 12, -12][i]), y: my, 'text-anchor': i === 0 || i === 1 || i === 7 ? 'end' : 'start', 'font-size': 11, 'font-weight': 'bold' });
+        at.textContent = ages[i]; textLayer.append(at);
     });
 }
 
-/**
- * Helper to create SVG elements
- */
 function createSVGElement(tag, attrs = {}) {
     const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
     for (let key in attrs) el.setAttribute(key, attrs[key]);
     return el;
 }
 
-/**
- * Modal Controls
- */
 function showLockedModal(feature) {
     const modalTitle = document.getElementById('modalTitle');
-    const modalDesc = document.getElementById('modalDesc');
-
-    // Custom text based on feature
-    if (feature === 'compatibility') {
-        modalTitle.textContent = 'Совместимость';
-        modalDesc.textContent = 'Узнайте кармические задачи и точки соприкосновения в ваших отношениях.';
-    } else if (feature === 'year') {
-        modalTitle.textContent = 'Прогноз на год';
-        modalDesc.textContent = 'Подробная карта ваших возможностей, финансов и личного роста на ближайшие 12 месяцев.';
-    }
-
+    if (feature === 'compatibility') modalTitle.textContent = 'Совместимость';
+    else if (feature === 'year') modalTitle.textContent = 'Прогноз на год';
     lockedModal.classList.add('active');
     tg.HapticFeedback.notificationOccurred('warning');
 }
 
-function hideLockedModal() {
-    lockedModal.classList.remove('active');
-}
+function hideLockedModal() { lockedModal.classList.remove('active'); }
 
-// Start the APP
 window.addEventListener('load', initTMA);
