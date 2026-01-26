@@ -127,13 +127,14 @@ function performCalculation() {
         return;
     }
 
-    // 1. Calculate Data
+    // 1. Calculate Data using our shared logic
     const baseData = MatrixLogic.calculateBase(dateStr);
+    const healthData = MatrixLogic.calculateHealth(baseData);
 
-    // 2. Populate UI
-    populateResultUI(baseData);
+    // 2. Populate UI Text/Tables
+    populateResultUI(baseData, healthData);
 
-    // 3. Draw SVG
+    // 3. Draw DETAILED SVG
     drawMatrixSVG(baseData);
 
     // 4. Show Result View
@@ -142,10 +143,10 @@ function performCalculation() {
 }
 
 /**
- * Fill Result Text Fields
+ * Fill Result Text Fields and Tables
  */
-function populateResultUI(data) {
-    const { date, destiny } = data;
+function populateResultUI(data, health) {
+    const { date, destiny, points } = data;
 
     // Header
     const formattedDate = `${String(date.day).padStart(2, '0')}.${String(date.month).padStart(2, '0')}.${date.year}`;
@@ -163,6 +164,14 @@ function populateResultUI(data) {
     const summary = document.getElementById('destinySummary');
     summary.innerHTML = `
         <div class="destiny-item">
+            <span class="destiny-label">Небо</span>
+            <span class="destiny-value">${destiny.sky}</span>
+        </div>
+        <div class="destiny-item">
+            <span class="destiny-label">Земля</span>
+            <span class="destiny-value">${destiny.earth}</span>
+        </div>
+        <div class="destiny-item">
             <span class="destiny-label">Личное</span>
             <span class="destiny-value">${destiny.personal}</span>
         </div>
@@ -170,69 +179,109 @@ function populateResultUI(data) {
             <span class="destiny-label">Социальное</span>
             <span class="destiny-value">${destiny.social}</span>
         </div>
-        <div class="destiny-item">
-            <span class="destiny-label">Духовное</span>
-            <span class="destiny-value">${destiny.spiritual}</span>
-        </div>
-        <div class="destiny-item">
-            <span class="destiny-label">Планетарное</span>
-            <span class="destiny-value">${destiny.planetary}</span>
-        </div>
     `;
+
+    // Populate Health Table (Chakras)
+    const healthBody = document.getElementById('healthTableBody');
+    if (healthBody) {
+        healthBody.innerHTML = health.chakras.map(c => `
+            <tr class="row-${c.color}">
+                <td class="cell-name">${c.name}</td>
+                <td>${c.body}</td>
+                <td>${c.energy}</td>
+                <td>${c.emotion}</td>
+            </tr>
+        `).join('') + `
+            <tr class="row-total">
+                <td class="cell-name">ИТОГО</td>
+                <td>${health.totals.reducedBody}</td>
+                <td>${health.totals.reducedEnergy}</td>
+                <td>${health.totals.reducedEmotion}</td>
+            </tr>
+        `;
+    }
 }
 
 /**
- * Draw the actual matrix SVG (simplified version of original site)
+ * Draw the DETAILED matrix SVG (Matches original site)
  */
 function drawMatrixSVG(data) {
     const svg = document.getElementById('matrixSvg');
     svg.innerHTML = '';
 
-    const cx = 350, cy = 350, radius = 280, innerRadius = 230;
+    const cx = 350, cy = 350, outerRadius = 270, innerRadius2 = 197;
     const angles = [Math.PI, Math.PI * 1.25, Math.PI * 1.5, Math.PI * 1.75, 0, Math.PI * 0.25, Math.PI * 0.5, Math.PI * 0.75];
 
+    const outerPoints = angles.map(a => ({ x: cx + outerRadius * Math.cos(a), y: cy + outerRadius * Math.sin(a) }));
+    const uPoints = angles.map(a => ({ x: cx + innerRadius2 * Math.cos(a), y: cy + innerRadius2 * Math.sin(a) }));
+
     // Layers
-    const gLines = createSVGElement('g', { stroke: 'rgba(255,255,255,0.2)', 'stroke-width': 2 });
-    const gNodes = createSVGElement('g');
-    svg.append(gLines, gNodes);
+    const lineLayer = createSVGElement('g', { stroke: 'rgba(0,0,0,0.15)', 'stroke-width': 1.5 });
+    const nodeLayer = createSVGElement('g');
+    const textLayer = createSVGElement('g');
+    svg.append(lineLayer, nodeLayer, textLayer);
 
-    // 1. Draw Squares (Simplified)
-    // Personal Square (0, 2, 4, 6)
-    const pPoints = [0, 2, 4, 6].map(i => ({
-        x: cx + radius * Math.cos(angles[i]),
-        y: cy + radius * Math.sin(angles[i])
-    }));
-    for (let i = 0; i < 4; i++) {
-        const p1 = pPoints[i], p2 = pPoints[(i + 1) % 4];
-        gLines.append(createSVGElement('line', { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y }));
-    }
+    // Helpers
+    const connect = (p1, p2, opacity = 0.5) => {
+        lineLayer.append(createSVGElement('line', { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, opacity }));
+    };
 
-    // 2. Draw Nodes
-    const pointValues = data.values;
+    const drawNode = (x, y, r, fill, val, txtCol, fontSize = 20) => {
+        nodeLayer.append(createSVGElement('circle', { cx: x, cy: y, r: r, fill: fill, stroke: '#000', 'stroke-width': 1.5 }));
+        const t = createSVGElement('text', { x, y, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: txtCol, 'font-weight': 'bold', 'font-size': fontSize });
+        t.textContent = val;
+        textLayer.append(t);
+    };
+
+    // 1. DRAW SQUARES & AXES
+    // Personal Square
+    [0, 2, 4, 6].forEach((i, idx, arr) => connect(outerPoints[i], outerPoints[arr[(idx + 1) % 4]]));
+    // Ancestral Square
+    [1, 3, 5, 7].forEach((i, idx, arr) => connect(outerPoints[i], outerPoints[arr[(idx + 1) % 4]]));
+    // Main Axes
+    connect(outerPoints[0], outerPoints[4]);
+    connect(outerPoints[2], outerPoints[6]);
+
+    // 2. NODES
+    const values = data.values;
     const colors = ["#9A71C9", "#ffffff", "#9A71C9", "#ffffff", "#F34B47", "#ffffff", "#F34B47", "#ffffff"];
+    const txtColors = ["#fff", "#000", "#fff", "#000", "#fff", "#000", "#fff", "#000"];
 
-    for (let i = 0; i < 8; i++) {
-        const x = cx + radius * Math.cos(angles[i]);
-        const y = cy + radius * Math.sin(angles[i]);
+    // Outer Points
+    outerPoints.forEach((p, i) => drawNode(p.x, p.y, 22, colors[i], values[i], txtColors[i]));
 
-        const circle = createSVGElement('circle', { cx: x, cy: y, r: 24, fill: colors[i], stroke: '#000', 'stroke-width': 2 });
-        const text = createSVGElement('text', {
-            x: x, y: y, 'text-anchor': 'middle', 'dominant-baseline': 'central',
-            fill: i % 2 === 0 ? '#fff' : '#000', 'font-weight': 'bold', 'font-size': 20
-        });
-        text.textContent = pointValues[i];
+    // Middle Points (U)
+    const uColors = ["#3EB4F0", "#fff", "#3EB4F0", "#fff", "#D88A4B", "#fff", "#D88A4B", "#fff"];
+    uPoints.forEach((p, i) => drawNode(p.x, p.y, 16, uColors[i], data.U[i], i % 2 === 0 ? '#fff' : '#000', 14));
 
-        gNodes.append(circle, text);
-    }
+    // Center
+    drawNode(cx, cy, 28, "#F4F866", data.points.centerValue, "#000", 22);
 
-    // Center Node
-    const centerCircle = createSVGElement('circle', { cx: cx, cy: cy, r: 30, fill: '#F4F866', stroke: '#000', 'stroke-width': 2 });
-    const centerText = createSVGElement('text', {
-        x: cx, y: cy, 'text-anchor': 'middle', 'dominant-baseline': 'central',
-        fill: '#000', 'font-weight': 'bold', 'font-size': 22
+    // 3. PERIMETER AGE MARKERS
+    const markerData = [
+        { letter: "A", age: "0 лет", off: [-35, 0], align: "end" },
+        { letter: "Д", age: "10 лет", off: [-25, -25], align: "end" },
+        { letter: "Б", age: "20 лет", off: [0, -35], align: "start" },
+        { letter: "Е", age: "30 лет", off: [25, -25], align: "start" },
+        { letter: "В", age: "40 лет", off: [35, 0], align: "start" },
+        { letter: "Ж", age: "50 лет", off: [25, 25], align: "start" },
+        { letter: "Г", age: "60 лет", off: [0, 35], align: "start" },
+        { letter: "З", age: "70 лет", off: [-25, 25], align: "end" }
+    ];
+
+    markerData.forEach((m, i) => {
+        const p = outerPoints[i];
+        const mx = p.x + m.off[0], my = p.y + m.off[1];
+        // Marker circle
+        nodeLayer.append(createSVGElement('circle', { cx: mx, cy: my, r: 10, fill: i % 2 === 0 ? '#a185c8' : '#000' }));
+        const lt = createSVGElement('text', { x: mx, y: my, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: '#fff', 'font-size': 9, 'font-weight': 'bold' });
+        lt.textContent = m.letter;
+        textLayer.append(lt);
+        // Age Text
+        const at = createSVGElement('text', { x: mx + (m.align === 'start' ? 12 : -12), y: my, 'text-anchor': m.align, 'dominant-baseline': 'central', fill: '#000', 'font-size': 10, 'font-weight': 'bold' });
+        at.textContent = m.age;
+        textLayer.append(at);
     });
-    centerText.textContent = data.points.centerValue;
-    gNodes.append(centerCircle, centerText);
 }
 
 /**
