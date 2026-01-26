@@ -74,11 +74,31 @@ function initEventListeners() {
 }
 
 /**
- * View Management
+ * Universal View Switcher
  */
 function showView(viewId) {
+    // Hide all views
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById(viewId).classList.add('active');
+
+    // Show target view
+    const target = document.getElementById(viewId);
+    if (target) {
+        target.classList.add('active');
+    }
+
+    // SPECIAL CASE: Hide Header and Footer on Result View
+    const header = document.querySelector('.tma-header');
+    const nav = document.querySelector('.tma-nav');
+
+    if (viewId === 'resultView') {
+        header.style.display = 'none';
+        nav.style.display = 'none';
+        document.body.style.paddingBottom = '0';
+    } else {
+        header.style.display = 'flex';
+        nav.style.display = 'flex';
+        document.body.style.paddingBottom = 'calc(80px + var(--safe-area-bottom))';
+    }
 }
 
 function switchTab(tabId, element) {
@@ -156,8 +176,9 @@ function drawFullMatrixSVG(data) {
 
     const outerPoints = angles.map(a => ({ x: cx + radius * Math.cos(a), y: cy + radius * Math.sin(a) }));
     const uPoints = angles.map(a => ({ x: cx + innerRadius2 * Math.cos(a), y: cy + innerRadius2 * Math.sin(a) }));
+    const yPoints = angles.map(a => ({ x: cx + innerRadius * Math.cos(a), y: cy + innerRadius * Math.sin(a) }));
 
-    const lineLayer = createSVGElement('g', { stroke: 'rgba(0,0,0,0.2)', 'stroke-width': 1.5 });
+    const lineLayer = createSVGElement('g', { stroke: 'rgba(0,0,0,0.15)', 'stroke-width': 1.5 });
     const nodeLayer = createSVGElement('g');
     const textLayer = createSVGElement('g');
     svg.append(lineLayer, nodeLayer, textLayer);
@@ -174,8 +195,13 @@ function drawFullMatrixSVG(data) {
     };
 
     // Squares
+    // 1. Personal Square (Outer 0, 2, 4, 6)
     [0, 2, 4, 6].forEach((i, idx, arr) => connect(outerPoints[i], outerPoints[arr[(idx + 1) % 4]]));
-    [1, 3, 5, 7].forEach((i, idx, arr) => connect(outerPoints[i], outerPoints[arr[(idx + 1) % 4]]));
+
+    // 2. Ancestral Square (Calculated Y-Points 1, 3, 5, 7 - One row inward)
+    [1, 3, 5, 7].forEach((i, idx, arr) => connect(yPoints[i], yPoints[arr[(idx + 1) % 4]]));
+
+    // Main Axes
     connect(outerPoints[0], outerPoints[4]);
     connect(outerPoints[2], outerPoints[6]);
 
