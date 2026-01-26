@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Мой личный Нумеролог</title>
+
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="loading">
+
+    <!-- HEADER -->
+    <header class="tma-header">
+        <div class="user-profile">
+            <div id="userAvatar" class="avatar-placeholder">
+                <iconify-icon icon="solar:user-circle-bold"></iconify-icon>
+            </div>
+            <div class="user-info">
+                <span id="userName" class="user-name">Загрузка...</span>
+                <span class="user-status">Личный нумеролог</span>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="icon-btn" id="notificationsBtn">
+                <iconify-icon icon="solar:bell-linear"></iconify-icon>
+            </button>
+        </div>
+    </header>
+
+    <!-- CONTENT AREA -->
+    <main class="tma-main" id="appContent">
+        <!-- HOME VIEW -->
+        <section id="homeView" class="view active">
+            <div class="welcome-card">
+                <h2>Ваша Матрица Судьбы</h2>
+                <p>Раскройте свой потенциал и узнайте предназначение по дате рождения.</p>
+            </div>
+
+            <div class="matrix-grid">
+                <!-- Основная матрица -->
+                <div class="matrix-card primary" onclick="navigateTo('calculate')">
+                    <div class="card-glass"></div>
+                    <div class="card-content">
+                        <span class="card-tag">Бесплатно</span>
+                        <h3>Основная матрица</h3>
+                        <p>Базовый разбор личности и талантов</p>
+                        <div class="card-footer">
+                            <span>Рассчитать</span>
+                            <iconify-icon icon="solar:arrow-right-up-linear"></iconify-icon>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Закрытые секции (аналог сайта) -->
+                <div class="matrix-card locked" data-feature="compatibility">
+                    <div class="card-glass"></div>
+                    <div class="card-content">
+                        <div class="lock-header">
+                            <iconify-icon icon="solar:lock-keyhole-minimalistic-bold"></iconify-icon>
+                            <span class="card-tag gold">Premium</span>
+                        </div>
+                        <h3>Совместимость</h3>
+                        <p>Анализ отношений и кармических связей</p>
+                    </div>
+                </div>
+
+                <div class="matrix-card locked" data-feature="year">
+                    <div class="card-glass"></div>
+                    <div class="card-content">
+                        <div class="lock-header">
+                            <iconify-icon icon="solar:lock-keyhole-minimalistic-bold"></iconify-icon>
+                            <span class="card-tag gold">Premium</span>
+                        </div>
+                        <h3>Прогноз на год</h3>
+                        <p>Ваши возможности и вызовы в этом году</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CALCULATE FORM VIEW -->
+        <section id="calcView" class="view" style="display:none;">
+            <div class="back-link" onclick="navigateTo('home')">
+                <iconify-icon icon="solar:arrow-left-linear"></iconify-icon>
+                <span>Назад</span>
+            </div>
+            <div class="form-header">
+                <h2>Введите дату</h2>
+                <p>Для точного расчета нам нужна только дата вашего рождения</p>
+            </div>
+            <div class="date-input-container">
+                <input type="date" id="birthDateInput" class="tma-input" required>
+                <button class="btn-primary full-width" onclick="performCalculation()">Рассчитать</button>
+            </div>
+        </section>
+
+        <!-- RESULT VIEW -->
+        <section id="resultView" class="view" style="display:none;">
+            <div class="back-link" onclick="navigateTo('calculate')">
+                <iconify-icon icon="solar:arrow-left-linear"></iconify-icon>
+                <span>К вводу даты</span>
+            </div>
+
+            <div class="result-header">
+                <div id="resultDate" class="result-date">01.01.1990</div>
+                <div id="resultAge" class="result-age">33 года</div>
+            </div>
+
+            <!-- Matrix Visualization (Simplified for mobile) -->
+            <div class="matrix-svg-container">
+                <svg id="matrixSvg" viewBox="0 0 700 700"></svg>
+            </div>
+
+            <div class="result-tables">
+                <!-- Краткие показатели -->
+                <div class="info-card">
+                    <h4>Предназначение</h4>
+                    <div class="destiny-grid" id="destinySummary">
+                        <!-- Will be filled by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="tma-nav">
+        <button class="nav-item active" onclick="switchTab('home', this)">
+            <iconify-icon icon="solar:magic-stick-3-linear"></iconify-icon>
+            <span>Матрица</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('history', this)">
+            <iconify-icon icon="solar:history-linear"></iconify-icon>
+            <span>История</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('services', this)">
+            <iconify-icon icon="solar:chat-round-dots-linear"></iconify-icon>
+            <span>Услуги</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('profile', this)">
+            <iconify-icon icon="solar:settings-linear"></iconify-icon>
+            <span>Профиль</span>
+        </button>
+    </nav>
+
+    <!-- Modal for Locked Features -->
+    <div id="lockedModal" class="tma-modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-sheet">
+            <div class="handle"></div>
+            <div class="modal-body">
+                <div class="modal-icon gold">
+                    <iconify-icon icon="solar:star-fall-minimalistic-bold-duotone"></iconify-icon>
+                </div>
+                <h3 id="modalTitle">Раздел заблокирован</h3>
+                <p id="modalDesc">Этот глубокий разбор доступен в Premium версии. Откройте все возможности своего
+                    предназначения.</p>
+                <div class="modal-benefits">
+                    <div class="benefit-item">
+                        <iconify-icon icon="solar:check-circle-bold"></iconify-icon>
+                        <span>Полная расшифровка</span>
+                    </div>
+                    <div class="benefit-item">
+                        <iconify-icon icon="solar:check-circle-bold"></iconify-icon>
+                        <span>PDF-отчет в Telegram</span>
+                    </div>
+                </div>
+                <button class="btn-primary full-width" id="buyBtn">Купить доступ</button>
+                <button class="btn-secondary full-width" id="closeModal">Позже</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="matrix-logic.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,539 @@
+:root {
+    /* Telegram Theme Variables */
+    --bg-color: var(--tg-theme-bg-color, #1a1a1a);
+    --secondary-bg: var(--tg-theme-secondary-bg-color, #242424);
+    --text-color: var(--tg-theme-text-color, #ffffff);
+    --hint-color: var(--tg-theme-hint-color, #aaaaaa);
+    --accent-color: var(--tg-theme-button-color, #7c4dff);
+    --accent-text: var(--tg-theme-button-text-color, #ffffff);
+
+    /* Custom Aesthetic Colors */
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --gold: #FFD700;
+    --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+
+    /* Safe Area for iPhones with notch */
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: 'Manrope', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.5;
+    overflow-x: hidden;
+    padding-bottom: calc(80px + var(--safe-area-bottom));
+    /* Space for nav */
+}
+
+/* HEADER STYLE */
+.tma-header {
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg-color);
+    backdrop-filter: blur(10px);
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar-placeholder {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.avatar-placeholder img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.user-status {
+    font-size: 11px;
+    color: var(--hint-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.icon-btn {
+    background: var(--secondary-bg);
+    border: none;
+    color: var(--text-color);
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* MAIN CONTENT */
+.tma-main {
+    padding: 10px 20px;
+}
+
+.welcome-card {
+    margin-bottom: 24px;
+}
+
+.welcome-card h2 {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #fff 0%, #aaa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.welcome-card p {
+    color: var(--hint-color);
+    font-size: 14px;
+}
+
+/* CARDS GRID */
+.matrix-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+.matrix-card {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    padding: 24px;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid var(--glass-border);
+    cursor: pointer;
+}
+
+.matrix-card:active {
+    transform: scale(0.97);
+}
+
+.card-glass {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--glass-bg);
+    backdrop-filter: blur(15px);
+    z-index: 1;
+}
+
+.card-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-tag {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    align-self: flex-start;
+    margin-bottom: 12px;
+    color: var(--hint-color);
+}
+
+.card-tag.gold {
+    background: rgba(255, 215, 0, 0.2);
+    color: var(--gold);
+}
+
+.matrix-card h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.matrix-card p {
+    font-size: 13px;
+    color: var(--hint-color);
+    margin-bottom: 16px;
+}
+
+.card-footer {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent-color);
+}
+
+/* PRIMARY CARD SPECIFIC */
+.matrix-card.primary {
+    background: linear-gradient(135deg, rgba(124, 77, 255, 0.2) 0%, rgba(124, 77, 255, 0.05) 100%);
+    border-color: rgba(124, 77, 255, 0.3);
+}
+
+/* LOCKED CARD STYLE */
+.matrix-card.locked {
+    background: var(--secondary-bg);
+}
+
+.lock-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.lock-header iconify-icon {
+    font-size: 20px;
+    color: var(--hint-color);
+}
+
+/* BOTTOM NAV */
+.tma-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(26, 26, 26, 0.8);
+    backdrop-filter: blur(20px);
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0 calc(10px + var(--safe-area-bottom));
+    border-top: 1px solid var(--glass-border);
+    z-index: 1000;
+}
+
+.nav-item {
+    background: none;
+    border: none;
+    color: var(--hint-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 25%;
+}
+
+.nav-item iconify-icon {
+    font-size: 24px;
+}
+
+.nav-item span {
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.nav-item.active {
+    color: var(--accent-color);
+}
+
+.nav-item.active iconify-icon {
+    transform: translateY(-2px);
+}
+
+/* MODAL / BOTTOM SHEET */
+.tma-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2000;
+    display: none;
+    /* Controlled by JS */
+}
+
+.tma-modal.active {
+    display: block;
+}
+
+.modal-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+}
+
+.modal-sheet {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--secondary-bg);
+    border-radius: 32px 32px 0 0;
+    padding: 12px 24px calc(24px + var(--safe-area-bottom));
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tma-modal.active .modal-sheet {
+    transform: translateY(0);
+}
+
+.handle {
+    width: 40px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+}
+
+.modal-body {
+    text-align: center;
+}
+
+.modal-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+}
+
+.modal-icon.gold {
+    color: var(--gold);
+}
+
+.modal-body h3 {
+    font-size: 24px;
+    margin-bottom: 12px;
+}
+
+.modal-body p {
+    color: var(--hint-color);
+    font-size: 15px;
+    margin-bottom: 24px;
+}
+
+.modal-benefits {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
+    text-align: left;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-color);
+}
+
+.benefit-item iconify-icon {
+    color: var(--accent-color);
+    font-size: 20px;
+}
+
+/* BUTTONS */
+.btn-primary {
+    background: var(--accent-color);
+    color: var(--accent-text);
+    border: none;
+    padding: 16px;
+    border-radius: 16px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 12px;
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--hint-color);
+    border: none;
+    padding: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.full-width {
+    width: 100%;
+    display: block;
+}
+
+/* INPUTS */
+.tma-input {
+    width: 100%;
+    background: var(--secondary-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 16px;
+    color: var(--text-color);
+    font-size: 16px;
+    font-family: inherit;
+    margin-bottom: 20px;
+    outline: none;
+}
+
+.tma-input:focus {
+    border-color: var(--accent-color);
+}
+
+/* VIEW MANAGEMENT */
+.view {
+    display: none;
+    animation: fadeIn 0.3s ease forwards;
+}
+
+.view.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* BACK LINK */
+.back-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--hint-color);
+    margin-bottom: 20px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* RESULT VIEW */
+.result-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.result-date {
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.result-age {
+    color: var(--hint-color);
+    font-size: 14px;
+}
+
+.matrix-svg-container {
+    width: 100%;
+    aspect-ratio: 1/1;
+    background: var(--glass-bg);
+    border-radius: 24px;
+    padding: 10px;
+    margin-bottom: 24px;
+}
+
+#matrixSvg {
+    width: 100%;
+    height: 100%;
+}
+
+.info-card {
+    background: var(--secondary-bg);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+.info-card h4 {
+    margin-bottom: 12px;
+    color: var(--hint-color);
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+.destiny-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.destiny-item {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 12px;
+    border-radius: 12px;
+}
+
+.destiny-label {
+    display: block;
+    font-size: 11px;
+    color: var(--hint-color);
+    margin-bottom: 4px;
+}
+
+.destiny-value {
+    font-weight: 700;
+    font-size: 18px;
+}
+
+/* UTILS */
+.loading #appContent {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.matrix-card {
+    animation: slideInUp 0.4s ease forwards;
+}
