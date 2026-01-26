@@ -314,38 +314,50 @@ function drawFullMatrixSVG(data) {
     drawRay(5, "#3E67EE", "", false);
     drawRay(7, "#F7494C", "", true);
 
-    // Detailed Perimeter (Strictly matching site config)
-    function drawPerimeter(i1, i2, v1, v2, config) {
+    // Detailed Perimeter (Perfectly aligned outside)
+    function drawPerimeter(i1, i2, v1, v2) {
         const p1 = outerPoints[i1], p2 = outerPoints[i2];
         const dx = p2.x - p1.x, dy = p2.y - p1.y, len = Math.sqrt(dx * dx + dy * dy);
-        let nx = -dy / len, ny = dx / len;
-        const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
-        if (nx * (mx - cx) + ny * (my - cy) < 0) { nx = -nx; ny = -ny; }
-        const offset = 30; // isMobile ? 30
-        const extend = 15; // isMobile ? 15
+        let nx = -dy / len, ny = dx / len; // Normal vector
+        const mxGlobal = (p1.x + p2.x) / 2, myGlobal = (p1.y + p2.y) / 2;
+
+        // Always push logic 'outward' from center
+        if (nx * (mxGlobal - cx) + ny * (myGlobal - cy) < 0) { nx = -nx; ny = -ny; }
+
+        const offsetLine = 30; // Line distance from nodes
+        const offsetText = 48; // Text distance from nodes (stays outside line)
         const ux = dx / len, uy = dy / len;
-        drawGenericLine({ x: p1.x + nx * offset - ux * extend, y: p1.y + ny * offset - uy * extend }, { x: p2.x + nx * offset + ux * extend, y: p2.y + ny * offset + uy * extend }, "#000", 2, 0.7);
+
+        // Draw side line
+        drawGenericLine({ x: p1.x + nx * offsetLine - ux * 15, y: p1.y + ny * offsetLine - uy * 15 }, { x: p2.x + nx * offsetLine + ux * 15, y: p2.y + ny * offsetLine + uy * 15 }, "#000", 1.5, 0.6);
+
         const p4 = reduce(v1 + v2), p2_ = reduce(p4 + v1), p1_ = reduce(p2_ + v1), p3 = reduce(p2_ + p4), p6 = reduce(p4 + v2), p5 = reduce(p4 + p6), p7 = reduce(p6 + v2);
         const vals = [null, p1_, p2_, p3, p4, p5, p6, p7];
+
         for (let j = 1; j <= 7; j++) {
             const t = 0.5 + (j - 4) / 9;
-            const tx = p1.x + ux * len * t + nx * offset, ty = p1.y + uy * len * t + ny * offset;
-            nodeLayer.append(createSVGElement('circle', { cx: tx, cy: ty, r: (j === 4 ? 5 : 2.5) * rScale, fill: "#cc3366", stroke: "#fff" }));
-            const l = createSVGElement('text', { x: tx + (config.shifts?.[j]?.x || -9), y: ty + (config.shifts?.[j]?.y || -1), 'text-anchor': 'middle', 'font-size': (j === 4 ? 11 : 9) * tScale });
-            l.textContent = vals[j]; textLayer.append(l);
+            const tx = p1.x + ux * len * t + nx * offsetLine;
+            const ty = p1.y + uy * len * t + ny * offsetLine;
+
+            // Text position (further out than line)
+            const tax = p1.x + ux * len * t + nx * offsetText;
+            const tay = p1.y + uy * len * t + ny * offsetText;
+
+            // Dot
+            nodeLayer.append(createSVGElement('circle', { cx: tx, cy: ty, r: (j === 4 ? 4 : 2) * rScale, fill: "#cc3366" }));
+
+            // Label (Outside)
+            const l = createSVGElement('text', {
+                x: tax, y: tay,
+                'text-anchor': 'middle', 'dominant-baseline': 'central',
+                'font-size': (j === 4 ? 11 : 9) * tScale,
+                'font-weight': j === 4 ? 'bold' : 'normal'
+            });
+            l.textContent = vals[j];
+            textLayer.append(l);
         }
     }
-    const pConfigs = [
-        { shifts: { 4: { x: -12, y: -1 } } }, // 0->1
-        { shifts: { 4: { x: -9, y: -9 } } },  // 1->2
-        { shifts: { 4: { x: 12, y: -7 } } },   // 2->3
-        { shifts: { 4: { x: 12, y: 1 } } },    // 3->4
-        { shifts: { 4: { x: 12, y: 15 } } },   // 4->5
-        { shifts: { 4: { x: 12, y: 15 } } },   // 5->6
-        { shifts: { 4: { x: -12, y: 15 } } },  // 6->7
-        { shifts: { 4: { x: -12, y: 10 } } }   // 7->0
-    ];
-    for (let i = 0; i < 8; i++) drawPerimeter(i, (i + 1) % 8, values[i], values[(i + 1) % 8], pConfigs[i]);
+    for (let i = 0; i < 8; i++) drawPerimeter(i, (i + 1) % 8, values[i], values[(i + 1) % 8]);
 
     // Age Markers (Outer labels)
     const mLetters = ["A", "Д", "Б", "Е", "В", "Ж", "Г", "З"], mAges = ["0 лет", "10 лет", "20 лет", "30 лет", "40 лет", "50 лет", "60 лет", "70 лет"];
