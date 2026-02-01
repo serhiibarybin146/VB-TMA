@@ -616,7 +616,7 @@ function drawFullMatrixSVG(data) {
             d.textContent = "$"; textLayer.append(d);
         }
         if (hrt) {
-            const hx = x - 35, hy = y - 35;
+            const hx = x - 30, hy = y - 40;
             const p = createSVGElement('path', { d: `M ${hx} ${hy} c ${-5 * rScale} ${-5 * rScale}, ${-15 * rScale} 0, ${-10 * rScale} ${10 * rScale} c ${5 * rScale} ${10 * rScale}, ${15 * rScale} ${10 * rScale}, ${20 * rScale} 0 c ${5 * rScale} ${-10 * rScale}, ${-5 * rScale} ${-15 * rScale}, ${-10 * rScale} ${-10 * rScale} Z`, fill: "#e84e42", stroke: "#000" });
             nodeLayer.append(p);
         }
