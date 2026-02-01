@@ -427,7 +427,7 @@ function drawFullMatrixSVG(data) {
                     'text-anchor': 'middle',
                     'dominant-baseline': 'central',
                     fill: isMid ? '#000' : '#999',
-                    'font-size': (isMid ? 11 : 9) * tScale,
+                    'font-size': (isMid ? 10 : 8) * tScale,
                     'font-weight': isMid ? '700' : 'normal',
                     'font-family': 'Manrope, sans-serif'
                 });
