@@ -617,6 +617,47 @@ body {
     text-decoration-color: rgba(0, 0, 0, 0.2);
 }
 
+/* BASE MODAL STYLES */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+@keyframes modalSlideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
 /* CHAKRA MODAL V3 (Colored Background + White Card) */
 .modal-content-styled {
     position: relative;
@@ -672,52 +713,6 @@ body {
 .section-text {
     font-size: 13px;
     line-height: 1.4;
-    color: #333;
-}
-
-.footer-row {
-    display: grid;
-    grid-template-columns: 1fr 1.2fr 1.2fr 1.5fr;
-    border-top: 1px solid #000;
-}
-
-.footer-row:first-child {
-    border-top: none;
-}
-
-.footer-row span {
-    padding: 8px 4px;
-    text-align: center;
-    font-size: 13px;
-    font-weight: 800;
-    border-right: 1px solid #000;
-}
-
-.footer-row span:last-child {
-    border-right: none;
-    font-size: 11px;
-    text-transform: uppercase;
-}
-
-.row-orange td {
-    background-color: #FF9933;
-    color: #000;
-}
-
-.row-red td {
-    background-color: #F34B47;
-    color: #000;
-}
-
-.row-sum td {
-    background: rgba(0, 0, 0, 0.05);
-    font-weight: 600;
-    color: #333;
-}
-
-.row-total td {
-    background: rgba(0, 0, 0, 0.1);
-    font-weight: 800;
     color: #333;
 }
 
