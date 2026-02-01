@@ -397,7 +397,7 @@ function drawFullMatrixSVG(data) {
                 if (isMid) {
                     labelText = `${ageVal} лет`;
                 } else {
-                    labelText = `${ageVal}-${ageVal + 1}`;
+                    labelText = `${ageVal - 1}-${ageVal}`;
                 }
 
                 // Text
