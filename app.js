@@ -377,7 +377,7 @@ function drawFullMatrixSVG(data) {
             const nx = vcx / distC;
             const ny = vcy / distC;
 
-            const labelOffset = 4.5 * rScale; // Offset distance from line
+            const labelOffset = 2 * rScale; // 2px offset as requested
 
             for (let j = 1; j <= 9; j++) {
                 const t = j / 10;
@@ -393,14 +393,16 @@ function drawFullMatrixSVG(data) {
                 // Small dot on the line
                 // lineLayer.append(createSVGElement('circle', { cx: x, cy: y, r: 2 * rScale, fill: '#ccc' })); // Optional: user asked for "figures", maybe dots too? "on same points" implies points.
 
+                const isMid = (j === 5); // 5, 15, 25...
+
                 // Text
                 const ageText = createSVGElement('text', {
                     x: lx, y: ly,
                     'text-anchor': 'middle',
                     'dominant-baseline': 'central',
-                    fill: '#999',
-                    'font-size': 10 * tScale,
-                    'font-weight': 'normal',
+                    fill: isMid ? '#000' : '#999',
+                    'font-size': (isMid ? 11 : 10) * tScale,
+                    'font-weight': isMid ? '700' : 'normal',
                     'font-family': 'Manrope, sans-serif'
                 });
                 ageText.textContent = ageVal;
