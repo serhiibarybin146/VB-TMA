@@ -382,6 +382,10 @@ function drawFullMatrixSVG(data) {
             const labelOffset = -14;
 
             for (let j = 1; j <= 9; j++) {
+                // User requested specific sequence: 1-2, 2-3, 3-4, 5 лет, 6-7, 7-8, 8-9.
+                // This implies skipping indices 4 and 9.
+                if (j === 4 || j === 9) continue;
+
                 const t = j / 10;
                 const x = p1.x + dx * t;
                 const y = p1.y + dy * t;
@@ -397,7 +401,8 @@ function drawFullMatrixSVG(data) {
                 if (isMid) {
                     labelText = `${ageVal} лет`;
                 } else {
-                    labelText = `${ageVal - 1}-${ageVal}`;
+                    // Reverted to ageVal - (ageVal+1) per request "starts with 1-2"
+                    labelText = `${ageVal}-${ageVal + 1}`;
                 }
 
                 // Text
