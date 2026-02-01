@@ -23,8 +23,6 @@ let currentState = {
  * Initialize Telegram Web App
  */
 function initTMA() {
-    tg.ready();
-    tg.expand();
 
     // Get User Data
     const userData = tg.initDataUnsafe?.user;
