@@ -136,24 +136,20 @@
                 <!-- Таблица здоровья (Чакры) - First -->
                 <div class="info-card health-block">
                     <h4>Таблица здоровья</h4>
-                    <div class="health-container">
-                        <div class="health-header">
-                            <span>Тело</span>
-                            <span>Энергия</span>
-                            <span>Эмоция</span>
-                            <span>Чакра</span>
-                        </div>
-                        <div class="health-main">
-                            <div class="chakra-detail" id="chakraDetail">
-                                <!-- Filled by JS -->
-                            </div>
-                            <div class="chakra-list" id="chakraList">
-                                <!-- Filled by JS -->
-                            </div>
-                        </div>
-                        <div class="health-footer" id="healthFooter">
-                            <!-- Filled by JS -->
-                        </div>
+                    <div class="table-container">
+                        <table class="health-table">
+                            <thead>
+                                <tr>
+                                    <th>Тело</th>
+                                    <th>Энергия</th>
+                                    <th>Эмоция</th>
+                                    <th>Чакра</th>
+                                </tr>
+                            </thead>
+                            <tbody id="healthTableBody">
+                                <!-- Will be filled by JS -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -285,6 +281,31 @@
                 </div>
                 <button class="btn-primary full-width" id="buyBtn">Купить доступ</button>
                 <button class="btn-secondary full-width" id="closeModal">Позже</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chakra Details Modal -->
+    <div id="chakraModal" class="modal chakra-modal-v3">
+        <div class="modal-overlay" onclick="hideChakraModal()"></div>
+        <div class="modal-content-styled" id="chakraModalContent">
+            <div class="chakra-info-card">
+                <div class="chakra-header-v3">
+                    <iconify-icon id="chakraIcon" icon="solar:crown-minimalistic-linear"></iconify-icon>
+                    <h3 id="chakraTitle">САХАСРАРА</h3>
+                </div>
+
+                <div class="chakra-info-section">
+                    <p class="section-label">Аспекты:</p>
+                    <p id="chakraAspects" class="section-text"></p>
+                </div>
+
+                <div class="chakra-info-section">
+                    <p class="section-label">Органы:</p>
+                    <p id="chakraOrgans" class="section-text"></p>
+                </div>
+
+                <button class="btn-primary full-width" onclick="hideChakraModal()">Закрыть</button>
             </div>
         </div>
     </div>
