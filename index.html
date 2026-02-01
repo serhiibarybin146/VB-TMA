@@ -111,14 +111,16 @@
 
         <!-- RESULT VIEW -->
         <section id="resultView" class="view">
-            <div class="back-link" onclick="navigateTo('calculate')">
-                <iconify-icon icon="solar:arrow-left-linear"></iconify-icon>
-                <span>К вводу даты</span>
-            </div>
-
-            <div class="result-header">
-                <div id="resultDate" class="result-date">01.01.1990</div>
-                <div id="resultAge" class="result-age">33 года</div>
+            <div class="result-top-row">
+                <div class="back-link" onclick="navigateTo('calculate')">
+                    <iconify-icon icon="solar:arrow-left-linear"></iconify-icon>
+                    <span>К вводу даты</span>
+                </div>
+                <div class="result-info">
+                    <span id="resultDate" class="result-date">01.01.1990</span>
+                    <span class="result-separator">•</span>
+                    <span id="resultAge" class="result-age">33 года</span>
+                </div>
             </div>
 
             <!-- Matrix Visualization (Simplified for mobile) -->
