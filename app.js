@@ -699,8 +699,8 @@ function drawFullMatrixSVG(data) {
         if (i === 0) {
             textLayer.append(createSVGElement('text', { x: mx, y: my + 22 * tScale, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: "#000", 'font-weight': "bold", 'font-size': 13 * tScale, content: mAges[i] }));
         } else if (i === 4) {
-            // 40 years: Reverted Y to 22, moved X to the right (approx +15)
-            textLayer.append(createSVGElement('text', { x: mx + 15 * tScale, y: my + 22 * tScale, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: "#000", 'font-weight': "bold", 'font-size': 13 * tScale, content: mAges[i] }));
+            // 40 years: Reduced X offset from 15 to 8 ("a little back")
+            textLayer.append(createSVGElement('text', { x: mx + 8 * tScale, y: my + 22 * tScale, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: "#000", 'font-weight': "bold", 'font-size': 13 * tScale, content: mAges[i] }));
         } else {
             textLayer.append(createSVGElement('text', { x: mx + (mAligns[i] === 'start' ? 15 : -15) * tScale, y: my, 'text-anchor': mAligns[i], 'dominant-baseline': 'central', fill: "#000", 'font-weight': "bold", 'font-size': 14 * tScale, content: mAges[i] }));
         }
