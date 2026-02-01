@@ -689,9 +689,9 @@ body {
 }
 
 .chakra-header-v3 iconify-icon {
-    font-size: 40px;
-    color: var(--accent-color);
-    margin-bottom: 4px;
+    font-size: 64px;
+    color: #000;
+    margin-bottom: 8px;
 }
 
 .chakra-header-v3 h3 {
