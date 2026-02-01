@@ -678,7 +678,7 @@ function drawFullMatrixSVG(data) {
             const l = createSVGElement('text', {
                 x: tax, y: tay,
                 'text-anchor': 'middle', 'dominant-baseline': 'central',
-                'font-size': (j === 4 ? 11 : 9) * tScale,
+                'font-size': (j === 4 ? 13 : 11) * tScale,
                 'font-weight': j === 4 ? 'bold' : 'normal'
             });
             l.textContent = vals[j];
