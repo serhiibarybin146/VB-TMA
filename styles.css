@@ -713,14 +713,15 @@ body {
 .d-val.big-circle {
     width: 28px;
     height: 28px;
-    border: 1.5px solid var(--text-color);
+    border: 1.5px solid rgba(0, 0, 0, 0.2);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 13px;
     font-weight: 700;
-    background: var(--secondary-bg);
+    background: transparent;
+    color: #000;
 }
 
 .brace-wrapper {
@@ -733,7 +734,8 @@ body {
     font-size: 32px;
     font-weight: 300;
     line-height: 1;
-    color: var(--text-color);
+    color: rgba(0, 0, 0, 0.3);
+    /* Matching the thin border look */
 }
 
 /* --- Codes Block --- */
