@@ -557,30 +557,31 @@ body {
 }
 
 .health-table th {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.05);
     font-size: 11px;
     text-transform: uppercase;
-    color: var(--hint-color);
+    color: #333;
+    font-weight: 700;
 }
 
 .row-purple td {
     background-color: #9A71C9;
-    color: #fff;
+    color: #000;
 }
 
 .row-blue td {
     background-color: #3E67EE;
-    color: #fff;
+    color: #000;
 }
 
 .row-cyan td {
     background-color: #55C5F0;
-    color: #fff;
+    color: #000;
 }
 
 .row-green td {
     background-color: #9ACD32;
-    color: #fff;
+    color: #000;
 }
 
 .row-yellow td {
@@ -590,22 +591,28 @@ body {
 
 .row-orange td {
     background-color: #FF9933;
-    color: #fff;
+    color: #000;
 }
 
 .row-red td {
     background-color: #F34B47;
-    color: #fff;
+    color: #000;
+}
+
+.row-sum td {
+    background: rgba(0, 0, 0, 0.05);
+    font-weight: 600;
+    color: #333;
 }
 
 .row-total td {
-    background: var(--secondary-bg);
+    background: rgba(0, 0, 0, 0.1);
     font-weight: 800;
+    color: #333;
 }
 
 .cell-name {
-    text-align: left !important;
-    padding-left: 12px !important;
+    text-align: center !important;
     font-weight: 700;
 }
 
