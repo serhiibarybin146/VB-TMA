@@ -26,8 +26,14 @@ function initTMA() {
     tg.ready();
     tg.expand();
 
+    // Request true fullscreen for deeper immersion (SDK 7.10+)
+    if (tg.requestFullscreen) {
+        tg.requestFullscreen();
+    }
+
     // Sync with Telegram theme colors
-    tg.setHeaderColor('secondary_bg_color');
+    // Both set to 'bg_color' ensuring a seamless blend between Telegram and the app
+    tg.setHeaderColor('bg_color');
     tg.setBackgroundColor('bg_color');
 
     // Get User Data
