@@ -621,9 +621,10 @@ function drawFullMatrixSVG(data) {
             nodeLayer.append(p);
         }
     }
-    drawExtra(5, 10, 10, innerA, "К", -13, -13, "#fff", false, false);
-    drawExtra(5, 80, 10, innerB, "О", -13, -13, "#fff", true, false);
-    drawExtra(5, 10, 80, innerC, "Н", -13, -13, "#fff", false, true);
+    // Shifted (+15, +15) to avoid overlap with center/arrows
+    drawExtra(5, 25, 25, innerA, "К", -13, -13, "#fff", false, false);
+    drawExtra(5, 95, 25, innerB, "О", -13, -13, "#fff", true, false);
+    drawExtra(5, 25, 95, innerC, "Н", -13, -13, "#fff", false, true);
 
     // --- markers ---
     const defs = createSVGElement('defs');
