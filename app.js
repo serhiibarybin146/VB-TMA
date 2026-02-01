@@ -481,7 +481,11 @@ function showChakraModal(name, colorKey) {
     organs.textContent = info.organs;
 
     // Set background color from the chakra color key
-    content.style.backgroundColor = CHAKRA_COLOR_MAP[colorKey] || '#fff';
+    const color = CHAKRA_COLOR_MAP[colorKey] || '#fff';
+    content.style.backgroundColor = color;
+
+    const closeBtn = modal.querySelector('.btn-modal-close');
+    if (closeBtn) closeBtn.style.backgroundColor = color;
 
     modal.classList.add('active');
     tg.HapticFeedback.impactOccurred('medium');
