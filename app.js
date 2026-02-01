@@ -391,11 +391,14 @@ function drawFullMatrixSVG(data) {
                 const ly = y + ny * labelOffset;
 
                 const ageVal = i * 10 + j;
-
-                // Small dot on the line
-                // lineLayer.append(createSVGElement('circle', { cx: x, cy: y, r: 2 * rScale, fill: '#ccc' })); // Optional: user asked for "figures", maybe dots too? "on same points" implies points.
-
                 const isMid = (j === 5); // 5, 15, 25...
+
+                let labelText = '';
+                if (isMid) {
+                    labelText = `${ageVal} лет`;
+                } else {
+                    labelText = `${ageVal}-${ageVal + 1}`;
+                }
 
                 // Text
                 const ageText = createSVGElement('text', {
@@ -403,11 +406,11 @@ function drawFullMatrixSVG(data) {
                     'text-anchor': 'middle',
                     'dominant-baseline': 'central',
                     fill: isMid ? '#000' : '#999',
-                    'font-size': (isMid ? 11 : 10) * tScale,
+                    'font-size': (isMid ? 11 : 9) * tScale, // slightly smaller for ranges
                     'font-weight': isMid ? '700' : 'normal',
                     'font-family': 'Manrope, sans-serif'
                 });
-                ageText.textContent = ageVal;
+                ageText.textContent = labelText;
                 ageLayer.append(ageText);
             }
         }
