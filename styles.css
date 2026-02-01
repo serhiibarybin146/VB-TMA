@@ -540,9 +540,10 @@ body {
 /* HEALTH TABLE */
 .health-table {
     width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #000;
-    border-radius: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid #ddd;
+    border-radius: 12px;
     overflow: hidden;
     font-size: 13px;
 }
@@ -551,7 +552,17 @@ body {
 .health-table td {
     padding: 8px 4px;
     text-align: center;
-    border: 1px solid #000;
+    border-bottom: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+
+.health-table th:last-child,
+.health-table td:last-child {
+    border-right: none;
+}
+
+.health-table tr:last-child td {
+    border-bottom: none;
 }
 
 .health-table th {
