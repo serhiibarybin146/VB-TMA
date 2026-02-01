@@ -731,6 +731,40 @@ body {
     color: var(--text-color);
 }
 
+/* --- Codes Block --- */
+.codes-block {
+    padding: 0 !important;
+}
+
+.codes-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.code-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #ddd;
+}
+
+.code-row:last-child {
+    border-bottom: none;
+}
+
+.code-label {
+    font-size: 13px;
+    color: #333;
+}
+
+.code-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: #333;
+    text-decoration: underline;
+}
+
 /* UTILS */
 .loading #appContent {
     opacity: 0.5;

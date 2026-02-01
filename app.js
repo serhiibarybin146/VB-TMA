@@ -167,6 +167,12 @@ function populateResultUI(data, health) {
     document.getElementById('val-spiritual').textContent = destiny.spiritual;
     document.getElementById('val-planetary').textContent = destiny.planetary;
 
+    // Populate codes section
+    document.getElementById('val-male-code').textContent = destiny.maleCode.join(', ');
+    document.getElementById('val-female-code').textContent = destiny.femaleCode.join(', ');
+    document.getElementById('val-ancestral-power').textContent = destiny.ancestralPower;
+    document.getElementById('val-internal-code').textContent = destiny.internalCode.join(', ');
+
     const healthBody = document.getElementById('healthTableBody');
     if (healthBody) {
         healthBody.innerHTML = health.chakras.map(c => `

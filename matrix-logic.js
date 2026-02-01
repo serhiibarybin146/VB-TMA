@@ -65,6 +65,12 @@ const MatrixLogic = {
         const spiritual = this.reduce(personal + social);
         const planetary = this.reduce(social + spiritual);
 
+        // Codes for additional section
+        const ancestralPower = this.reduce(tl + tr + br + bl);
+        const maleCode = [tl, br, this.reduce(tl + br)];
+        const femaleCode = [tr, bl, this.reduce(tr + bl)];
+        const internalCode = [centerValue, ancestralPower, this.reduce(centerValue + ancestralPower)];
+
         return {
             date: { day, month, year },
             points: {
@@ -78,7 +84,8 @@ const MatrixLogic = {
             destiny: {
                 sky, earth, personal,
                 maleLine, femaleLine, social,
-                spiritual, planetary
+                spiritual, planetary,
+                ancestralPower, maleCode, femaleCode, internalCode
             }
         };
     },
