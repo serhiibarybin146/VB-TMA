@@ -294,7 +294,7 @@ function saveRecentDate(date) {
 function renderHistoryDropdown() {
     const dates = getRecentDates();
     const dropdown = document.getElementById('historyDropdown');
-    const input = document.getElementById('birthDate');
+    const input = document.getElementById('birthDateInput');
 
     if (!dropdown || !input) return;
 
@@ -312,7 +312,7 @@ function renderHistoryDropdown() {
 }
 
 function selectHistoryDate(date) {
-    const input = document.getElementById('birthDate');
+    const input = document.getElementById('birthDateInput');
     const dropdown = document.getElementById('historyDropdown');
     if (input) {
         input.value = date;
@@ -322,7 +322,7 @@ function selectHistoryDate(date) {
 }
 
 function initHistoryEvents() {
-    const input = document.getElementById('birthDate');
+    const input = document.getElementById('birthDateInput');
     const dropdown = document.getElementById('historyDropdown');
 
     if (!input || !dropdown) return;
