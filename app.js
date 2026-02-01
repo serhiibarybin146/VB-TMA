@@ -23,6 +23,12 @@ let currentState = {
  * Initialize Telegram Web App
  */
 function initTMA() {
+    tg.ready();
+    tg.expand();
+
+    // Sync with Telegram theme colors
+    tg.setHeaderColor('secondary_bg_color');
+    tg.setBackgroundColor('bg_color');
 
     // Get User Data
     const userData = tg.initDataUnsafe?.user;
