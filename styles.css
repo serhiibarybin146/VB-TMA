@@ -501,9 +501,9 @@ body {
 }
 
 .matrix-svg-container {
-    width: calc(100% + 32px);
-    margin-left: -16px;
-    margin-right: -16px;
+    width: calc(100% + 24px);
+    margin-left: -12px;
+    margin-right: -12px;
     aspect-ratio: 1/1;
     background: #F8F6F2;
     /* Creamy background like original */
@@ -523,6 +523,9 @@ body {
     border-radius: 16px;
     padding: 12px 14px;
     margin-bottom: 10px;
+    width: calc(100% + 24px);
+    margin-left: -12px;
+    margin-right: -12px;
 }
 
 .info-card h4 {
