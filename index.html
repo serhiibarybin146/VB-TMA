@@ -104,7 +104,10 @@
                 <p>Для точного расчета нам нужна только дата вашего рождения</p>
             </div>
             <div class="date-input-container">
-                <input type="text" id="birthDateInput" class="tma-input" placeholder="ДД.ММ.ГГГГ" maxlength="10">
+                <div class="date-input-group">
+                    <input type="text" id="birthDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" maxlength="10">
+                    <div id="historyDropdown" class="history-dropdown"></div> <!-- History Dropdown -->
+                </div>
                 <button class="btn-primary full-width" onclick="performCalculation()">Рассчитать</button>
             </div>
         </section>

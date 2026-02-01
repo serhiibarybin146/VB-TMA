@@ -420,7 +420,7 @@ body {
 /* VIEW MANAGEMENT */
 .view {
     display: none;
-    animation: fadeIn 0.3s ease forwards;
+    animation: fadeIn 0.3s ease-out forwards;
 }
 
 .view.active {

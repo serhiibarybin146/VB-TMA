@@ -257,7 +257,89 @@ function initZoomEvents() {
 function navigateTo(pageId) {
     tg.HapticFeedback.impactOccurred('light');
     if (pageId === 'calculate') showView('calcView');
-    else if (pageId === 'home') showView('homeView');
+    else if (pageId === 'home') {
+        // --- History Logic Init ---
+        initHistoryEvents();
+
+        showView('homeView');
+    }
+}
+
+/**
+ * HISTORY FEATURE
+ */
+const RECENT_DATES_KEY = 'tma_recent_dates';
+
+function getRecentDates() {
+    try {
+        const stored = localStorage.getItem(RECENT_DATES_KEY);
+        return stored ? JSON.parse(stored) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveRecentDate(date) {
+    let dates = getRecentDates();
+    // Remove if exists to move to top
+    dates = dates.filter(d => d !== date);
+    // Add to front
+    dates.unshift(date);
+    // Keep max 3
+    if (dates.length > 3) dates = dates.slice(0, 3);
+
+    localStorage.setItem(RECENT_DATES_KEY, JSON.stringify(dates));
+}
+
+function renderHistoryDropdown() {
+    const dates = getRecentDates();
+    const dropdown = document.getElementById('historyDropdown');
+    const input = document.getElementById('birthDate');
+
+    if (!dropdown || !input) return;
+
+    if (dates.length === 0) {
+        dropdown.classList.remove('active');
+        return;
+    }
+
+    dropdown.innerHTML = dates.map(date => `
+        <div class="history-item" onclick="selectHistoryDate('${date}')">
+            <iconify-icon icon="solar:clock-circle-linear"></iconify-icon>
+            <span>${date}</span>
+        </div>
+    `).join('');
+}
+
+function selectHistoryDate(date) {
+    const input = document.getElementById('birthDate');
+    const dropdown = document.getElementById('historyDropdown');
+    if (input) {
+        input.value = date;
+        performCalculation(); // Auto-calculate on selection
+    }
+    if (dropdown) dropdown.classList.remove('active');
+}
+
+function initHistoryEvents() {
+    const input = document.getElementById('birthDate');
+    const dropdown = document.getElementById('historyDropdown');
+
+    if (!input || !dropdown) return;
+
+    // Show on focus
+    input.addEventListener('focus', () => {
+        renderHistoryDropdown();
+        const dates = getRecentDates();
+        if (dates.length > 0) dropdown.classList.add('active');
+    });
+
+    // Hide on click outside
+    document.addEventListener('click', (e) => {
+        if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('active');
+        }
+    });
 }
 
 /**
@@ -277,6 +359,9 @@ function performCalculation() {
 
     populateResultUI(baseData, healthData);
     drawFullMatrixSVG(baseData);
+
+    // Save to history
+    saveRecentDate(val);
 
     showView('resultView');
     tg.HapticFeedback.notificationOccurred('success');
