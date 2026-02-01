@@ -239,6 +239,23 @@
         </button>
     </nav>
 
+    <!-- Matrix Zoom Overlay -->
+    <div id="matrixZoomOverlay" class="zoom-overlay">
+        <div class="zoom-header">
+            <button class="zoom-close" onclick="closeMatrixZoom()">
+                <iconify-icon icon="solar:close-circle-linear"></iconify-icon>
+            </button>
+        </div>
+        <div class="zoom-content" id="zoomContent">
+            <div id="zoomSvgWrapper">
+                <!-- SVG will be cloned here -->
+            </div>
+        </div>
+        <div class="zoom-footer">
+            <span>Ущипните для масштабирования • Перетащите для сдвига</span>
+        </div>
+    </div>
+
     <!-- Modal for Locked Features -->
     <div id="lockedModal" class="tma-modal">
         <div class="modal-overlay"></div>

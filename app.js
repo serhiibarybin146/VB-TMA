@@ -81,6 +81,12 @@ function initEventListeners() {
 
     closeModal.addEventListener('click', hideLockedModal);
     lockedModal.querySelector('.modal-overlay').addEventListener('click', hideLockedModal);
+
+    // Make matrix clickable for zoom
+    const matrixContainer = document.querySelector('.matrix-svg-container');
+    if (matrixContainer) {
+        matrixContainer.onclick = openMatrixZoom;
+    }
 }
 
 /**
@@ -116,6 +122,123 @@ function switchTab(tabId, element) {
     element.classList.add('active');
     showView(tabId + 'View');
     tg.HapticFeedback.selectionChanged();
+}
+
+/**
+ * MATRIX ZOOM LOGIC
+ */
+let zoomScale = 1;
+let zoomPosX = 0;
+let zoomPosY = 0;
+let isZooming = false;
+let startDist = 0;
+let startScale = 1;
+let startPosX = 0;
+let startPosY = 0;
+let lastTouchX = 0;
+let lastTouchY = 0;
+
+function openMatrixZoom() {
+    const originalSvg = document.getElementById('matrixSvg');
+    if (!originalSvg) return;
+
+    const zoomOverlay = document.getElementById('matrixZoomOverlay');
+    const zoomWrapper = document.getElementById('zoomSvgWrapper');
+
+    // Clear and clone
+    zoomWrapper.innerHTML = '';
+    const clonedSvg = originalSvg.cloneNode(true);
+    clonedSvg.id = 'matrixSvgZoomed';
+    zoomWrapper.appendChild(clonedSvg);
+
+    // Reset state
+    zoomScale = 1;
+    zoomPosX = 0;
+    zoomPosY = 0;
+    updateZoomTransform();
+
+    zoomOverlay.classList.add('active');
+    tg.HapticFeedback.impactOccurred('medium');
+    document.body.style.overflow = 'hidden'; // Prevent scrolling background
+}
+
+function closeMatrixZoom() {
+    const zoomOverlay = document.getElementById('matrixZoomOverlay');
+    zoomOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+function updateZoomTransform() {
+    const wrapper = document.getElementById('zoomSvgWrapper');
+    if (wrapper) {
+        wrapper.style.transform = `translate(${zoomPosX}px, ${zoomPosY}px) scale(${zoomScale})`;
+    }
+}
+
+function initZoomEvents() {
+    const zoomContent = document.getElementById('zoomContent');
+    if (!zoomContent) return;
+
+    zoomContent.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 2) {
+            isZooming = true;
+            startDist = Math.hypot(
+                e.touches[0].pageX - e.touches[1].pageX,
+                e.touches[0].pageY - e.touches[1].pageY
+            );
+            startScale = zoomScale;
+        } else if (e.touches.length === 1) {
+            lastTouchX = e.touches[0].pageX;
+            lastTouchY = e.touches[0].pageY;
+        }
+    }, { passive: false });
+
+    zoomContent.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+
+        if (e.touches.length === 2 && isZooming) {
+            const dist = Math.hypot(
+                e.touches[0].pageX - e.touches[1].pageX,
+                e.touches[0].pageY - e.touches[1].pageY
+            );
+            zoomScale = Math.min(Math.max(startScale * (dist / startDist), 1), 5);
+            updateZoomTransform();
+        } else if (e.touches.length === 1 && !isZooming) {
+            const deltaX = e.touches[0].pageX - lastTouchX;
+            const deltaY = e.touches[0].pageY - lastTouchY;
+
+            // Pan only if zoomed in
+            if (zoomScale > 1) {
+                zoomPosX += deltaX;
+                zoomPosY += deltaY;
+                updateZoomTransform();
+            }
+
+            lastTouchX = e.touches[0].pageX;
+            lastTouchY = e.touches[0].pageY;
+        }
+    }, { passive: false });
+
+    zoomContent.addEventListener('touchend', (e) => {
+        if (e.touches.length < 2) {
+            isZooming = false;
+        }
+    });
+
+    // Double tap to reset
+    let lastTap = 0;
+    zoomContent.addEventListener('touchend', (e) => {
+        const currentTime = new Date().getTime();
+        const tapLength = currentTime - lastTap;
+        if (tapLength < 300 && tapLength > 0) {
+            zoomScale = 1;
+            zoomPosX = 0;
+            zoomPosY = 0;
+            updateZoomTransform();
+            tg.HapticFeedback.notificationOccurred('success');
+        }
+        lastTap = currentTime;
+    });
 }
 
 function navigateTo(pageId) {
@@ -415,4 +538,5 @@ function showLockedModal(feature) {
 
 function hideLockedModal() { lockedModal.classList.remove('active'); }
 
+initZoomEvents();
 window.addEventListener('load', initTMA);
