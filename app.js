@@ -390,8 +390,15 @@ function drawFullMatrixSVG(data) {
                 const y = p1.y + dy * t;
 
                 // Position for label
-                const lx = x + nx * labelOffset;
-                const ly = y + ny * labelOffset;
+                let currentOffset = labelOffset;
+                // "Move away only 5 years, 35 years, 45 years, 75 years a bit"
+                // 5 (i=0), 35 (i=3), 45 (i=4), 75 (i=7). All are at j=4 (midpoint).
+                if (j === 4 && [0, 3, 4, 7].includes(i)) {
+                    currentOffset = -24; // Move further inward (standard is -14)
+                }
+
+                const lx = x + nx * currentOffset;
+                const ly = y + ny * currentOffset;
 
                 const startAge = i * 10;
                 let labelText = '';
