@@ -497,9 +497,9 @@ function selectChakra(name) {
             <div class="cd-label">Органы:</div>
             <div class="cd-text">${info.organs}</div>
         </div>
-        <div class="footer-row" style="border: none; margin-top: auto; padding-top: 10px; width: 100%;">
-            <span style="border-right: 1px solid #000;">${chakra.body}</span>
-            <span style="border-right: 1px solid #000;">${chakra.energy}</span>
+        <div class="cd-footer-values">
+            <span>${chakra.body}</span>
+            <span>${chakra.energy}</span>
             <span>${chakra.emotion}</span>
         </div>
     `;
