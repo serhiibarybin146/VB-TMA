@@ -603,30 +603,109 @@ body {
     font-weight: 700;
 }
 
+/* --- Destiny Block (Предназначение) --- */
+.destiny-block {
+    padding: 12px 10px !important;
+}
+
 .destiny-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 6px;
-}
-
-.destiny-item {
-    background: rgba(255, 255, 255, 0.03);
-    padding: 6px 8px;
-    border-radius: 8px;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
     border: 1px solid var(--glass-border);
-    text-align: center;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--bg-color);
 }
 
-.destiny-label {
-    display: block;
-    font-size: 9px;
-    color: var(--hint-color);
-    margin-bottom: 1px;
+.destiny-cell {
+    padding: 10px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 80px;
 }
 
-.destiny-value {
+.borders-right {
+    border-right: 1px solid var(--glass-border);
+}
+
+.borders-bottom {
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.destiny-subtitle {
+    font-size: 10px;
     font-weight: 700;
-    font-size: 14px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    text-align: center;
+    letter-spacing: 0.05em;
+    color: var(--hint-color);
+}
+
+.destiny-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.destiny-values {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-align: right;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.d-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: flex-end;
+    white-space: nowrap;
+}
+
+.d-val.circled {
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--text-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--secondary-bg);
+}
+
+.d-val.big-circle {
+    width: 28px;
+    height: 28px;
+    border: 1.5px solid var(--text-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    background: var(--secondary-bg);
+}
+
+.brace-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.brace-symbol {
+    font-size: 32px;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--text-color);
 }
 
 /* UTILS */

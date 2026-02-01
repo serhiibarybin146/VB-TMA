@@ -129,11 +129,48 @@
             </div>
 
             <div class="result-tables">
-                <!-- Краткие показатели -->
-                <div class="info-card">
-                    <h4>Предназначение</h4>
+                <!-- Предназначение - Full Layout -->
+                <div class="info-card destiny-block">
+                    <h4>Предназначения</h4>
                     <div class="destiny-grid" id="destinySummary">
-                        <!-- Will be filled by JS -->
+                        <!-- Личное -->
+                        <div class="destiny-cell borders-right borders-bottom">
+                            <div class="destiny-subtitle">Личное</div>
+                            <div class="destiny-group">
+                                <div class="destiny-values">
+                                    <div class="d-row">Небо: <span class="d-val circled" id="val-sky">0</span></div>
+                                    <div class="d-row">Земля: <span class="d-val circled" id="val-earth">0</span></div>
+                                </div>
+                                <div class="brace-wrapper">
+                                    <span class="brace-symbol">}</span>
+                                    <span class="d-val big-circle" id="val-personal">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Социальное -->
+                        <div class="destiny-cell borders-bottom">
+                            <div class="destiny-subtitle">Социальное</div>
+                            <div class="destiny-group">
+                                <div class="destiny-values">
+                                    <div class="d-row">М: <span class="d-val circled" id="val-male">0</span></div>
+                                    <div class="d-row">Ж: <span class="d-val circled" id="val-female">0</span></div>
+                                </div>
+                                <div class="brace-wrapper">
+                                    <span class="brace-symbol">}</span>
+                                    <span class="d-val big-circle" id="val-social">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Духовное -->
+                        <div class="destiny-cell borders-right">
+                            <div class="destiny-subtitle">Духовное</div>
+                            <span class="d-val big-circle" id="val-spiritual">0</span>
+                        </div>
+                        <!-- Планетарное -->
+                        <div class="destiny-cell">
+                            <div class="destiny-subtitle">Планетарное</div>
+                            <span class="d-val big-circle" id="val-planetary">0</span>
+                        </div>
                     </div>
                 </div>
 

@@ -157,12 +157,15 @@ function populateResultUI(data, health) {
     document.getElementById('resultAge').textContent = `${age} лет`;
 
     const summary = document.getElementById('destinySummary');
-    summary.innerHTML = `
-        <div class="destiny-item"><span class="destiny-label">Небо</span><span class="destiny-value">${destiny.sky}</span></div>
-        <div class="destiny-item"><span class="destiny-label">Земля</span><span class="destiny-value">${destiny.earth}</span></div>
-        <div class="destiny-item"><span class="destiny-label">Личное</span><span class="destiny-value">${destiny.personal}</span></div>
-        <div class="destiny-item"><span class="destiny-label">Социальное</span><span class="destiny-value">${destiny.social}</span></div>
-    `;
+    // Populate destiny values
+    document.getElementById('val-sky').textContent = destiny.sky;
+    document.getElementById('val-earth').textContent = destiny.earth;
+    document.getElementById('val-personal').textContent = destiny.personal;
+    document.getElementById('val-male').textContent = destiny.male || destiny.sky; // M = sky
+    document.getElementById('val-female').textContent = destiny.female || destiny.earth; // F = earth
+    document.getElementById('val-social').textContent = destiny.social;
+    document.getElementById('val-spiritual').textContent = destiny.spiritual || reduce(destiny.personal + destiny.social);
+    document.getElementById('val-planetary').textContent = destiny.planetary || reduce(destiny.spiritual || reduce(destiny.personal + destiny.social));
 
     const healthBody = document.getElementById('healthTableBody');
     if (healthBody) {
