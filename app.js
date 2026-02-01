@@ -20,6 +20,47 @@ let currentState = {
 };
 
 /**
+ * CHAKRA DATA
+ */
+const CHAKRA_INFO = {
+    'САХАСРАРА': {
+        icon: 'solar:crown-minimalistic-linear',
+        aspects: 'духовность, соединение с Высшим Я, осознание, просветление.',
+        organs: 'верхняя часть головного мозга, шишковидная железа, центральная нервная система (депрессия, потеря смысла жизни, циклы сна).'
+    },
+    'АДЖНА': {
+        icon: 'solar:eye-linear',
+        aspects: 'интуиция, видение, мудрость, интеллект, память.',
+        organs: 'глаза, нижняя часть мозга, гипофиз, пазухи носа.'
+    },
+    'ВИШУДХА': {
+        icon: 'solar:mouth-linear',
+        aspects: 'самовыражение, общение, творчество, честность.',
+        organs: 'горло, щитовидная железа, голосовые связки, зубы, уши.'
+    },
+    'АНАХАТА': {
+        icon: 'solar:heart-linear',
+        aspects: 'любовь, сострадание, принятие, баланс, мир.',
+        organs: 'сердце, легкие, вилочковая железа, руки, плечи.'
+    },
+    'МАНИПУРА': {
+        icon: 'solar:fire-linear',
+        aspects: 'воля, уверенность, власть, личная сила, драйв.',
+        organs: 'желудок, печень, желчный пузырь, поджелудочная, надпочечники.'
+    },
+    'СВАДХИСТАНА': {
+        icon: 'solar:water-linear',
+        aspects: 'эмоции, удовольствие, сексуальность, желания.',
+        organs: 'почки, мочевой пузырь, репродуктивные органы, поясница.'
+    },
+    'МУЛАДХАРА': {
+        icon: 'solar:leaf-linear',
+        aspects: 'выживание, безопасность, заземление, инстинкты.',
+        organs: 'позвоночник, кости, зубы, ногти, прямая кишка.'
+    }
+};
+
+/**
  * Initialize Telegram Web App
  */
 function initTMA() {
@@ -397,12 +438,43 @@ function populateResultUI(data, health) {
     const healthBody = document.getElementById('healthTableBody');
     if (healthBody) {
         healthBody.innerHTML = health.chakras.map(c => `
-            <tr class="row-${c.color}"><td>${c.body}</td><td>${c.energy}</td><td>${c.emotion}</td><td class="cell-name">${c.name}</td></tr>
+            <tr class="row-${c.color}">
+                <td>${c.body}</td>
+                <td>${c.energy}</td>
+                <td>${c.emotion}</td>
+                <td class="cell-name clickable" onclick="showChakraModal('${c.name}')">${c.name}</td>
+            </tr>
         `).join('') + `
             <tr class="row-sum"><td>${health.totals.body}</td><td>${health.totals.energy}</td><td>${health.totals.emotion}</td><td class="cell-name">Сумма</td></tr>
             <tr class="row-total"><td>${health.totals.reducedBody}</td><td>${health.totals.reducedEnergy}</td><td>${health.totals.reducedEmotion}</td><td class="cell-name">Итого</td></tr>
         `;
     }
+}
+
+/**
+ * CHAKRA MODAL
+ */
+function showChakraModal(name) {
+    const info = CHAKRA_INFO[name];
+    if (!info) return;
+
+    const modal = document.getElementById('chakraModal');
+    const title = document.getElementById('chakraTitle');
+    const icon = document.getElementById('chakraIcon');
+    const aspects = document.getElementById('chakraAspects');
+    const organs = document.getElementById('chakraOrgans');
+
+    title.textContent = name;
+    icon.setAttribute('icon', info.icon);
+    aspects.textContent = info.aspects;
+    organs.textContent = info.organs;
+
+    modal.classList.add('active');
+    tg.HapticFeedback.impactOccurred('medium');
+}
+
+function hideChakraModal() {
+    document.getElementById('chakraModal').classList.remove('active');
 }
 
 /**

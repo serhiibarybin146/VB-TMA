@@ -12,6 +12,29 @@
     <!-- Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
+    <!-- Chakra Details Modal -->
+    <div id="chakraModal" class="modal">
+        <div class="modal-overlay" onclick="hideChakraModal()"></div>
+        <div class="modal-content">
+            <div class="chakra-header">
+                <iconify-icon id="chakraIcon" icon="solar:crown-minimalistic-linear"></iconify-icon>
+                <h3 id="chakraTitle">САХАСРАРА</h3>
+            </div>
+
+            <div class="chakra-info-section">
+                <p class="section-label">Аспекты:</p>
+                <p id="chakraAspects" class="section-text"></p>
+            </div>
+
+            <div class="chakra-info-section">
+                <p class="section-label">Органы:</p>
+                <p id="chakraOrgans" class="section-text"></p>
+            </div>
+
+            <button class="btn-primary full-width" onclick="hideChakraModal()">Закрыть</button>
+        </div>
+    </div>
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
