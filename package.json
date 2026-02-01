@@ -1,5 +1,7 @@
 {
-    "name": "viktoriia-barybina-tma-bot",
+    "name": "viktoriia-barybina-tma",
     "version": "1.0.0",
-    "dependencies": {}
+    "engines": {
+        "node": "20.x"
+    }
 }
