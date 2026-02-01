@@ -377,9 +377,9 @@ function drawFullMatrixSVG(data) {
             const nx = vcx / distC;
             const ny = vcy / distC;
 
-            // Visual line is at -30 (outwards). 
-            // -28 caused overlap. -22 gives ~8px "inward" gap.
-            const labelOffset = -22;
+            // Visual line at 30. Dot radius ~5. Inner edge ~25.
+            // Text center at 14. Outer edge ~20. Gap ~5.
+            const labelOffset = -14;
 
             for (let j = 1; j <= 9; j++) {
                 const t = j / 10;
