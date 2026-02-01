@@ -180,6 +180,7 @@ function initZoomEvents() {
     if (!zoomContent) return;
 
     let gestureType = 'none'; // 'pan' or 'zoom'
+    let lastTap = 0;
 
     zoomContent.addEventListener('touchstart', (e) => {
         if (e.touches.length === 2) {
