@@ -377,16 +377,15 @@ function drawFullMatrixSVG(data) {
             const nx = vcx / distC;
             const ny = vcy / distC;
 
-            // Visual line at 30. Dot radius ~5. Inner edge ~25.
-            // Text center at 14. Outer edge ~20. Gap ~5.
+            // Visual line is at -30 (outwards). 
+            // -14 gives ~5px gap from dots.
             const labelOffset = -14;
 
-            for (let j = 1; j <= 9; j++) {
-                // User requested specific sequence: 1-2, 2-3, 3-4, 5 лет, 6-7, 7-8, 8-9.
-                // This implies skipping indices 4 and 9.
-                if (j === 4 || j === 9) continue;
+            for (let j = 1; j <= 7; j++) {
+                // Determine 't' to match drawPerimeter dots exactly
+                // drawPerimeter uses: t = 0.5 + (j - 4) / 9;
+                const t = 0.5 + (j - 4) / 9;
 
-                const t = j / 10;
                 const x = p1.x + dx * t;
                 const y = p1.y + dy * t;
 
@@ -394,16 +393,33 @@ function drawFullMatrixSVG(data) {
                 const lx = x + nx * labelOffset;
                 const ly = y + ny * labelOffset;
 
-                const ageVal = i * 10 + j;
-                const isMid = (j === 5); // 5, 15, 25...
-
+                const startAge = i * 10;
                 let labelText = '';
-                if (isMid) {
-                    labelText = `${ageVal} лет`;
-                } else {
-                    // Reverted to ageVal - (ageVal+1) per request "starts with 1-2"
-                    labelText = `${ageVal}-${ageVal + 1}`;
+
+                // Map j=1..7 to user requested sequence:
+                // j=1 -> 1-2
+                // j=2 -> 2-3
+                // j=3 -> 3-4
+                // j=4 -> 5 лет (midpoint)
+                // j=5 -> 6-7
+                // j=6 -> 7-8
+                // j=7 -> 8-9
+
+                if (j === 4) {
+                    labelText = `${startAge + 5} лет`; // e.g. 5 лет, 15 лет...
+                } else if (j < 4) {
+                    // j=1 => start+1 - start+2
+                    // j=2 => start+2 - start+3
+                    // j=3 => start+3 - start+4
+                    labelText = `${startAge + j}-${startAge + j + 1}`;
+                } else { // j > 4
+                    // j=5 => start+6 - start+7
+                    // j=6 => start+7 - start+8
+                    // j=7 => start+8 - start+9
+                    labelText = `${startAge + j + 1}-${startAge + j + 2}`;
                 }
+
+                const isMid = (j === 4);
 
                 // Text
                 const ageText = createSVGElement('text', {
@@ -411,7 +427,7 @@ function drawFullMatrixSVG(data) {
                     'text-anchor': 'middle',
                     'dominant-baseline': 'central',
                     fill: isMid ? '#000' : '#999',
-                    'font-size': (isMid ? 11 : 9) * tScale, // slightly smaller for ranges
+                    'font-size': (isMid ? 11 : 9) * tScale,
                     'font-weight': isMid ? '700' : 'normal',
                     'font-family': 'Manrope, sans-serif'
                 });
