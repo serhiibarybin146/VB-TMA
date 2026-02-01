@@ -808,7 +808,7 @@ body {
 }
 
 .zoom-header {
-    padding: calc(15px + var(--safe-area-top)) 20px 10px;
+    padding: calc(45px + var(--safe-area-top)) 20px 10px;
     display: flex;
     justify-content: flex-end;
 }
