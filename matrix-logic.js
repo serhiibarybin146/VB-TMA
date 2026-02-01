@@ -95,13 +95,13 @@ const MatrixLogic = {
         const midU2 = this.reduce(U[2] + center);
 
         const chakras = [
-            { name: 'Sahasrara', color: 'purple', body: points.rDay, energy: points.rMonth },
-            { name: 'Ajna', color: 'blue', body: Y[0], energy: Y[2] },
-            { name: 'Vishuddha', color: 'cyan', body: U[0], energy: U[2] },
-            { name: 'Anahata', color: 'green', body: midU1, energy: midU2 },
-            { name: 'Manipura', color: 'yellow', body: center, energy: center },
-            { name: 'Svadhisthana', color: 'orange', body: U[4], energy: U[6] },
-            { name: 'Muladhara', color: 'red', body: points.rYear, energy: points.sumBottom }
+            { name: 'Сахасрара', color: 'purple', body: points.rDay, energy: points.rMonth },
+            { name: 'Аджна', color: 'blue', body: Y[0], energy: Y[2] },
+            { name: 'Вишудха', color: 'cyan', body: U[0], energy: U[2] },
+            { name: 'Анахата', color: 'green', body: midU1, energy: midU2 },
+            { name: 'Манипура', color: 'yellow', body: center, energy: center },
+            { name: 'Свадхистана', color: 'orange', body: U[4], energy: U[6] },
+            { name: 'Муладхара', color: 'red', body: points.rYear, energy: points.sumBottom }
         ];
 
         // Add emotion (reduced sum of body + energy)
