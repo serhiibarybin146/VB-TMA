@@ -408,7 +408,13 @@ function performCalculation() {
     tg.HapticFeedback.notificationOccurred('success');
 }
 
+/**
+ * Global or Scope-limited state for result
+ */
+let currentHealthData = null;
+
 function populateResultUI(data, health) {
+    currentHealthData = health;
     const { date, destiny } = data;
     document.getElementById('resultDate').textContent = `${String(date.day).padStart(2, '0')}.${String(date.month).padStart(2, '0')}.${date.year}`;
 
@@ -435,46 +441,74 @@ function populateResultUI(data, health) {
     document.getElementById('val-ancestral-power').textContent = destiny.ancestralPower;
     document.getElementById('val-internal-code').textContent = destiny.internalCode.join(', ');
 
-    const healthBody = document.getElementById('healthTableBody');
-    if (healthBody) {
-        healthBody.innerHTML = health.chakras.map(c => `
-            <tr class="row-${c.color}">
-                <td>${c.body}</td>
-                <td>${c.energy}</td>
-                <td>${c.emotion}</td>
-                <td class="cell-name clickable" onclick="showChakraModal('${c.name}')">${c.name}</td>
-            </tr>
-        `).join('') + `
-            <tr class="row-sum"><td>${health.totals.body}</td><td>${health.totals.energy}</td><td>${health.totals.emotion}</td><td class="cell-name">Сумма</td></tr>
-            <tr class="row-total"><td>${health.totals.reducedBody}</td><td>${health.totals.reducedEnergy}</td><td>${health.totals.reducedEmotion}</td><td class="cell-name">Итого</td></tr>
+    // HEALTH TABLE V2
+    const chakraList = document.getElementById('chakraList');
+    const healthFooter = document.getElementById('healthFooter');
+
+    if (chakraList) {
+        chakraList.innerHTML = health.chakras.map(c => `
+            <div class="chakra-item ${c.color}" id="item-${c.name}" onclick="selectChakra('${c.name}')">
+                ${c.name}
+            </div>
+        `).join('');
+    }
+
+    if (healthFooter) {
+        healthFooter.innerHTML = `
+            <div class="footer-row">
+                <span>${health.totals.body}</span>
+                <span>${health.totals.energy}</span>
+                <span>${health.totals.emotion}</span>
+                <span>Сумма</span>
+            </div>
+            <div class="footer-row">
+                <span>${health.totals.reducedBody}</span>
+                <span>${health.totals.reducedEnergy}</span>
+                <span>${health.totals.reducedEmotion}</span>
+                <span>Итог</span>
+            </div>
         `;
+    }
+
+    // Default selection
+    if (health.chakras.length > 0) {
+        selectChakra(health.chakras[0].name);
     }
 }
 
 /**
- * CHAKRA MODAL
+ * CHAKRA SELECTION (V2)
  */
-function showChakraModal(name) {
+function selectChakra(name) {
+    if (!currentHealthData) return;
+    const chakra = currentHealthData.chakras.find(c => c.name === name);
     const info = CHAKRA_INFO[name.toUpperCase()];
-    if (!info) return;
+    if (!chakra || !info) return;
 
-    const modal = document.getElementById('chakraModal');
-    const title = document.getElementById('chakraTitle');
-    const icon = document.getElementById('chakraIcon');
-    const aspects = document.getElementById('chakraAspects');
-    const organs = document.getElementById('chakraOrgans');
+    // Update Detail Card
+    const detail = document.getElementById('chakraDetail');
+    detail.innerHTML = `
+        <iconify-icon class="cd-icon" icon="${info.icon}"></iconify-icon>
+        <div class="cd-section">
+            <div class="cd-label">Аспекты:</div>
+            <div class="cd-text">${info.aspects}</div>
+        </div>
+        <div class="cd-section">
+            <div class="cd-label">Органы:</div>
+            <div class="cd-text">${info.organs}</div>
+        </div>
+        <div class="footer-row" style="border: none; margin-top: auto; padding-top: 10px; width: 100%;">
+            <span style="border-right: 1px solid #000;">${chakra.body}</span>
+            <span style="border-right: 1px solid #000;">${chakra.energy}</span>
+            <span>${chakra.emotion}</span>
+        </div>
+    `;
 
-    title.textContent = name;
-    icon.setAttribute('icon', info.icon);
-    aspects.textContent = info.aspects;
-    organs.textContent = info.organs;
+    // Update List Active State
+    document.querySelectorAll('.chakra-item').forEach(el => el.classList.remove('active'));
+    document.getElementById(`item-${name}`).classList.add('active');
 
-    modal.classList.add('active');
-    tg.HapticFeedback.impactOccurred('medium');
-}
-
-function hideChakraModal() {
-    document.getElementById('chakraModal').classList.remove('active');
+    tg.HapticFeedback.selectionChanged();
 }
 
 /**

@@ -537,65 +537,162 @@ body {
     text-align: center;
 }
 
-/* HEALTH TABLE */
-.health-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    border: 1px solid #ddd;
+/* HEALTH TABLE V2 (Master-Detail) */
+.health-container {
+    background: #fff;
     border-radius: 12px;
+    border: 1px solid #000;
     overflow: hidden;
-    font-size: 13px;
+    color: #000;
 }
 
-.health-table th,
-.health-table td {
-    padding: 8px 4px;
+.health-header {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 1.2fr 1.5fr;
+    border-bottom: 1px solid #000;
+    background: #fff;
+}
+
+.health-header span {
+    padding: 10px 4px;
     text-align: center;
-    border-bottom: 1px solid #ddd;
-    border-right: 1px solid #ddd;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    border-right: 1px solid #000;
 }
 
-.health-table th:last-child,
-.health-table td:last-child {
+.health-header span:last-child {
     border-right: none;
 }
 
-.health-table tr:last-child td {
+.health-main {
+    display: grid;
+    grid-template-columns: 2.3fr 1.5fr;
+    /* 3 cols area : 1 col area */
+    min-height: 240px;
+}
+
+.chakra-detail {
+    background: #fff;
+    border-right: 1px solid #000;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+}
+
+.cd-icon {
+    font-size: 32px;
+    color: var(--accent-color);
+    margin-bottom: 8px;
+}
+
+.cd-section {
+    margin-bottom: 10px;
+}
+
+.cd-label {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+.cd-text {
+    font-size: 11px;
+    line-height: 1.3;
+    color: #333;
+}
+
+.chakra-list {
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+.chakra-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    border-bottom: 1px solid #000;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    user-select: none;
+}
+
+.chakra-item:last-child {
     border-bottom: none;
 }
 
-.health-table th {
-    background: rgba(0, 0, 0, 0.05);
+.chakra-item.active {
+    outline: 2px solid #000;
+    outline-offset: -2px;
+    z-index: 1;
+}
+
+/* Chakra Colors */
+.chakra-item.purple {
+    background: #9A71C9;
+}
+
+.chakra-item.blue {
+    background: #3E67EE;
+}
+
+.chakra-item.cyan {
+    background: #55C5F0;
+}
+
+.chakra-item.green {
+    background: #9ACD32;
+}
+
+.chakra-item.yellow {
+    background: #FFFF4D;
+}
+
+.chakra-item.orange {
+    background: #FF9933;
+}
+
+.chakra-item.red {
+    background: #FF4D4D;
+}
+
+.health-footer {
+    border-top: 1px solid #000;
+}
+
+.footer-row {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 1.2fr 1.5fr;
+    border-top: 1px solid #000;
+}
+
+.footer-row:first-child {
+    border-top: none;
+}
+
+.footer-row span {
+    padding: 8px 4px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 800;
+    border-right: 1px solid #000;
+}
+
+.footer-row span:last-child {
+    border-right: none;
     font-size: 11px;
     text-transform: uppercase;
-    color: #333;
-    font-weight: 700;
-}
-
-.row-purple td {
-    background-color: #9A71C9;
-    color: #000;
-}
-
-.row-blue td {
-    background-color: #3E67EE;
-    color: #000;
-}
-
-.row-cyan td {
-    background-color: #55C5F0;
-    color: #000;
-}
-
-.row-green td {
-    background-color: #9ACD32;
-    color: #000;
-}
-
-.row-yellow td {
-    background-color: #FFFF4D;
-    color: #000;
 }
 
 .row-orange td {
@@ -861,102 +958,6 @@ body {
 
 .matrix-svg-container {
     cursor: zoom-in;
-}
-
-/* BASE MODAL STYLES */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 5000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    box-sizing: border-box;
-}
-
-.modal.active {
-    display: flex;
-}
-
-.modal-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(4px);
-}
-
-.modal-content {
-    position: relative;
-    background: var(--bg-color);
-    width: 100%;
-    max-width: 360px;
-    padding: 24px;
-    border-radius: 24px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    border: 1px solid var(--glass-border);
-    animation: modalSlideUp 0.3s ease-out;
-}
-
-@keyframes modalSlideUp {
-    from {
-        transform: translateY(20px);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-/* CHAKRA MODAL STYLES */
-.chakra-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.chakra-header iconify-icon {
-    font-size: 48px;
-    color: var(--accent-color);
-    margin-bottom: 8px;
-}
-
-.chakra-header h3 {
-    font-size: 22px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--text-color);
-}
-
-.chakra-info-section {
-    margin-bottom: 16px;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px solid var(--glass-border);
-}
-
-.section-label {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--accent-color);
-    margin-bottom: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-}
-
-.section-text {
-    font-size: 14px;
-    line-height: 1.5;
-    color: var(--text-color);
 }
 
 .cell-name.clickable {
