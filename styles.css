@@ -862,3 +862,57 @@ body {
 .matrix-svg-container {
     cursor: zoom-in;
 }
+
+/* CHAKRA MODAL STYLES */
+.chakra-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.chakra-header iconify-icon {
+    font-size: 48px;
+    color: var(--accent-color);
+    margin-bottom: 8px;
+}
+
+.chakra-header h3 {
+    font-size: 22px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-color);
+}
+
+.chakra-info-section {
+    margin-bottom: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+}
+
+.section-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent-color);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.section-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-color);
+}
+
+.cell-name.clickable {
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(0, 0, 0, 0.2);
+}
+
+.cell-name.clickable:active {
+    opacity: 0.6;
+}
