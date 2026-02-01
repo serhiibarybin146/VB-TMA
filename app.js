@@ -625,10 +625,40 @@ function drawFullMatrixSVG(data) {
     drawExtra(5, 80, 10, innerB, "О", -13, -13, "#fff", true, false);
     drawExtra(5, 10, 80, innerC, "Н", -13, -13, "#fff", false, true);
 
+    // --- markers ---
+    const defs = createSVGElement('defs');
+    svg.appendChild(defs);
+
+    function createArrowMarker(id, color) {
+        const marker = document.createElementNS("http://www.w3.org/2000/svg", 'marker');
+        marker.setAttribute('id', id);
+        marker.setAttribute('viewBox', '0 0 10 10');
+        marker.setAttribute('refX', '9'); // Adjust to position tip correctly
+        marker.setAttribute('refY', '5');
+        marker.setAttribute('markerWidth', '6');
+        marker.setAttribute('markerHeight', '6');
+        marker.setAttribute('orient', 'auto-start-reverse');
+
+        const path = document.createElementNS("http://www.w3.org/2000/svg", 'path');
+        path.setAttribute('d', 'M 0 0 L 10 5 L 0 10 z');
+        path.setAttribute('fill', color);
+
+        marker.appendChild(path);
+        return marker;
+    }
+
+    defs.appendChild(createArrowMarker('arrowMale', '#3E67EE'));
+    defs.appendChild(createArrowMarker('arrowFemale', '#F7494C'));
+
     // Diagonal Rays
-    function drawRay(idx, col, txt, isFlip) {
+    function drawRay(idx, col, txt, isFlip, markerId = null) {
         const pInner = uPoints[idx];
         const line = createSVGElement('line', { x1: cx, y1: cy, x2: pInner.x, y2: pInner.y, stroke: col, 'stroke-width': 2 });
+        if (markerId) {
+            line.setAttribute('marker-end', `url(#${markerId})`);
+            // Shorten line slightly so arrow doesn't overlap excessively if needed, 
+            // but usually standard marker refX handles it.
+        }
         lineLayer.append(line);
         if (txt) {
             const mx = (cx + pInner.x) / 2, my = (cy + pInner.y) / 2;
@@ -637,8 +667,8 @@ function drawFullMatrixSVG(data) {
             t.textContent = txt; textLayer.append(t);
         }
     }
-    drawRay(1, "#3E67EE", "линия мужского рода", true);
-    drawRay(3, "#F7494C", "линия женского рода", false);
+    drawRay(1, "#3E67EE", "линия мужского рода", true, 'arrowMale');
+    drawRay(3, "#F7494C", "линия женского рода", false, 'arrowFemale');
     drawRay(5, "#3E67EE", "", false);
     drawRay(7, "#F7494C", "", true);
 
