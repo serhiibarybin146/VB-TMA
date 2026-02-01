@@ -377,7 +377,9 @@ function drawFullMatrixSVG(data) {
             const nx = vcx / distC;
             const ny = vcy / distC;
 
-            const labelOffset = -5 * rScale; // -5 offset as requested
+            // Visual line is at -30 (outwards) relative to this inward normal.
+            // We want to be at -28 (just inside the line).
+            const labelOffset = -28;
 
             for (let j = 1; j <= 9; j++) {
                 const t = j / 10;
