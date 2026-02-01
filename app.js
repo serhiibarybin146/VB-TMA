@@ -377,7 +377,7 @@ function drawFullMatrixSVG(data) {
             const nx = vcx / distC;
             const ny = vcy / distC;
 
-            const labelOffset = 2 * rScale; // 2px offset as requested
+            const labelOffset = 0.5 * rScale; // Minimal offset
 
             for (let j = 1; j <= 9; j++) {
                 const t = j / 10;
