@@ -785,82 +785,73 @@ body {
 
 .matrix-card {
     animation: slideInUp 0.4s ease forwards;
-}. m a t r i x - c a r d   {  
-         a n i m a t i o n :   s l i d e I n U p   0 . 4 s   e a s e   f o r w a r d s ;  
- }  
-  
- / *   - - -   Z O O M   O V E R L A Y   - - -   * /  
- . z o o m - o v e r l a y   {  
-         p o s i t i o n :   f i x e d ;  
-         t o p :   0 ;  
-         l e f t :   0 ;  
-         w i d t h :   1 0 0 % ;  
-         h e i g h t :   1 0 0 % ;  
-         b a c k g r o u n d :   # F 8 F 6 F 2 ;  
-         / *   C r e a m y   b a c k g r o u n d   * /  
-         z - i n d e x :   2 0 0 0 ;  
-         d i s p l a y :   n o n e ;  
-         f l e x - d i r e c t i o n :   c o l u m n ;  
-         o p a c i t y :   0 ;  
-         t r a n s i t i o n :   o p a c i t y   0 . 3 s   e a s e ;  
- }  
-  
- . z o o m - o v e r l a y . a c t i v e   {  
-         d i s p l a y :   f l e x ;  
-         o p a c i t y :   1 ;  
- }  
-  
- . z o o m - h e a d e r   {  
-         p a d d i n g :   c a l c ( 1 0 p x   +   v a r ( - - s a f e - a r e a - t o p ) )   2 0 p x   1 0 p x ;  
-         d i s p l a y :   f l e x ;  
-         j u s t i f y - c o n t e n t :   f l e x - e n d ;  
- }  
-  
- . z o o m - c l o s e   {  
-         b a c k g r o u n d :   n o n e ;  
-         b o r d e r :   n o n e ;  
-         f o n t - s i z e :   3 2 p x ;  
-         c o l o r :   # 3 3 3 ;  
-         c u r s o r :   p o i n t e r ;  
-         p a d d i n g :   5 p x ;  
- }  
-  
- . z o o m - c o n t e n t   {  
-         f l e x :   1 ;  
-         o v e r f l o w :   h i d d e n ;  
-         p o s i t i o n :   r e l a t i v e ;  
-         d i s p l a y :   f l e x ;  
-         a l i g n - i t e m s :   c e n t e r ;  
-         j u s t i f y - c o n t e n t :   c e n t e r ;  
-         t o u c h - a c t i o n :   n o n e ;  
-         / *   C r u c i a l   f o r   c u s t o m   t o u c h   h a n d l i n g   * /  
- }  
-  
- # z o o m S v g W r a p p e r   {  
-         w i d t h :   1 0 0 % ;  
-         h e i g h t :   1 0 0 % ;  
-         d i s p l a y :   f l e x ;  
-         a l i g n - i t e m s :   c e n t e r ;  
-         j u s t i f y - c o n t e n t :   c e n t e r ;  
-         t r a n s f o r m - o r i g i n :   c e n t e r   c e n t e r ;  
- }  
-  
- # z o o m S v g W r a p p e r   s v g   {  
-         w i d t h :   9 5 v w ;  
-         h e i g h t :   9 5 v w ;  
-         m a x - w i d t h :   1 0 0 % ;  
-         m a x - h e i g h t :   1 0 0 % ;  
- }  
-  
- . z o o m - f o o t e r   {  
-         p a d d i n g :   1 5 p x   2 0 p x   c a l c ( 1 5 p x   +   v a r ( - - s a f e - a r e a - b o t t o m ) ) ;  
-         t e x t - a l i g n :   c e n t e r ;  
-         b a c k g r o u n d :   r g b a ( 0 ,   0 ,   0 ,   0 . 0 3 ) ;  
-         f o n t - s i z e :   1 2 p x ;  
-         c o l o r :   # 6 6 6 ;  
- }  
-  
- . m a t r i x - s v g - c o n t a i n e r   {  
-         c u r s o r :   z o o m - i n ;  
- }  
- 
+}
+
+/* --- ZOOM OVERLAY --- */
+.zoom-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #F8F6F2;
+    z-index: 3000;
+    display: none;
+    flex-direction: column;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.zoom-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.zoom-header {
+    padding: calc(15px + var(--safe-area-top)) 20px 10px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.zoom-close {
+    background: rgba(0, 0, 0, 0.05);
+    border: none;
+    font-size: 32px;
+    color: #333;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.zoom-content {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: none;
+}
+
+#zoomSvgWrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-origin: center center;
+}
+
+#zoomSvgWrapper svg {
+    width: 95vw;
+    height: 95vw;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.matrix-svg-container {
+    cursor: zoom-in;
+}
