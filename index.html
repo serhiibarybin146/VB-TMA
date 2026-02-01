@@ -129,7 +129,27 @@
             </div>
 
             <div class="result-tables">
-                <!-- Предназначение - Full Layout -->
+                <!-- Таблица здоровья (Чакры) - First -->
+                <div class="info-card health-block">
+                    <h4>Таблица здоровья</h4>
+                    <div class="table-container">
+                        <table class="health-table">
+                            <thead>
+                                <tr>
+                                    <th>Тело</th>
+                                    <th>Энергия</th>
+                                    <th>Эмоция</th>
+                                    <th>Чакра</th>
+                                </tr>
+                            </thead>
+                            <tbody id="healthTableBody">
+                                <!-- Will be filled by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Предназначение - Second -->
                 <div class="info-card destiny-block">
                     <h4>Предназначения</h4>
                     <div class="destiny-grid" id="destinySummary">
@@ -171,26 +191,6 @@
                             <div class="destiny-subtitle">Планетарное</div>
                             <span class="d-val big-circle" id="val-planetary">0</span>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Карта здоровья (Чакры) -->
-                <div class="info-card health-block">
-                    <h4>Карта здоровья</h4>
-                    <div class="table-container">
-                        <table class="health-table">
-                            <thead>
-                                <tr>
-                                    <th>Чakra</th>
-                                    <th>Физ.</th>
-                                    <th>Энерг.</th>
-                                    <th>Эмоц.</th>
-                                </tr>
-                            </thead>
-                            <tbody id="healthTableBody">
-                                <!-- Will be filled by JS -->
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </div>

@@ -170,9 +170,10 @@ function populateResultUI(data, health) {
     const healthBody = document.getElementById('healthTableBody');
     if (healthBody) {
         healthBody.innerHTML = health.chakras.map(c => `
-            <tr class="row-${c.color}"><td class="cell-name">${c.name}</td><td>${c.body}</td><td>${c.energy}</td><td>${c.emotion}</td></tr>
+            <tr class="row-${c.color}"><td>${c.body}</td><td>${c.energy}</td><td>${c.emotion}</td><td class="cell-name">${c.name}</td></tr>
         `).join('') + `
-            <tr class="row-total"><td class="cell-name">ИТОГО</td><td>${health.totals.reducedBody}</td><td>${health.totals.reducedEnergy}</td><td>${health.totals.reducedEmotion}</td></tr>
+            <tr class="row-sum"><td>${health.totals.body}</td><td>${health.totals.energy}</td><td>${health.totals.emotion}</td><td class="cell-name">Сумма</td></tr>
+            <tr class="row-total"><td>${health.totals.reducedBody}</td><td>${health.totals.reducedEnergy}</td><td>${health.totals.reducedEmotion}</td><td class="cell-name">Итого</td></tr>
         `;
     }
 }
