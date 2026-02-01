@@ -501,9 +501,9 @@ body {
 }
 
 .matrix-svg-container {
-    width: calc(100% + 20px);
-    margin-left: -10px;
-    margin-right: -10px;
+    width: calc(100% + 32px);
+    margin-left: -16px;
+    margin-right: -16px;
     aspect-ratio: 1/1;
     background: #F8F6F2;
     /* Creamy background like original */
