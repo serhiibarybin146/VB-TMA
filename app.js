@@ -179,36 +179,40 @@ function initZoomEvents() {
     const zoomContent = document.getElementById('zoomContent');
     if (!zoomContent) return;
 
+    let gestureType = 'none'; // 'pan' or 'zoom'
+
     zoomContent.addEventListener('touchstart', (e) => {
         if (e.touches.length === 2) {
             isZooming = true;
+            gestureType = 'zoom';
             startDist = Math.hypot(
                 e.touches[0].pageX - e.touches[1].pageX,
                 e.touches[0].pageY - e.touches[1].pageY
             );
             startScale = zoomScale;
         } else if (e.touches.length === 1) {
+            if (!isZooming) gestureType = 'pan';
             lastTouchX = e.touches[0].pageX;
             lastTouchY = e.touches[0].pageY;
         }
     }, { passive: false });
 
     zoomContent.addEventListener('touchmove', (e) => {
-        e.preventDefault();
-
         if (e.touches.length === 2 && isZooming) {
+            e.preventDefault();
             const dist = Math.hypot(
                 e.touches[0].pageX - e.touches[1].pageX,
                 e.touches[0].pageY - e.touches[1].pageY
             );
-            zoomScale = Math.min(Math.max(startScale * (dist / startDist), 1), 5);
+            // Allow a bit of overscroll-out for smoothness, but clamp on touchend
+            zoomScale = Math.min(Math.max(startScale * (dist / startDist), 0.8), 6);
             updateZoomTransform();
         } else if (e.touches.length === 1 && !isZooming) {
             const deltaX = e.touches[0].pageX - lastTouchX;
             const deltaY = e.touches[0].pageY - lastTouchY;
 
-            // Pan only if zoomed in
             if (zoomScale > 1) {
+                e.preventDefault();
                 zoomPosX += deltaX;
                 zoomPosY += deltaY;
                 updateZoomTransform();
@@ -220,23 +224,31 @@ function initZoomEvents() {
     }, { passive: false });
 
     zoomContent.addEventListener('touchend', (e) => {
+        if (e.touches.length === 0) {
+            // Clamping scale after gesture ends
+            if (zoomScale < 1) zoomScale = 1;
+            if (zoomScale > 5) zoomScale = 5;
+            updateZoomTransform();
+        }
+
         if (e.touches.length < 2) {
             isZooming = false;
         }
-    });
 
-    // Double tap to reset
-    let lastTap = 0;
-    zoomContent.addEventListener('touchend', (e) => {
+        // Double tap reset logic
         const currentTime = new Date().getTime();
         const tapLength = currentTime - lastTap;
-        if (tapLength < 300 && tapLength > 0) {
+
+        // Only reset if it was a quick tap, not a long move/zoom
+        if (tapLength < 300 && tapLength > 0 && gestureType === 'pan') {
             zoomScale = 1;
             zoomPosX = 0;
             zoomPosY = 0;
             updateZoomTransform();
             tg.HapticFeedback.notificationOccurred('success');
         }
+
+        if (e.touches.length === 0) gestureType = 'none';
         lastTap = currentTime;
     });
 }
