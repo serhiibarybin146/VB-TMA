@@ -653,11 +653,29 @@ function drawFullMatrixSVG(data) {
     // Diagonal Rays
     function drawRay(idx, col, txt, isFlip, markerId = null) {
         const pInner = uPoints[idx];
-        const line = createSVGElement('line', { x1: cx, y1: cy, x2: pInner.x, y2: pInner.y, stroke: col, 'stroke-width': 2 });
+
+        let x2 = pInner.x;
+        let y2 = pInner.y;
+
+        // If marker is present, shorten the line so arrow points TO the circle, not inside it
+        if (markerId) {
+            const dx = pInner.x - cx;
+            const dy = pInner.y - cy;
+            const len = Math.hypot(dx, dy);
+            // Circle radius is 15 (defined in loop below). 
+            // Marker is ~10px long. 
+            // We want arrow tip to stop at circle edge. 
+            // Offset = Radius (15) + Padding (2)
+            const reduceLen = 17 * rScale;
+            const t = (len - reduceLen) / len;
+
+            x2 = cx + dx * t;
+            y2 = cy + dy * t;
+        }
+
+        const line = createSVGElement('line', { x1: cx, y1: cy, x2: x2, y2: y2, stroke: col, 'stroke-width': 2 });
         if (markerId) {
             line.setAttribute('marker-end', `url(#${markerId})`);
-            // Shorten line slightly so arrow doesn't overlap excessively if needed, 
-            // but usually standard marker refX handles it.
         }
         lineLayer.append(line);
         if (txt) {
@@ -667,10 +685,14 @@ function drawFullMatrixSVG(data) {
             t.textContent = txt; textLayer.append(t);
         }
     }
+    // Male: 1 (Top-Left) and 5 (Bottom-Right)
     drawRay(1, "#3E67EE", "линия мужского рода", true, 'arrowMale');
+    // Female: 3 (Top-Right) and 7 (Bottom-Left)
     drawRay(3, "#F7494C", "линия женского рода", false, 'arrowFemale');
-    drawRay(5, "#3E67EE", "", false);
-    drawRay(7, "#F7494C", "", true);
+
+    // Bottom diagonals (no text, but needs arrows)
+    drawRay(5, "#3E67EE", "", false, 'arrowMale');
+    drawRay(7, "#F7494C", "", true, 'arrowFemale');
 
     // Detailed Perimeter (Perfectly aligned outside)
     function drawPerimeter(i1, i2, v1, v2) {
