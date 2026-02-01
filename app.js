@@ -374,7 +374,7 @@ function drawFullMatrixSVG(data) {
 
     // Age Markers (Outer labels)
     const mLetters = ["A", "Д", "Б", "Е", "В", "Ж", "Г", "З"], mAges = ["0 лет", "10 лет", "20 лет", "30 лет", "40 лет", "50 лет", "60 лет", "70 лет"];
-    const mOffsets = [[-42.5, 0], [-30, -30], [0, -42.5], [30, -30], [42.5, 0], [30, 30], [0, 42.5], [-30, 30]];
+    const mOffsets = [[-35, 8], [-30, -30], [0, -42.5], [30, -30], [35, 8], [30, 30], [0, 42.5], [-30, 30]];
     const mAligns = ["end", "end", "start", "start", "start", "start", "start", "end"];
     outerPoints.forEach((p, i) => {
         const mx = p.x + mOffsets[i][0], my = p.y + mOffsets[i][1];

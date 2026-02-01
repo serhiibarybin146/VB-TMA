@@ -523,6 +523,9 @@ body {
     border-radius: 16px;
     padding: 12px 14px;
     margin-bottom: 10px;
+    width: calc(100% + 20px);
+    margin-left: -10px;
+    margin-right: -10px;
 }
 
 .info-card h4 {
