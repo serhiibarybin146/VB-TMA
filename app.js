@@ -455,7 +455,7 @@ function populateResultUI(data, health) {
  * CHAKRA MODAL
  */
 function showChakraModal(name) {
-    const info = CHAKRA_INFO[name];
+    const info = CHAKRA_INFO[name.toUpperCase()];
     if (!info) return;
 
     const modal = document.getElementById('chakraModal');
