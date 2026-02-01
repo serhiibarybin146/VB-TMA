@@ -622,9 +622,10 @@ function drawFullMatrixSVG(data) {
         }
     }
     // Shifted (+15, +15) to avoid overlap with center/arrows
-    drawExtra(5, 25, 25, innerA, "К", -13, -13, "#fff", false, false);
-    drawExtra(5, 95, 25, innerB, "О", -13, -13, "#fff", true, false);
-    drawExtra(5, 25, 95, innerC, "Н", -13, -13, "#fff", false, true);
+    // Increased letter offset from -13 to -22 to separate K,O,H from values 7,20,19
+    drawExtra(5, 25, 25, innerA, "К", -22, -22, "#fff", false, false);
+    drawExtra(5, 95, 25, innerB, "О", -22, -22, "#fff", true, false);
+    drawExtra(5, 25, 95, innerC, "Н", -22, -22, "#fff", false, true);
 
     // --- markers ---
     const defs = createSVGElement('defs');
