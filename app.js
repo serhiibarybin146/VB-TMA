@@ -478,8 +478,10 @@ function drawFullMatrixSVG(data) {
                 let currentOffset = labelOffset;
                 // "Move away only 5 years, 35 years, 45 years, 75 years a bit"
                 // 5 (i=0), 35 (i=3), 45 (i=4), 75 (i=7). All are at j=4 (midpoint).
+                // Previous -24 was "wrong direction" (too close to line).
+                // Moving towards center: less negative. Standard is -14. Try -4.
                 if (j === 4 && [0, 3, 4, 7].includes(i)) {
-                    currentOffset = -24; // Move further inward (standard is -14)
+                    currentOffset = -4; // Move INWARD (away from line)
                 }
 
                 const lx = x + nx * currentOffset;
