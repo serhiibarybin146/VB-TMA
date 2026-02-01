@@ -374,13 +374,18 @@ function drawFullMatrixSVG(data) {
 
     // Age Markers (Outer labels)
     const mLetters = ["A", "Д", "Б", "Е", "В", "Ж", "Г", "З"], mAges = ["0 лет", "10 лет", "20 лет", "30 лет", "40 лет", "50 лет", "60 лет", "70 лет"];
-    const mOffsets = [[-35, 8], [-30, -30], [0, -42.5], [30, -30], [35, 8], [30, 30], [0, 42.5], [-30, 30]];
+    const mOffsets = [[-42.5, 0], [-30, -30], [0, -42.5], [30, -30], [42.5, 0], [30, 30], [0, 42.5], [-30, 30]];
     const mAligns = ["end", "end", "start", "start", "start", "start", "start", "end"];
     outerPoints.forEach((p, i) => {
         const mx = p.x + mOffsets[i][0], my = p.y + mOffsets[i][1];
         nodeLayer.append(createSVGElement('circle', { cx: mx, cy: my, r: 12 * rScale, fill: (["В", "Г"].includes(mLetters[i]) ? "#e84e42" : (i % 2 !== 0 ? "#000" : "#a185c8")) }));
         textLayer.append(createSVGElement('text', { x: mx, y: my, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: "#fff", 'font-weight': 'bold', 'font-size': 14 * tScale, content: mLetters[i] }));
-        textLayer.append(createSVGElement('text', { x: mx + (mAligns[i] === 'start' ? 15 : -15) * tScale, y: my, 'text-anchor': mAligns[i], 'dominant-baseline': 'central', fill: "#000", 'font-weight': "bold", 'font-size': 13 * tScale, content: mAges[i] }));
+        // Position age text: for 0 лет (i=0) and 40 лет (i=4) place below circle, others to the side
+        if (i === 0 || i === 4) {
+            textLayer.append(createSVGElement('text', { x: mx, y: my + 22 * tScale, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: "#000", 'font-weight': "bold", 'font-size': 12 * tScale, content: mAges[i] }));
+        } else {
+            textLayer.append(createSVGElement('text', { x: mx + (mAligns[i] === 'start' ? 15 : -15) * tScale, y: my, 'text-anchor': mAligns[i], 'dominant-baseline': 'central', fill: "#000", 'font-weight': "bold", 'font-size': 13 * tScale, content: mAges[i] }));
+        }
     });
 
     // Final text content reassignment for safety
