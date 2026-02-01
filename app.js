@@ -161,11 +161,11 @@ function populateResultUI(data, health) {
     document.getElementById('val-sky').textContent = destiny.sky;
     document.getElementById('val-earth').textContent = destiny.earth;
     document.getElementById('val-personal').textContent = destiny.personal;
-    document.getElementById('val-male').textContent = destiny.male || destiny.sky; // M = sky
-    document.getElementById('val-female').textContent = destiny.female || destiny.earth; // F = earth
+    document.getElementById('val-male').textContent = destiny.maleLine;
+    document.getElementById('val-female').textContent = destiny.femaleLine;
     document.getElementById('val-social').textContent = destiny.social;
-    document.getElementById('val-spiritual').textContent = destiny.spiritual || reduce(destiny.personal + destiny.social);
-    document.getElementById('val-planetary').textContent = destiny.planetary || reduce(destiny.spiritual || reduce(destiny.personal + destiny.social));
+    document.getElementById('val-spiritual').textContent = destiny.spiritual;
+    document.getElementById('val-planetary').textContent = destiny.planetary;
 
     const healthBody = document.getElementById('healthTableBody');
     if (healthBody) {
