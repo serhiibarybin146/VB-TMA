@@ -353,11 +353,61 @@ function drawFullMatrixSVG(data) {
     const lineLayer = createSVGElement('g', { stroke: 'rgba(0,0,0,0.15)', 'stroke-width': 2 });
     const nodeLayer = createSVGElement('g');
     const textLayer = createSVGElement('g');
-    svg.append(lineLayer, nodeLayer, textLayer);
+    const ageLayer = createSVGElement('g', { class: 'age-labels' }); // New layer for ages
+    svg.append(lineLayer, ageLayer, nodeLayer, textLayer); // ageLayer below nodes
 
     function drawGenericLine(p1, p2, col, width = 2, opacity = 0.5) {
         lineLayer.append(createSVGElement('line', { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, stroke: col, 'stroke-width': width, opacity }));
     }
+
+    // --- NEW: Draw Age Labels 1-79 ---
+    (function drawAgeLabels() {
+        for (let i = 0; i < 8; i++) {
+            const p1 = outerPoints[i];
+            const p2 = outerPoints[(i + 1) % 8];
+            const dx = p2.x - p1.x;
+            const dy = p2.y - p1.y;
+
+            // Calculate normal vector pointing INWARDS (towards center)
+            const mx = (p1.x + p2.x) / 2;
+            const my = (p1.y + p2.y) / 2;
+            const vcx = cx - mx;
+            const vcy = cy - my;
+            const distC = Math.hypot(vcx, vcy);
+            const nx = vcx / distC;
+            const ny = vcy / distC;
+
+            const labelOffset = 20 * rScale; // Offset distance from line
+
+            for (let j = 1; j <= 9; j++) {
+                const t = j / 10;
+                const x = p1.x + dx * t;
+                const y = p1.y + dy * t;
+
+                // Position for label
+                const lx = x + nx * labelOffset;
+                const ly = y + ny * labelOffset;
+
+                const ageVal = i * 10 + j;
+
+                // Small dot on the line
+                // lineLayer.append(createSVGElement('circle', { cx: x, cy: y, r: 2 * rScale, fill: '#ccc' })); // Optional: user asked for "figures", maybe dots too? "on same points" implies points.
+
+                // Text
+                const ageText = createSVGElement('text', {
+                    x: lx, y: ly,
+                    'text-anchor': 'middle',
+                    'dominant-baseline': 'central',
+                    fill: '#999',
+                    'font-size': 10 * tScale,
+                    'font-weight': 'normal',
+                    'font-family': 'Manrope, sans-serif'
+                });
+                ageText.textContent = ageVal;
+                ageLayer.append(ageText);
+            }
+        }
+    })();
 
     function connectNodes(idx1, idx2, pts, offsetR = 22, col = "#888", width = 2, opacity = 0.5) {
         const p1 = pts[idx1], p2 = pts[idx2];
