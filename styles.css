@@ -714,6 +714,24 @@ body {
     font-size: 13px;
     line-height: 1.4;
     color: #333;
+    margin-bottom: 20px;
+}
+
+.btn-modal-close {
+    background: var(--accent-color);
+    color: #000;
+    border: none;
+    padding: 8px 24px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s;
+    align-self: center;
+}
+
+.btn-modal-close:active {
+    transform: scale(0.95);
 }
 
 .cell-name {
