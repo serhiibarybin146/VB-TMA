@@ -57,6 +57,11 @@ const CHAKRA_INFO = {
         image: 'assets/chakras/muladhara.png',
         aspects: 'безопасность, базовые потребности, финансовая стабильность.',
         organs: 'копчик, кости/скелет, ноги, стопы, зубы, ногти, мочевой пузырь, нижняя часть кишечника, прямая кишка, анус, клетки крови, иммунная система, кожа.'
+    },
+    'ЧАКРА': {
+        image: 'assets/chakras/Chakra.jpg',
+        aspects: '',
+        organs: ''
     }
 };
 
@@ -505,8 +510,14 @@ function showChakraModal(name, colorKey) {
         }
     }
 
+    const aspectLabel = aspects.previousElementSibling;
+    const organLabel = organs.previousElementSibling;
+
     aspects.textContent = info.aspects;
     organs.textContent = info.organs;
+
+    if (aspectLabel) aspectLabel.style.display = info.aspects ? 'block' : 'none';
+    if (organLabel) organLabel.style.display = info.organs ? 'block' : 'none';
 
     // Set background color from the chakra color key
     const color = CHAKRA_COLOR_MAP[colorKey] || '#fff';
