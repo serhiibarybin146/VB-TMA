@@ -688,10 +688,14 @@ body {
     margin-bottom: 16px;
 }
 
-.chakra-header-v3 iconify-icon {
+.chakra-header-v3 iconify-icon,
+.chakra-modal-image {
+    width: 64px;
+    height: 64px;
     font-size: 64px;
     color: #000;
     margin-bottom: 8px;
+    object-fit: contain;
 }
 
 .chakra-header-v3 h3 {

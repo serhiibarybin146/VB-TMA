@@ -24,37 +24,37 @@ let currentState = {
  */
 const CHAKRA_INFO = {
     'САХАСРАРА': {
-        icon: 'game-icons:lotus',
+        image: 'assets/chakras/sahasrara.png',
         aspects: 'духовность, соединение с Высшим Я, осознание, просветление.',
         organs: 'верхняя часть головного мозга, шишковидная железа, центральная нервная система (депрессия, потеря смысла жизни, циклы сна).'
     },
     'АДЖНА': {
-        icon: 'game-icons:third-eye',
+        image: 'assets/chakras/adjna.png',
         aspects: 'интуиция, мудрость, способность видеть за пределы очевидного (в большую картину), интуитивное и более глубокое понимания мира.',
         organs: 'глаза, носовые пазухи, лоб, виски, затылок, головной мозг, нервная система, эндокринная система.'
     },
     'ВИШУДХА': {
-        icon: 'game-icons:lotus-flower',
+        image: 'assets/chakras/vishuddha.png',
         aspects: 'коммуникация, самовыражение, творческое искусство через речь и пение, способность слушать и быть услышанным.',
         organs: 'горло, руки, голосовые связки, щитовидная железа, трахея, уши, рот (включая зубы и десны), шея, гортань, глотка, челюсти, голосовой аппарат, плечевой пояс.'
     },
     'АНАХАТА': {
-        icon: 'ph:heart-bold',
+        image: 'assets/chakras/anahata.png',
         aspects: 'любовь, сострадание, принятие, гармония, способность к эмпатии и прощению, душа, эмоциональные травмы.',
         organs: 'сердце, легкие, бронхи, ребра, диафрагма, грудная клетка, тимус (вилочковая железа).'
     },
     'МАНИПУРА': {
-        icon: 'game-icons:lotus',
+        image: 'assets/chakras/manipura.png',
         aspects: 'статус, достижения, уверенность, способность к контролю и управлению в своей жизни, целеустремленность.',
         organs: 'пищеварительная система (желудок, печень, желчный пузырь, поджелудочная железа, селезенка, верхняя часть тонкого кишечника, толстый кишечник), надпочечники, обмен веществ.'
     },
     'СВАДХИСТАНА': {
-        icon: 'game-icons:lotus-flower',
+        image: 'assets/chakras/svadhisthana.png',
         aspects: 'эмоции, сексуальность, творчество, детство, удовольствие от жизни, границы и уважение с партнером.',
         organs: 'половые органы, яичники у женщин и яички у мужчин, матка, влагалище, шейка матки, простата, репродуктивная система, мочевая система, почки, мочевой пузырь, толстый кишечник.'
     },
     'МУЛАДХАРА': {
-        icon: 'game-icons:lotus',
+        image: 'assets/chakras/muladhara.png',
         aspects: 'безопасность, базовые потребности, финансовая стабильность.',
         organs: 'копчик, кости/скелет, ноги, стопы, зубы, ногти, мочевой пузырь, нижняя часть кишечника, прямая кишка, анус, клетки крови, иммунная система, кожа.'
     }
@@ -476,7 +476,29 @@ function showChakraModal(name, colorKey) {
     const organs = document.getElementById('chakraOrgans');
 
     title.textContent = name;
-    icon.setAttribute('icon', info.icon);
+
+    // Handle switching between Iconify and Image
+    const iconEl = document.getElementById('chakraIcon');
+    let imgEl = document.getElementById('chakraImage');
+
+    if (info.image) {
+        if (iconEl) iconEl.style.display = 'none';
+        if (!imgEl) {
+            imgEl = document.createElement('img');
+            imgEl.id = 'chakraImage';
+            imgEl.className = 'chakra-modal-image';
+            iconEl.parentNode.insertBefore(imgEl, iconEl);
+        }
+        imgEl.style.display = 'block';
+        imgEl.src = info.image;
+    } else {
+        if (imgEl) imgEl.style.display = 'none';
+        if (iconEl) {
+            iconEl.style.display = 'block';
+            iconEl.setAttribute('icon', info.icon);
+        }
+    }
+
     aspects.textContent = info.aspects;
     organs.textContent = info.organs;
 
