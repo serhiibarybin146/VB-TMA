@@ -700,6 +700,13 @@ body {
     height: 80px;
     margin: 0 auto 12px auto !important;
     object-fit: contain;
+    transition: all 0.3s ease;
+}
+
+.chakra-modal-image.full-width-image {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
 }
 
 .chakra-header-v3 h3 {

@@ -486,7 +486,9 @@ function showChakraModal(name, colorKey) {
     const aspects = document.getElementById('chakraAspects');
     const organs = document.getElementById('chakraOrgans');
 
-    title.textContent = name;
+    const isGeneral = name.toUpperCase() === 'ЧАКРА';
+    title.textContent = isGeneral ? '' : name;
+    title.style.display = isGeneral ? 'none' : 'block';
 
     // Handle switching between Iconify and Image
     const iconEl = document.getElementById('chakraIcon');
@@ -502,6 +504,13 @@ function showChakraModal(name, colorKey) {
         }
         imgEl.style.display = 'block';
         imgEl.src = info.image;
+
+        // Enlarging general image
+        if (isGeneral) {
+            imgEl.classList.add('full-width-image');
+        } else {
+            imgEl.classList.remove('full-width-image');
+        }
     } else {
         if (imgEl) imgEl.style.display = 'none';
         if (iconEl) {
