@@ -709,6 +709,15 @@ body {
     max-height: 400px;
 }
 
+/* Fix gap for general view */
+.chakra-header-v3.general-view {
+    margin-bottom: 0px !important;
+}
+
+.chakra-header-v3.general-view .chakra-modal-image.full-width-image {
+    margin-bottom: 0px !important;
+}
+
 .chakra-header-v3 h3 {
     font-size: 22px;
     font-weight: 800;
@@ -719,13 +728,16 @@ body {
     text-align: center;
 }
 
+/* Perfect alignment for table icons */
 .cell-name.clickable {
     display: flex !important;
     align-items: center !important;
-    justify-content: center !important;
-    gap: 10px;
-    padding: 10px !important;
-    text-align: center;
+    justify-content: flex-start !important;
+    /* One under under another alignment */
+    gap: 12px;
+    padding: 10px 10px 10px 24px !important;
+    /* Shift right to look centered as a block */
+    text-align: left;
 }
 
 .table-chakra-icon {
@@ -734,6 +746,14 @@ body {
     object-fit: contain;
     flex-shrink: 0;
     display: block;
+}
+
+/* Decorative line under general chakra header */
+.health-table th.clickable {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.1);
 }
 
 .chakra-info-section {

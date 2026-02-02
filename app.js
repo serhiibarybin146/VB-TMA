@@ -490,6 +490,12 @@ function showChakraModal(name, colorKey) {
     title.textContent = isGeneral ? '' : name;
     title.style.display = isGeneral ? 'none' : 'block';
 
+    const headerContainer = document.querySelector('.chakra-header-v3');
+    if (headerContainer) {
+        if (isGeneral) headerContainer.classList.add('general-view');
+        else headerContainer.classList.remove('general-view');
+    }
+
     // Handle switching between Iconify and Image
     const iconEl = document.getElementById('chakraIcon');
     let imgEl = document.getElementById('chakraImage');
