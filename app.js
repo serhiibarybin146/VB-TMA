@@ -525,14 +525,14 @@ function showChakraModal(name, colorKey) {
         }
     }
 
-    const aspectLabel = aspects.previousElementSibling;
-    const organLabel = organs.previousElementSibling;
+    const aspectSection = aspects.closest('.chakra-info-section');
+    const organSection = organs.closest('.chakra-info-section');
 
     aspects.textContent = info.aspects;
     organs.textContent = info.organs;
 
-    if (aspectLabel) aspectLabel.style.display = info.aspects ? 'block' : 'none';
-    if (organLabel) organLabel.style.display = info.organs ? 'block' : 'none';
+    if (aspectSection) aspectSection.style.display = info.aspects ? 'block' : 'none';
+    if (organSection) organSection.style.display = info.organs ? 'block' : 'none';
 
     // Set background color from the chakra color key
     const color = CHAKRA_COLOR_MAP[colorKey] || '#fff';

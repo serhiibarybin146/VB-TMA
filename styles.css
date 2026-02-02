@@ -718,6 +718,11 @@ body {
     margin-bottom: 0px !important;
 }
 
+/* Reduce card padding when in general view to pull button up */
+.chakra-modal-content-styled:has(.general-view) .chakra-info-card {
+    padding-bottom: 12px !important;
+}
+
 .chakra-header-v3 h3 {
     font-size: 22px;
     font-weight: 800;
