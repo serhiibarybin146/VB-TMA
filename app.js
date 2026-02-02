@@ -437,14 +437,20 @@ function populateResultUI(data, health) {
 
     const healthBody = document.getElementById('healthTableBody');
     if (healthBody) {
-        healthBody.innerHTML = health.chakras.map(c => `
-            <tr class="row-${c.color}">
-                <td>${c.body}</td>
-                <td>${c.energy}</td>
-                <td>${c.emotion}</td>
-                <td class="cell-name clickable" onclick="showChakraModal('${c.name}', '${c.color}')">${c.name}</td>
-            </tr>
-        `).join('') + `
+        healthBody.innerHTML = health.chakras.map(c => {
+            const info = CHAKRA_INFO[c.name.toUpperCase()];
+            const imgHtml = info && info.image ? `<img src="${info.image}" class="table-chakra-icon">` : '';
+            return `
+                <tr class="row-${c.color}">
+                    <td>${c.body}</td>
+                    <td>${c.energy}</td>
+                    <td>${c.emotion}</td>
+                    <td class="cell-name clickable" onclick="showChakraModal('${c.name}', '${c.color}')">
+                        ${imgHtml}${c.name}
+                    </td>
+                </tr>
+            `;
+        }).join('') + `
             <tr class="row-sum"><td>${health.totals.body}</td><td>${health.totals.energy}</td><td>${health.totals.emotion}</td><td class="cell-name">Сумма</td></tr>
             <tr class="row-total"><td>${health.totals.reducedBody}</td><td>${health.totals.reducedEnergy}</td><td>${health.totals.reducedEmotion}</td><td class="cell-name">Итого</td></tr>
         `;
