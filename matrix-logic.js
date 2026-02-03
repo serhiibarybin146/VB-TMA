@@ -20,6 +20,36 @@ const MatrixLogic = {
     },
 
     /**
+     * Reduces a number by summing its digits until it's 1-9
+     * @param {number|string} n 
+     * @returns {number}
+     */
+    reduce9(n) {
+        let val = parseInt(n) || 0;
+        if (val === 0) return 0;
+        while (val > 9) {
+            val = String(val).split('').reduce((a, b) => a + parseInt(b), 0);
+        }
+        return val;
+    },
+
+    /**
+     * Calculates the Money Code based on birth date
+     */
+    calculateMoneyCode(day, month, year) {
+        const c1 = this.reduce9(day);
+        const c2 = this.reduce9(month);
+        const c3 = this.reduce9(year);
+        const c4 = this.reduce9(c1 + c2 + c3);
+        const c5 = this.reduce9(c1 + c2 + c3 + c4);
+
+        return {
+            corners: [c1, c2, c3, c4, c5],
+            code: `${c1}${c2}${c3}${c4}${c5}`
+        };
+    },
+
+    /**
      * Calculates all base points for the Matrix of Destiny
      * @param {string} dateStr Format YYYY-MM-DD
      */

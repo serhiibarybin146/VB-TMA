@@ -461,8 +461,33 @@ async function performMoneyCalculation() {
         return;
     }
 
+    const [d, m, y] = dateStr.split('.').map(n => parseInt(n));
+
     tg.HapticFeedback.impactOccurred('medium');
-    tg.showAlert('Расчет Денежного Кода скоро появится! Логика будет добавлена в следующем обновлении.');
+
+    try {
+        const result = MatrixLogic.calculateMoneyCode(d, m, y);
+
+        // Update Corner Labels
+        document.getElementById('c1').textContent = result.corners[0];
+        document.getElementById('c2').textContent = result.corners[1];
+        document.getElementById('c3').textContent = result.corners[2];
+        document.getElementById('c4').textContent = result.corners[3];
+        document.getElementById('c5').textContent = result.corners[4];
+
+        // Update center code inside star
+        document.getElementById('centerCode').textContent = result.code;
+
+        // Update final strong tag
+        document.getElementById('finalMoneyCode').textContent = result.code;
+
+        // Navigate to result view
+        showView('moneyResultView');
+
+    } catch (e) {
+        console.error('Money Calculation Failed:', e);
+        tg.showAlert('Ошибка при расчете: ' + e.message);
+    }
 }
 
 async function renderHistoryDropdown() {
