@@ -16,7 +16,8 @@ const birthDateInput = document.getElementById('birthDateInput');
 // App State
 let currentState = {
     activeTab: 'home',
-    user: null
+    user: null,
+    permissions: [] // Array of permission_key strings
 };
 
 /**
@@ -83,12 +84,41 @@ function initTMA() {
     tg.setBackgroundColor('bg_color');
 
     // Get User Data
-    const userData = tg.initDataUnsafe?.user;
-    if (userData) {
-        currentState.user = userData;
-        userName.textContent = userData.first_name || 'Пользователь';
-        if (userData.photo_url) {
-            userAvatar.innerHTML = `<img src="${userData.photo_url}" alt="${userData.first_name}">`;
+    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        const u = tg.initDataUnsafe.user;
+        currentState.user = u;
+        userName.textContent = u.username || u.first_name || 'Гость';
+        if (u.photo_url) {
+            userAvatar.src = u.photo_url;
+            userAvatar.style.display = 'block';
+        }
+
+        // --- Supabase User Sync ---
+        try {
+            // Upsert user to Supabase
+            const { error: userError } = await supabase
+                .from('users')
+                .upsert({
+                    id: u.id,
+                    username: u.username,
+                    first_name: u.first_name,
+                    last_name: u.last_name,
+                    language_code: u.language_code
+                });
+            if (userError) console.error('Supabase User Sync Error:', userError);
+
+            // Fetch Permissions
+            const { data: permData, error: permError } = await supabase
+                .from('user_permissions')
+                .select('permission_key')
+                .eq('user_id', u.id);
+
+            if (permData) {
+                currentState.permissions = permData.map(p => p.permission_key);
+                console.log('User Permissions:', currentState.permissions);
+            }
+        } catch (e) {
+            console.error('Supabase Init Failed:', e);
         }
     } else {
         userName.textContent = 'Гость';
@@ -98,6 +128,7 @@ function initTMA() {
     body.classList.remove('loading');
 
     initEventListeners();
+    renderHistoryDropdown();
 }
 
 /**
@@ -316,29 +347,81 @@ function navigateTo(pageId) {
  */
 const RECENT_DATES_KEY = 'tma_recent_dates';
 
-function getRecentDates() {
+async function getRecentDates() {
+    if (!currentState.user) {
+        try {
+            const stored = localStorage.getItem(RECENT_DATES_KEY);
+            return stored ? JSON.parse(stored) : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
     try {
-        const stored = localStorage.getItem(RECENT_DATES_KEY);
-        return stored ? JSON.parse(stored) : [];
+        const { data, error } = await supabase
+            .from('calculations')
+            .select('birth_date') // Select only birth_date
+            .eq('user_id', currentState.user.id)
+            .order('created_at', { ascending: false })
+            .limit(10);
+
+        if (error) throw error;
+        // Map to expected format
+        return data.map(item => item.birth_date);
     } catch (e) {
-        return [];
+        console.warn('Supabase getHistory failed, falling back to LocalStorage', e);
+        const saved = localStorage.getItem(RECENT_DATES_KEY);
+        return saved ? JSON.parse(saved) : [];
     }
 }
 
-function saveRecentDate(date) {
-    let dates = getRecentDates();
-    // Remove if exists to move to top
-    dates = dates.filter(d => d !== date);
-    // Add to front
-    dates.unshift(date);
-    // Keep max 3
-    if (dates.length > 3) dates = dates.slice(0, 3);
+async function saveRecentDate(date) {
+    const dateStr = `${String(date.day).padStart(2, '0')}.${String(date.month).padStart(2, '0')}.${date.year}`;
 
+    // LocalStorage fallback for Guest or if Supabase fails
+    let dates = JSON.parse(localStorage.getItem(RECENT_DATES_KEY) || '[]');
+    // Remove if exists to move to top
+    dates = dates.filter(d => d !== dateStr);
+    // Add to front
+    dates.unshift(dateStr);
+    // Keep max 10
+    if (dates.length > 10) dates = dates.slice(0, 10);
     localStorage.setItem(RECENT_DATES_KEY, JSON.stringify(dates));
+
+    // Supabase Store if logged in
+    if (currentState.user) {
+        try {
+            const isoDate = `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`;
+            // Check if this date already exists for the user to avoid duplicates
+            const { data: existing, error: fetchError } = await supabase
+                .from('calculations')
+                .select('id')
+                .eq('user_id', currentState.user.id)
+                .eq('birth_date', isoDate)
+                .limit(1);
+
+            if (fetchError) throw fetchError;
+
+            if (existing && existing.length === 0) { // Only insert if not already present
+                const { error: insertError } = await supabase
+                    .from('calculations')
+                    .insert({
+                        user_id: currentState.user.id,
+                        birth_date: isoDate,
+                        data: { day: date.day, month: date.month, year: date.year } // Minimal data for now
+                    });
+                if (insertError) console.error('Supabase Save Error:', insertError);
+            }
+        } catch (e) {
+            console.error('Supabase Save Failed:', e);
+        }
+    }
+
+    renderHistoryDropdown();
 }
 
-function renderHistoryDropdown() {
-    const dates = getRecentDates();
+async function renderHistoryDropdown() {
+    const dates = await getRecentDates(); // Await the async function
     const dropdown = document.getElementById('historyDropdown');
     const input = document.getElementById('birthDateInput');
 
@@ -367,23 +450,18 @@ function selectHistoryDate(date) {
     if (dropdown) dropdown.classList.remove('active');
 }
 
-function initHistoryEvents() {
+async function initHistoryEvents() {
     const input = document.getElementById('birthDateInput');
-    const dropdown = document.getElementById('historyDropdown');
 
-    if (!input || !dropdown) return;
-
-    // Show on focus
-    input.addEventListener('focus', () => {
-        renderHistoryDropdown();
-        const dates = getRecentDates();
-        if (dates.length > 0) dropdown.classList.add('active');
+    input.addEventListener('focus', async () => {
+        await renderHistoryDropdown();
     });
 
-    // Hide on click outside
     document.addEventListener('click', (e) => {
+        const dropdown = document.getElementById('historyDropdown');
+        const input = document.getElementById('birthDateInput');
         if (!input.contains(e.target) && !dropdown.contains(e.target)) {
-            dropdown.classList.remove('active');
+            dropdown.style.display = 'none';
         }
     });
 }
