@@ -95,10 +95,10 @@ async function initTMA() {
             }
 
             // --- Supabase User Sync ---
-            if (typeof supabase !== 'undefined' && supabase) {
+            if (typeof supabaseClient !== 'undefined' && supabaseClient) {
                 try {
                     // Upsert user to Supabase
-                    const { error: userError } = await supabase
+                    const { error: userError } = await supabaseClient
                         .from('users')
                         .upsert({
                             id: u.id,
@@ -107,13 +107,21 @@ async function initTMA() {
                             last_name: u.last_name,
                             language_code: u.language_code
                         });
-                    if (userError) console.error('Supabase User Sync Error:', userError);
+                    if (userError) {
+                        console.error('Supabase User Sync Error:', userError);
+                        tg.showAlert('User Sync Error: ' + JSON.stringify(userError));
+                    }
 
                     // Fetch Permissions
-                    const { data: permData, error: permError } = await supabase
+                    const { data: permData, error: permError } = await supabaseClient
                         .from('user_permissions')
                         .select('permission_key')
                         .eq('user_id', u.id);
+
+                    if (permError) {
+                        console.error('Fetch Permissions Error:', permError);
+                        tg.showAlert('Fetch Perms Error: ' + JSON.stringify(permError));
+                    }
 
                     if (permData) {
                         currentState.permissions = permData.map(p => p.permission_key);
@@ -121,6 +129,7 @@ async function initTMA() {
                     }
                 } catch (e) {
                     console.error('Supabase Init Failed:', e);
+                    tg.showAlert('Supabase Init Exception: ' + e.message);
                 }
             }
         } else {
@@ -369,9 +378,9 @@ async function getRecentDates() {
         }
     }
 
-    if (typeof supabase !== 'undefined' && supabase) {
+    if (typeof supabaseClient !== 'undefined' && supabaseClient) {
         try {
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from('calculations')
                 .select('birth_date') // Select only birth_date
                 .eq('user_id', currentState.user.id)
@@ -404,11 +413,11 @@ async function saveRecentDate(date) {
     localStorage.setItem(RECENT_DATES_KEY, JSON.stringify(dates));
 
     // Supabase Store if logged in
-    if (currentState.user && typeof supabase !== 'undefined' && supabase) {
+    if (currentState.user && typeof supabaseClient !== 'undefined' && supabaseClient) {
         try {
             const isoDate = `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`;
             // Check if this date already exists for the user to avoid duplicates
-            const { data: existing, error: fetchError } = await supabase
+            const { data: existing, error: fetchError } = await supabaseClient
                 .from('calculations')
                 .select('id')
                 .eq('user_id', currentState.user.id)
@@ -418,17 +427,21 @@ async function saveRecentDate(date) {
             if (fetchError) throw fetchError;
 
             if (existing && existing.length === 0) { // Only insert if not already present
-                const { error: insertError } = await supabase
+                const { error: insertError } = await supabaseClient
                     .from('calculations')
                     .insert({
                         user_id: currentState.user.id,
                         birth_date: isoDate,
                         data: { day: date.day, month: date.month, year: date.year } // Minimal data for now
                     });
-                if (insertError) console.error('Supabase Save Error:', insertError);
+                if (insertError) {
+                    console.error('Supabase Save Error:', insertError);
+                    tg.showAlert('Calculation Save Error: ' + JSON.stringify(insertError));
+                }
             }
         } catch (e) {
             console.error('Supabase Save Failed:', e);
+            tg.showAlert('Supabase Save Exception: ' + e.message);
         }
     }
 
