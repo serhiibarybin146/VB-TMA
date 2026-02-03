@@ -453,6 +453,9 @@ async function renderHistoryDropdown() {
             <span>${date}</span>
         </div>
     `).join('');
+
+    dropdown.classList.add('active');
+    dropdown.style.display = 'block';
 }
 
 function selectHistoryDate(date) {
@@ -484,7 +487,7 @@ async function initHistoryEvents() {
 /**
  * Perform Calculation
  */
-function performCalculation() {
+async function performCalculation() {
     const val = birthDateInput.value;
     const parts = val.split('.');
     if (parts.length !== 3 || parts[2].length !== 4) {
@@ -500,7 +503,7 @@ function performCalculation() {
     drawFullMatrixSVG(baseData);
 
     // Save to history
-    saveRecentDate(val);
+    await saveRecentDate(baseData.date);
 
     showView('resultView');
     tg.HapticFeedback.notificationOccurred('success');
