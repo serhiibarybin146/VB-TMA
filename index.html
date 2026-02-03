@@ -90,6 +90,18 @@
                         <p>Ваши возможности и вызовы в этом году</p>
                     </div>
                 </div>
+
+                <!-- Money Code Section - Title only, unlocked for now -->
+                <div class="matrix-card primary" onclick="navigateTo('moneyCalc')">
+                    <div class="card-glass"></div>
+                    <div class="card-content">
+                        <h3>Денежный код</h3>
+                        <div class="card-footer" style="margin-top: auto;">
+                            <span>Перейти</span>
+                            <iconify-icon icon="solar:arrow-right-up-linear"></iconify-icon>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -110,6 +122,35 @@
                     <div id="historyDropdown" class="history-dropdown"></div> <!-- History Dropdown -->
                 </div>
                 <button class="btn-primary full-width" onclick="performCalculation()">Рассчитать</button>
+            </div>
+        </section>
+
+        <!-- MONEY CALC VIEW -->
+        <section id="moneyCalcView" class="view">
+            <div class="back-link" onclick="navigateTo('home')">
+                <iconify-icon icon="solar:arrow-left-linear"></iconify-icon>
+                <span>Назад</span>
+            </div>
+
+            <div class="calculate-form">
+                <div class="form-header">
+                    <div class="icon-circle">
+                        <iconify-icon icon="solar:wad-of-money-bold-duotone"></iconify-icon>
+                    </div>
+                    <h2>Денежный Код</h2>
+                    <p>Введите дату рождения для индивидуального расчета финансовых ключей</p>
+                </div>
+
+                <div class="date-input-container">
+                    <div class="date-input-group">
+                        <input type="text" id="moneyDateInput" class="tma-input" inputmode="numeric"
+                            placeholder="ДД.ММ.ГГГГ" maxlength="10">
+                    </div>
+                    <button class="btn-primary full-width" onclick="performMoneyCalculation()">
+                        <span>Рассчитать код</span>
+                        <iconify-icon icon="solar:magic-stick-3-bold"></iconify-icon>
+                    </button>
+                </div>
             </div>
         </section>
 

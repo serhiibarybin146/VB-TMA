@@ -12,6 +12,7 @@ const lockedModal = document.getElementById('lockedModal');
 const closeModal = document.getElementById('closeModal');
 const lockedCards = document.querySelectorAll('.matrix-card.locked');
 const birthDateInput = document.getElementById('birthDateInput');
+const moneyDateInput = document.getElementById('moneyDateInput');
 
 // App State
 let currentState = {
@@ -150,26 +151,31 @@ async function initTMA() {
  * Event Listeners
  */
 function initEventListeners() {
-    // Mask for Date Input (DD.MM.YYYY)
-    if (birthDateInput) {
-        birthDateInput.addEventListener('input', function (e) {
-            let v = this.value.replace(/\D/g, '');
-            if (v.length > 8) v = v.substring(0, 8);
-            let formatted = '';
-            if (v.length > 0) formatted += v.substring(0, 2);
-            if (v.length > 2) formatted += '.' + v.substring(2, 4);
-            if (v.length > 4) formatted += '.' + v.substring(4, 8);
-            this.value = formatted;
-        });
-    }
+    // Mask for Date Inputs (DD.MM.YYYY)
+    const applyMask = function (e) {
+        let v = this.value.replace(/\D/g, '');
+        if (v.length > 8) v = v.substring(0, 8);
+        let formatted = '';
+        if (v.length > 0) formatted += v.substring(0, 2);
+        if (v.length > 2) formatted += '.' + v.substring(2, 4);
+        if (v.length > 4) formatted += '.' + v.substring(4, 8);
+        this.value = formatted;
+    };
+
+    if (birthDateInput) birthDateInput.addEventListener('input', applyMask);
+    if (moneyDateInput) moneyDateInput.addEventListener('input', applyMask);
 
     // Locked Cards Click
     lockedCards.forEach(card => {
         card.addEventListener('click', () => {
             const feature = card.getAttribute('data-feature');
             if (checkPermission(feature)) {
-                // If unlocked, navigate to the feature
-                navigateTo(feature);
+                // Feature is unlocked, but might not be implemented yet
+                if (feature === 'compatibility' || feature === 'year') {
+                    tg.showAlert('Этот раздел находится в разработке и скоро будет доступен!');
+                } else {
+                    navigateTo(feature);
+                }
             } else {
                 showLockedModal(feature);
             }
@@ -354,6 +360,7 @@ function initZoomEvents() {
 function navigateTo(pageId) {
     tg.HapticFeedback.impactOccurred('light');
     if (pageId === 'calculate') showView('calcView');
+    else if (pageId === 'moneyCalc') showView('moneyCalcView');
     else if (pageId === 'home') {
         // --- History Logic Init ---
         initHistoryEvents();
@@ -387,8 +394,11 @@ async function getRecentDates() {
                 .limit(10);
 
             if (error) throw error;
-            // Map to expected format
-            return data.map(item => item.birth_date);
+            // Map to expected format (DD.MM.YYYY)
+            return data.map(item => {
+                const [y, m, d] = item.birth_date.split('-');
+                return `${d}.${m}.${y}`;
+            });
         } catch (e) {
             console.warn('Supabase getHistory failed, falling back to LocalStorage', e);
         }
@@ -441,6 +451,18 @@ async function saveRecentDate(date) {
     }
 
     renderHistoryDropdown();
+}
+
+async function performMoneyCalculation() {
+    const input = document.getElementById('moneyDateInput');
+    const dateStr = input.value;
+    if (!/^\d{2}\.\d{2}\.\d{4}$/.test(dateStr)) {
+        tg.showAlert('Пожалуйста, введите дату в формате ДД.ММ.ГГГГ');
+        return;
+    }
+
+    tg.HapticFeedback.impactOccurred('medium');
+    tg.showAlert('Расчет Денежного Кода скоро появится! Логика будет добавлена в следующем обновлении.');
 }
 
 async function renderHistoryDropdown() {
