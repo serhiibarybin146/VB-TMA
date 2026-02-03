@@ -107,10 +107,7 @@ async function initTMA() {
                             last_name: u.last_name,
                             language_code: u.language_code
                         });
-                    if (userError) {
-                        console.error('Supabase User Sync Error:', userError);
-                        tg.showAlert('User Sync Error: ' + JSON.stringify(userError));
-                    }
+                    if (userError) console.error('Supabase User Sync Error:', userError);
 
                     // Fetch Permissions
                     const { data: permData, error: permError } = await supabaseClient
@@ -118,18 +115,15 @@ async function initTMA() {
                         .select('permission_key')
                         .eq('user_id', u.id);
 
-                    if (permError) {
-                        console.error('Fetch Permissions Error:', permError);
-                        tg.showAlert('Fetch Perms Error: ' + JSON.stringify(permError));
-                    }
+                    if (permError) console.error('Fetch Permissions Error:', permError);
 
                     if (permData) {
                         currentState.permissions = permData.map(p => p.permission_key);
                         console.log('User Permissions:', currentState.permissions);
+                        updatePremiumUI(); // Unlock features if permission exists
                     }
                 } catch (e) {
                     console.error('Supabase Init Failed:', e);
-                    tg.showAlert('Supabase Init Exception: ' + e.message);
                 }
             }
         } else {
@@ -173,7 +167,12 @@ function initEventListeners() {
     lockedCards.forEach(card => {
         card.addEventListener('click', () => {
             const feature = card.getAttribute('data-feature');
-            showLockedModal(feature);
+            if (checkPermission(feature)) {
+                // If unlocked, navigate to the feature
+                navigateTo(feature);
+            } else {
+                showLockedModal(feature);
+            }
         });
     });
 
@@ -434,14 +433,10 @@ async function saveRecentDate(date) {
                         birth_date: isoDate,
                         data: { day: date.day, month: date.month, year: date.year } // Minimal data for now
                     });
-                if (insertError) {
-                    console.error('Supabase Save Error:', insertError);
-                    tg.showAlert('Calculation Save Error: ' + JSON.stringify(insertError));
-                }
+                if (insertError) console.error('Supabase Save Error:', insertError);
             }
         } catch (e) {
             console.error('Supabase Save Failed:', e);
-            tg.showAlert('Supabase Save Exception: ' + e.message);
         }
     }
 
@@ -1032,6 +1027,24 @@ function showLockedModal(feature) {
 }
 
 function hideLockedModal() { lockedModal.classList.remove('active'); }
+
+function updatePremiumUI() {
+    lockedCards.forEach(card => {
+        const feature = card.getAttribute('data-feature');
+        if (checkPermission(feature)) {
+            card.classList.remove('locked');
+            // Remove lock icon if present
+            const lockIcon = card.querySelector('iconify-icon[icon="solar:lock-keyhole-minimalistic-bold"]');
+            if (lockIcon) lockIcon.style.display = 'none';
+            // Update tag if present
+            const tag = card.querySelector('.card-tag.gold');
+            if (tag) {
+                tag.textContent = 'Unlocked';
+                tag.style.background = 'var(--accent-gradient)';
+            }
+        }
+    });
+}
 
 initZoomEvents();
 window.addEventListener('load', initTMA);
