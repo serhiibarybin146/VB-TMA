@@ -69,7 +69,7 @@ const CHAKRA_INFO = {
 /**
  * Initialize Telegram Web App
  */
-function initTMA() {
+async function initTMA() {
     tg.ready();
     tg.expand();
 
@@ -128,7 +128,8 @@ function initTMA() {
     body.classList.remove('loading');
 
     initEventListeners();
-    renderHistoryDropdown();
+    await initHistoryEvents();
+    await renderHistoryDropdown();
 }
 
 /**
