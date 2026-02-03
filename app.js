@@ -94,31 +94,33 @@ async function initTMA() {
         }
 
         // --- Supabase User Sync ---
-        try {
-            // Upsert user to Supabase
-            const { error: userError } = await supabase
-                .from('users')
-                .upsert({
-                    id: u.id,
-                    username: u.username,
-                    first_name: u.first_name,
-                    last_name: u.last_name,
-                    language_code: u.language_code
-                });
-            if (userError) console.error('Supabase User Sync Error:', userError);
+        if (typeof supabase !== 'undefined' && supabase) {
+            try {
+                // Upsert user to Supabase
+                const { error: userError } = await supabase
+                    .from('users')
+                    .upsert({
+                        id: u.id,
+                        username: u.username,
+                        first_name: u.first_name,
+                        last_name: u.last_name,
+                        language_code: u.language_code
+                    });
+                if (userError) console.error('Supabase User Sync Error:', userError);
 
-            // Fetch Permissions
-            const { data: permData, error: permError } = await supabase
-                .from('user_permissions')
-                .select('permission_key')
-                .eq('user_id', u.id);
+                // Fetch Permissions
+                const { data: permData, error: permError } = await supabase
+                    .from('user_permissions')
+                    .select('permission_key')
+                    .eq('user_id', u.id);
 
-            if (permData) {
-                currentState.permissions = permData.map(p => p.permission_key);
-                console.log('User Permissions:', currentState.permissions);
+                if (permData) {
+                    currentState.permissions = permData.map(p => p.permission_key);
+                    console.log('User Permissions:', currentState.permissions);
+                }
+            } catch (e) {
+                console.error('Supabase Init Failed:', e);
             }
-        } catch (e) {
-            console.error('Supabase Init Failed:', e);
         }
     } else {
         userName.textContent = 'Гость';
@@ -358,22 +360,25 @@ async function getRecentDates() {
         }
     }
 
-    try {
-        const { data, error } = await supabase
-            .from('calculations')
-            .select('birth_date') // Select only birth_date
-            .eq('user_id', currentState.user.id)
-            .order('created_at', { ascending: false })
-            .limit(10);
+    if (typeof supabase !== 'undefined' && supabase) {
+        try {
+            const { data, error } = await supabase
+                .from('calculations')
+                .select('birth_date') // Select only birth_date
+                .eq('user_id', currentState.user.id)
+                .order('created_at', { ascending: false })
+                .limit(10);
 
-        if (error) throw error;
-        // Map to expected format
-        return data.map(item => item.birth_date);
-    } catch (e) {
-        console.warn('Supabase getHistory failed, falling back to LocalStorage', e);
-        const saved = localStorage.getItem(RECENT_DATES_KEY);
-        return saved ? JSON.parse(saved) : [];
+            if (error) throw error;
+            // Map to expected format
+            return data.map(item => item.birth_date);
+        } catch (e) {
+            console.warn('Supabase getHistory failed, falling back to LocalStorage', e);
+        }
     }
+
+    const saved = localStorage.getItem(RECENT_DATES_KEY);
+    return saved ? JSON.parse(saved) : [];
 }
 
 async function saveRecentDate(date) {
@@ -390,7 +395,7 @@ async function saveRecentDate(date) {
     localStorage.setItem(RECENT_DATES_KEY, JSON.stringify(dates));
 
     // Supabase Store if logged in
-    if (currentState.user) {
+    if (currentState.user && typeof supabase !== 'undefined' && supabase) {
         try {
             const isoDate = `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`;
             // Check if this date already exists for the user to avoid duplicates
