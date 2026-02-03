@@ -169,49 +169,49 @@
                     <p>5 ключевых энергий вашего финансового потока</p>
                 </div>
 
-                <div class="star-visualization">
-                    <div class="star-wrapper" id="moneyStar">
-                        <!-- SVG Star will be here -->
-                        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                            <!-- Definition for text alignment -->
-                            <defs>
-                                <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                                    <feGaussianBlur stdDeviation="3" result="blur" />
-                                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                                </filter>
-                            </defs>
+                <!-- Styled like matrix-svg-container -->
+                <div class="matrix-svg-container money-star-box">
+                    <div class="star-visualization">
+                        <div class="star-wrapper" id="moneyStar">
+                            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feGaussianBlur stdDeviation="3" result="blur" />
+                                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                    </filter>
+                                </defs>
 
-                            <!-- Star Polygon -->
-                            <polygon id="mainStar"
-                                points="100,10 120,78 190,78 135,118 155,185 100,145 45,185 65,118 10,78 80,78"
-                                fill="url(#starGradient)" filter="url(#glow)" />
+                                <polygon id="mainStar"
+                                    points="100,10 120,78 190,78 135,118 155,185 100,145 45,185 65,118 10,78 80,78"
+                                    fill="url(#starGradient)" filter="url(#glow)" />
 
-                            <linearGradient id="starGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
-                            </linearGradient>
+                                <linearGradient id="starGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#CC9900;stop-opacity:1" />
+                                </linearGradient>
 
-                            <!-- Corners Text Labels -->
-                            <text x="100" y="25" id="c1" class="star-val" text-anchor="middle">0</text>
-                            <text x="185" y="75" id="c2" class="star-val" text-anchor="middle">0</text>
-                            <text x="150" y="195" id="c3" class="star-val" text-anchor="middle">0</text>
-                            <text x="50" y="195" id="c4" class="star-val" text-anchor="middle">0</text>
-                            <text x="15" y="75" id="c5" class="star-val" text-anchor="middle">0</text>
+                                <text x="100" y="25" id="c1" class="star-val" text-anchor="middle">0</text>
+                                <text x="185" y="75" id="c2" class="star-val" text-anchor="middle">0</text>
+                                <text x="150" y="195" id="c3" class="star-val" text-anchor="middle">0</text>
+                                <text x="50" y="195" id="c4" class="star-val" text-anchor="middle">0</text>
+                                <text x="15" y="75" id="c5" class="star-val" text-anchor="middle">0</text>
 
-                            <!-- Central Code -->
-                            <text x="100" y="115" id="centerCode" class="star-code" text-anchor="middle">00000</text>
-                        </svg>
+                                <text x="100" y="115" id="centerCode" class="star-code"
+                                    text-anchor="middle">00000</text>
+                            </svg>
+                        </div>
                     </div>
                 </div>
 
-                <div class="money-final-code">
+                <!-- Using info-card class for consistency -->
+                <div class="info-card money-final-box">
                     <span>Код богатства:</span>
                     <strong id="finalMoneyCode">00000</strong>
                 </div>
 
-                <div class="money-description">
-                    <p>Этот код является вашим персональным финансовым ключом. Используйте его как пароль, пишите на
-                        документах или просто держите в фокусе внимания для активации денежной энергии.</p>
+                <div class="info-card money-desc-box">
+                    <p>Этот код является вашим персональным финансовым ключом. Используйте его для активации денежной
+                        энергии: в качестве пароля, пишите на документах или просто держите в фокусе внимания.</p>
                 </div>
             </div>
         </section>
