@@ -70,68 +70,77 @@ const CHAKRA_INFO = {
  * Initialize Telegram Web App
  */
 async function initTMA() {
-    tg.ready();
-    tg.expand();
+    try {
+        tg.ready();
+        tg.expand();
 
-    // Request true fullscreen for deeper immersion (SDK 7.10+)
-    if (tg.requestFullscreen) {
-        tg.requestFullscreen();
-    }
-
-    // Sync with Telegram theme colors
-    // Both set to 'bg_color' ensuring a seamless blend between Telegram and the app
-    tg.setHeaderColor('bg_color');
-    tg.setBackgroundColor('bg_color');
-
-    // Get User Data
-    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-        const u = tg.initDataUnsafe.user;
-        currentState.user = u;
-        userName.textContent = u.username || u.first_name || 'Гость';
-        if (u.photo_url) {
-            userAvatar.src = u.photo_url;
-            userAvatar.style.display = 'block';
+        // Request true fullscreen for deeper immersion (SDK 7.10+)
+        if (tg.requestFullscreen) {
+            try { tg.requestFullscreen(); } catch (e) { }
         }
 
-        // --- Supabase User Sync ---
-        if (typeof supabase !== 'undefined' && supabase) {
-            try {
-                // Upsert user to Supabase
-                const { error: userError } = await supabase
-                    .from('users')
-                    .upsert({
-                        id: u.id,
-                        username: u.username,
-                        first_name: u.first_name,
-                        last_name: u.last_name,
-                        language_code: u.language_code
-                    });
-                if (userError) console.error('Supabase User Sync Error:', userError);
+        // Sync with Telegram theme colors
+        tg.setHeaderColor('bg_color');
+        tg.setBackgroundColor('bg_color');
 
-                // Fetch Permissions
-                const { data: permData, error: permError } = await supabase
-                    .from('user_permissions')
-                    .select('permission_key')
-                    .eq('user_id', u.id);
+        // Get User Data
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            const u = tg.initDataUnsafe.user;
+            currentState.user = u;
+            if (userName) userName.textContent = u.username || u.first_name || 'Гость';
 
-                if (permData) {
-                    currentState.permissions = permData.map(p => p.permission_key);
-                    console.log('User Permissions:', currentState.permissions);
-                }
-            } catch (e) {
-                console.error('Supabase Init Failed:', e);
+            if (u.photo_url && userAvatar) {
+                userAvatar.innerHTML = `<img src="${u.photo_url}" alt="${u.first_name || 'User'}">`;
+                userAvatar.style.display = 'block';
             }
-        }
-    } else {
-        userName.textContent = 'Гость';
-    }
 
-    // Remove loading state
-    body.classList.remove('loading');
+            // --- Supabase User Sync ---
+            if (typeof supabase !== 'undefined' && supabase) {
+                try {
+                    // Upsert user to Supabase
+                    const { error: userError } = await supabase
+                        .from('users')
+                        .upsert({
+                            id: u.id,
+                            username: u.username,
+                            first_name: u.first_name,
+                            last_name: u.last_name,
+                            language_code: u.language_code
+                        });
+                    if (userError) console.error('Supabase User Sync Error:', userError);
+
+                    // Fetch Permissions
+                    const { data: permData, error: permError } = await supabase
+                        .from('user_permissions')
+                        .select('permission_key')
+                        .eq('user_id', u.id);
+
+                    if (permData) {
+                        currentState.permissions = permData.map(p => p.permission_key);
+                        console.log('User Permissions:', currentState.permissions);
+                    }
+                } catch (e) {
+                    console.error('Supabase Init Failed:', e);
+                }
+            }
+        } else {
+            console.warn('Telegram User Data not found, using Guest mode');
+            if (userName) userName.textContent = 'Гость';
+        }
+    } catch (err) {
+        console.error('Fatal Init Error:', err);
+    } finally {
+        // Alway remove loading state no matter what
+        if (body) body.classList.remove('loading');
+    }
 
     initEventListeners();
-    await initHistoryEvents();
-    await renderHistoryDropdown();
+    try {
+        await initHistoryEvents();
+        await renderHistoryDropdown();
+    } catch (e) {
+        console.error('History Init Error:', e);
+    }
 }
 
 /**
