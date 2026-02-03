@@ -185,8 +185,8 @@ function initEventListeners() {
     closeModal.addEventListener('click', hideLockedModal);
     lockedModal.querySelector('.modal-overlay').addEventListener('click', hideLockedModal);
 
-    // Make matrix clickable for zoom
-    const matrixContainer = document.querySelector('.matrix-svg-container');
+    // Make matrix clickable for zoom (only for main matrix)
+    const matrixContainer = document.querySelector('#resultView .matrix-svg-container');
     if (matrixContainer) {
         matrixContainer.onclick = openMatrixZoom;
     }
