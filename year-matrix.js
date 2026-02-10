@@ -62,16 +62,26 @@ const YearMatrixLogic = {
         const femaleCode = [tr, bl, r(tr + bl)];
         const internalCode = [centerValue, ancestralPower, r(centerValue + ancestralPower)];
 
-        // 7. Dates (Periods) - Placeholder logic
-        const dates = [];
+        // 7. Months (12 Monthly Periods)
+        const months = [];
         let cur = new Date(targetYear, month - 1, day);
         const fmt = d => ('0' + d.getDate()).slice(-2) + '.' + ('0' + (d.getMonth() + 1)).slice(-2) + '.' + d.getFullYear();
 
-        for (let i = 0; i < 8; i++) {
+        // Calculate 3 main energies for year:
+        // sky and earth are already calculated above
+        const yearEnergy = r(sky + earth);
+
+        for (let i = 0; i < 12; i++) {
             let start = new Date(cur);
             let end = new Date(cur);
-            end.setDate(end.getDate() + 45); // ~1.5 months per sector
-            dates.push([fmt(start), fmt(end)]);
+            end.setMonth(end.getMonth() + 1); // Exact 1 month step
+            const val = r(yearEnergy + i);
+            months.push({
+                index: i + 1,
+                dateStart: fmt(start),
+                dateEnd: fmt(end),
+                value: val
+            });
             cur = end;
         }
 
@@ -91,7 +101,8 @@ const YearMatrixLogic = {
                 spiritual, planetary,
                 ancestralPower, maleCode, femaleCode, internalCode
             },
-            dates,
+            months,
+            dates: months.map(m => [m.dateStart, m.dateEnd]),
             input: { day, month, targetYear }
         };
     },
@@ -421,44 +432,75 @@ const YearMatrixLogic = {
             }
         });
 
-        // ─── Date Labels (Monthly Periods) ───
-        // Placeholder date logic for visual structure
-        const dateRadius = 95 * rScale;
-        const dateData = data.dates || [];
+        // ─── Month Circles (12 Periods) ───
+        const monthData = data.months || [];
+        const monthRadius = 95 * rScale; // Radius for the month circles
 
-        for (let i = 0; i < 8; i++) {
-            const angle = angles[i]; // 0:Left, 1:TL, ...
-            const isLeft = (angle > Math.PI / 2 && angle < Math.PI * 3 / 2);
+        for (let i = 0; i < 12; i++) {
+            // Angle: Start from Left (Month 1/Birthday) and go Clockwise
+            // SVG 0 is Right. Left is PI.
+            // i=0 -> PI. i=1 -> PI + 30deg (PI/6).
+            const angle = Math.PI + (i * Math.PI / 6);
 
-            // Adjust angle for text rotation
+            const cxM = cx + monthRadius * Math.cos(angle);
+            const cyM = cy + monthRadius * Math.sin(angle);
+
+            // Draw small connector line from center? Or just float?
+            // Screenshot shows floating circles on spoke lines if they align.
+
+            // Draw small blue circle with number inside
+            const circle = el('circle', {
+                cx: cxM, cy: cyM, r: 8 * rScale,
+                fill: '#fff', stroke: '#3EB4F0', 'stroke-width': 1.5
+            });
+            nodeLayer.append(circle);
+
+            const valText = el('text', {
+                x: cxM, y: cyM,
+                'text-anchor': 'middle', 'dominant-baseline': 'central',
+                fill: '#3EB4F0', 'font-size': 9 * tScale, 'font-weight': 'bold',
+                'font-family': 'Manrope, sans-serif'
+            });
+            valText.textContent = monthData[i]?.value || (i + 1); // Show calculated Value instead of Index
+            textLayer.append(valText);
+
+            // Draw Date Text (Radial)
+            // Position slightly outside the circle
+            const textRadius = monthRadius + 22 * rScale;
+            const tx = cx + textRadius * Math.cos(angle);
+            const ty = cy + textRadius * Math.sin(angle);
+
+            // Rotation for readability
             let rot = angle * 180 / Math.PI;
-            if (isLeft) rot += 180;
-
-            const cxDate = cx + dateRadius * Math.cos(angle);
-            const cyDate = cy + dateRadius * Math.sin(angle);
+            // Flip left side (90..270 deg)
+            let normAngle = angle % (2 * Math.PI);
+            if (normAngle < 0) normAngle += 2 * Math.PI;
+            let isLeftSide = (normAngle > Math.PI / 2 && normAngle < 3 * Math.PI / 2);
+            let textRot = rot + (isLeftSide ? 180 : 0);
 
             const group = el('g', {
-                transform: `translate(${cxDate}, ${cyDate}) rotate(${rot})`
+                transform: `translate(${tx}, ${ty}) rotate(${textRot})`
             });
 
-            const d1 = dateData[i]?.[0] || '01.01.2025';
-            const d2 = dateData[i]?.[1] || '31.01.2025';
-
+            // Date 1 (Start)
+            const d1 = monthData[i]?.dateStart || '01.01';
             const t1 = el('text', {
                 x: 0, y: -4 * tScale,
                 'text-anchor': 'middle', 'dominant-baseline': 'middle',
                 fill: '#3E67EE', 'font-size': 6 * tScale, 'font-weight': '700',
                 'font-family': 'Manrope, sans-serif'
             });
-            t1.textContent = d1;
+            t1.textContent = d1.substring(0, 5); // Just DD.MM
 
+            // Date 2 (End)
+            const d2 = monthData[i]?.dateEnd || '31.01';
             const t2 = el('text', {
                 x: 0, y: 4 * tScale,
                 'text-anchor': 'middle', 'dominant-baseline': 'middle',
                 fill: '#3E67EE', 'font-size': 6 * tScale, 'font-weight': '700',
                 'font-family': 'Manrope, sans-serif'
             });
-            t2.textContent = d2;
+            t2.textContent = d2.substring(0, 5);
 
             group.append(t1, t2);
             textLayer.append(group);
