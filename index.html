@@ -132,6 +132,31 @@
             </div>
         </section>
 
+        <!-- YEAR MATRIX RESULT VIEW -->
+        <section id="yearResultView" class="view">
+            <div class="result-top-row">
+                <div class="back-link" onclick="navigateTo('yearForecast')">
+                    <iconify-icon icon="solar:arrow-left-linear"></iconify-icon>
+                    <span>Назад</span>
+                </div>
+                <div class="result-info">
+                    <span id="yearResultTitle" class="result-date">Прогноз 2025</span>
+                </div>
+            </div>
+
+            <!-- Custom Yearly Matrix SVG Container -->
+            <div class="matrix-svg-container" style="margin-top: 20px;">
+                <div id="yearMatrixSvg"></div>
+            </div>
+
+            <div class="info-card">
+                <p style="text-align: center; font-size: 14px; color: var(--text-secondary);">
+                    Ваша персональная матрица года. <br>
+                    Показывает ключевые энергии и задачи на выбранный период.
+                </p>
+            </div>
+        </section>
+
         <!-- CALCULATE FORM VIEW -->
         <section id="calcView" class="view">
             <div class="back-link" onclick="navigateTo('home')">
@@ -446,6 +471,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="year-matrix.js"></script>
     <script src="matrix-logic.js?v=1.0.4"></script>
     <script src="supabase-client.js?v=1.0.4"></script>
     <script src="app.js?v=1.0.4"></script>

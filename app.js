@@ -365,6 +365,7 @@ function navigateTo(pageId) {
         showView('yearForecastView');
         initYearForecastForm();
     }
+    else if (pageId === 'yearResult') showView('yearResultView');
     else if (pageId === 'home') {
         // --- History Logic Init ---
         initHistoryEvents();
@@ -397,12 +398,43 @@ function initYearForecastForm() {
 
     form.onsubmit = function (e) {
         e.preventDefault();
+
+        const dateStr = document.getElementById('forecastDate').value;
+        if (!/^\d{2}\.\d{2}\.\d{4}$/.test(dateStr)) {
+            tg.showAlert('Формат даты должен быть ДД.ММ.ГГГГ');
+            return;
+        }
+
+        const [day, month, fullYear] = dateStr.split('.').map(Number);
+
+        // Logic: The third part of input is the TARGET YEAR or BIRTH YEAR?
+        // User text said: "date of birth, month of birth, search year"
+        // So input is mixed. BUT the placeholder says 03.09.2022.
+        // If user enters 03.09.2025, it means Day 3, Month 9, Target Year 2025.
+        // Assuming this logic for now as per label description.
+
+        if (!day || !month || !fullYear) {
+            tg.showAlert('Некорректная дата');
+            return;
+        }
+
         tg.HapticFeedback.impactOccurred('medium');
-        tg.showConfirm('Данные успешно введены! Хотите выполнить расчет?', (confirmed) => {
-            if (confirmed) {
-                tg.showAlert('Раздел расчета таблиц находится в разработке.');
-            }
-        });
+
+        try {
+            // Calculate
+            const result = YearMatrixLogic.calculate(day, month, fullYear);
+
+            // Render
+            document.getElementById('yearResultTitle').textContent = `Прогноз на ${fullYear} год`;
+            YearMatrixLogic.drawSVG(result, 'yearMatrixSvg');
+
+            // Show Result
+            showView('yearResultView');
+
+        } catch (err) {
+            console.error(err);
+            tg.showAlert('Ошибка расчета: ' + err.message);
+        }
     };
 }
 
