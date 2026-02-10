@@ -148,7 +148,7 @@ const YearMatrixLogic = {
             // Рисуем радиальные линии между секторами (месяцами)
             data.months.forEach((m, i) => {
                 const lineAngleRad = (180 + i * 30) * Math.PI / 180;
-                const rStart = 28 * rScale, rEnd = 275;
+                const rStart = 28 * rScale, rEnd = 280;
                 lineLayer.append(createSVGElement('line', {
                     x1: cx + rStart * Math.cos(lineAngleRad),
                     y1: cy + rStart * Math.sin(lineAngleRad),
