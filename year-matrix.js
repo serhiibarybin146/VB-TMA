@@ -168,26 +168,8 @@ const YearMatrixLogic = {
         }
 
         // --- ОСТАЛЬНОЕ (Копия из app.js) ---
-        // Ages
-        (function drawAgeLabels() {
-            for (let i = 0; i < 8; i++) {
-                const p1 = outerPoints[i], p2 = outerPoints[(i + 1) % 8];
-                const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
-                const vcx = cx - mx, vcy = cy - my, distC = Math.hypot(vcx, vcy);
-                const nx = vcx / distC, ny = vcy / distC;
-                for (let j = 1; j <= 7; j++) {
-                    const t = 0.5 + (j - 4) / 9;
-                    const x = p1.x + (p2.x - p1.x) * t, y = p1.y + (p2.y - p1.y) * t;
-                    const offset = (j === 4 && [0, 3, 4, 7].includes(i)) ? -4 : -14;
-                    const ageText = createSVGElement('text', { x: x + nx * offset, y: y + ny * offset, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: j === 4 ? '#000' : '#999', 'font-size': (j === 4 ? 10 : 8) * tScale, 'font-weight': j === 4 ? '700' : 'normal', 'font-family': 'Manrope, sans-serif' });
-                    const startAge = i * 10;
-                    if (j === 4) ageText.textContent = `${startAge + 5} лет`;
-                    else if (j < 4) ageText.textContent = `${startAge + j}-${startAge + j + 1}`;
-                    else ageText.textContent = `${startAge + j + 1}-${startAge + j + 2}`;
-                    ageLayer.append(ageText);
-                }
-            }
-        })();
+        // Ages (Removed as per user request: "удали только цифры 1-2, 5 лет и т.д.")
+        // (function drawAgeLabels() { ... })();
 
         // Lines
         const connect = (i1, i2, pts, off = 22) => {
