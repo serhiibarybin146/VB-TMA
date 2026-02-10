@@ -185,10 +185,15 @@ function initEventListeners() {
     closeModal.addEventListener('click', hideLockedModal);
     lockedModal.querySelector('.modal-overlay').addEventListener('click', hideLockedModal);
 
-    // Make matrix clickable for zoom (only for main matrix)
+    // Make matrix clickable for zoom
     const matrixContainer = document.querySelector('#resultView .matrix-svg-container');
     if (matrixContainer) {
-        matrixContainer.onclick = openMatrixZoom;
+        matrixContainer.onclick = () => openMatrixZoom('matrixSvg');
+    }
+
+    const yearMatrixResultContainer = document.querySelector('#yearForecastResultView .matrix-svg-container');
+    if (yearMatrixResultContainer) {
+        yearMatrixResultContainer.onclick = () => openMatrixZoom('yearMatrixContainer');
     }
 }
 
@@ -241,8 +246,15 @@ let startPosY = 0;
 let lastTouchX = 0;
 let lastTouchY = 0;
 
-function openMatrixZoom() {
-    const originalSvg = document.getElementById('matrixSvg');
+function openMatrixZoom(sourceId = 'matrixSvg') {
+    let originalSvg = document.getElementById(sourceId);
+    if (!originalSvg) return;
+
+    // If the source is a container (DIV), get the SVG inside it
+    if (originalSvg.tagName.toLowerCase() !== 'svg') {
+        originalSvg = originalSvg.querySelector('svg');
+    }
+
     if (!originalSvg) return;
 
     const zoomOverlay = document.getElementById('matrixZoomOverlay');
