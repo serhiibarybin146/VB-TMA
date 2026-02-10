@@ -145,6 +145,20 @@ const YearMatrixLogic = {
 
         // --- 12 МЕСЯЦЕВ (Уникально для YearMatrix) ---
         if (data.months) {
+            // Рисуем радиальные линии между секторами (месяцами)
+            data.months.forEach((m, i) => {
+                const lineAngleRad = (180 + i * 30) * Math.PI / 180;
+                const rStart = 28 * rScale, rEnd = 270;
+                lineLayer.append(createSVGElement('line', {
+                    x1: cx + rStart * Math.cos(lineAngleRad),
+                    y1: cy + rStart * Math.sin(lineAngleRad),
+                    x2: cx + rEnd * Math.cos(lineAngleRad),
+                    y2: cy + rEnd * Math.sin(lineAngleRad),
+                    stroke: 'rgba(0,0,0,0.1)',
+                    'stroke-width': 1
+                }));
+            });
+
             data.months.forEach((m, i) => {
                 const angleRad = (180 - 15 + i * 30) * Math.PI / 180;
                 const mx = cx + R_MONTHS * Math.cos(angleRad), my = cy + R_MONTHS * Math.sin(angleRad);
