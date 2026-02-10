@@ -1,10 +1,14 @@
 /**
- * Year Forecast Matrix — Базируется на ПОЛНОМ файле matrix-logic.js
+ * Matrix of Destiny - Core Calculation Logic
+ * This file contains ONLY the mathematical formulas.
+ * No UI or SVG logic here.
  */
 
 const YearMatrixLogic = {
     /**
      * Reduces a number by summing its digits until it's <= 22
+     * @param {number|string} n 
+     * @returns {number}
      */
     reduce(n) {
         let val = parseInt(n) || 0;
@@ -17,6 +21,8 @@ const YearMatrixLogic = {
 
     /**
      * Reduces a number by summing its digits until it's 1-9
+     * @param {number|string} n 
+     * @returns {number}
      */
     reduce9(n) {
         let val = parseInt(n) || 0;
@@ -28,7 +34,7 @@ const YearMatrixLogic = {
     },
 
     /**
-     * Calculates the Money Code based on birth date (Duplicate from MatrixLogic)
+     * Calculates the Money Code based on birth date
      */
     calculateMoneyCode(day, month, year) {
         const c1 = this.reduce9(day);
@@ -115,17 +121,6 @@ const YearMatrixLogic = {
     },
 
     /**
-     * Формат для app.js (совместимость)
-     */
-    calculate(day, month, year) {
-        // app.js передает (day, month, year) отдельно.
-        // Переиспользуем calculateBase
-        const pad = n => String(n).padStart(2, '0');
-        const dateStr = `${year}-${pad(month)}-${pad(day)}`;
-        return this.calculateBase(dateStr);
-    },
-
-    /**
      * Calculates the Health (Chakra) Table
      */
     calculateHealth(baseData) {
@@ -146,10 +141,12 @@ const YearMatrixLogic = {
             { name: 'Муладхара', color: 'red', body: points.rYear, energy: points.sumBottom }
         ];
 
+        // Add emotion (reduced sum of body + energy)
         chakras.forEach(c => {
             c.emotion = this.reduce(c.body + c.energy);
         });
 
+        // Totals
         const totalBody = chakras.reduce((s, c) => s + c.body, 0);
         const totalEnergy = chakras.reduce((s, c) => s + c.energy, 0);
         const totalEmotion = chakras.reduce((s, c) => s + c.emotion, 0);
@@ -165,63 +162,8 @@ const YearMatrixLogic = {
                 reducedEmotion: this.reduce(totalEmotion)
             }
         };
-    },
-
-    /* ─── Рендеринг (Базовая заглушка, чтобы не ломался app.js) ─── */
-
-    drawSVG(data, containerId) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-
-        const svgNS = 'http://www.w3.org/2000/svg';
-        const W = 700, H = 700;
-        const cx = 350, cy = 350, radius = 270;
-        const rScale = 1.25;
-        const tScale = 1.20;
-
-        const svg = document.createElementNS(svgNS, 'svg');
-        svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-
-        const lineLayer = el('g', { stroke: 'rgba(0,0,0,0.15)', 'stroke-width': 2 });
-        const nodeLayer = el('g');
-        const textLayer = el('g');
-        svg.append(lineLayer, nodeLayer, textLayer);
-
-        function el(tag, attrs = {}) {
-            const e = document.createElementNS(svgNS, tag);
-            for (let k in attrs) e.setAttribute(k, attrs[k]);
-            return e;
-        }
-
-        const angles = [Math.PI, Math.PI * 1.25, Math.PI * 1.5, Math.PI * 1.75, 0, Math.PI * 0.25, Math.PI * 0.5, Math.PI * 0.75];
-        const outerPts = angles.map(a => ({ x: cx + radius * Math.cos(a), y: cy + radius * Math.sin(a) }));
-
-        // Отрисовка линий (квадраты)
-        [[0, 2, 4, 6], [1, 3, 5, 7]].forEach(q => {
-            for (let i = 0; i < 4; i++) {
-                const p1 = outerPts[q[i]], p2 = outerPts[q[(i + 1) % 4]];
-                lineLayer.append(el('line', { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, stroke: '#ccc' }));
-            }
-        });
-
-        // Узлы (Просто показать, что логика работает)
-        function drawNode(x, y, r, fill, val) {
-            nodeLayer.append(el('circle', { cx: x, cy: y, r: r * rScale, fill: fill, stroke: '#000' }));
-            const t = el('text', { x: x, y: y, 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': 15 * tScale, 'font-weight': 'bold' });
-            t.textContent = val;
-            textLayer.append(t);
-        }
-
-        // Внешние
-        const colors = ['#9A71C9', '#fff', '#9A71C9', '#fff', '#F34B47', '#fff', '#F34B47', '#fff'];
-        outerPts.forEach((p, i) => drawNode(p.x, p.y, 18, colors[i], data.values[i]));
-
-        // Центр
-        drawNode(cx, cy, 24, '#F4F866', data.points.centerValue);
-
-        container.innerHTML = '<h3>Годовая Матрица (база logic)</h3>';
-        container.appendChild(svg);
     }
 };
 
+// If using in browser directly without modules
 window.YearMatrixLogic = YearMatrixLogic;
