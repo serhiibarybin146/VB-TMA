@@ -146,7 +146,7 @@ const YearMatrixLogic = {
         // --- 12 МЕСЯЦЕВ (Уникально для YearMatrix) ---
         if (data.months) {
             data.months.forEach((m, i) => {
-                const angleRad = (180 + i * 30) * Math.PI / 180;
+                const angleRad = (180 - 15 + i * 30) * Math.PI / 180;
                 const mx = cx + R_MONTHS * Math.cos(angleRad), my = cy + R_MONTHS * Math.sin(angleRad);
                 // Малый кружок
                 nodeLayer.append(createSVGElement('circle', { cx: mx, cy: my, r: 10 * rScale, fill: '#fff', stroke: '#3388ff', 'stroke-width': 2 }));
@@ -156,7 +156,7 @@ const YearMatrixLogic = {
 
                 // Даты
                 const tx = cx + (R_MONTHS + 25) * Math.cos(angleRad), ty = cy + (R_MONTHS + 25) * Math.sin(angleRad);
-                let rot = 180 + i * 30; if (rot > 90 && rot < 270) rot += 180;
+                let rot = (180 - 15 + i * 30); if (rot > 90 && rot < 270) rot += 180;
                 const g = createSVGElement('g', { transform: `translate(${tx},${ty}) rotate(${rot})` });
                 const d1 = createSVGElement('text', { x: 0, y: -5, 'text-anchor': 'middle', 'font-size': 7 * tScale, fill: '#3388ff', 'font-weight': 'bold' });
                 d1.textContent = m.dateStart.slice(0, 5);
