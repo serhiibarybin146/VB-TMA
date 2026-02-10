@@ -154,8 +154,8 @@ const YearMatrixLogic = {
                     y1: cy + rStart * Math.sin(lineAngleRad),
                     x2: cx + rEnd * Math.cos(lineAngleRad),
                     y2: cy + rEnd * Math.sin(lineAngleRad),
-                    stroke: 'rgba(0,0,0,0.1)',
-                    'stroke-width': 1
+                    stroke: '#ccc',
+                    'stroke-width': 2
                 }));
             });
 
