@@ -395,7 +395,7 @@ function initYearForecastForm() {
         dateInput.dataset.masked = "true";
     }
 
-    form.onsubmit = function(e) {
+    form.onsubmit = function (e) {
         e.preventDefault();
         tg.HapticFeedback.impactOccurred('medium');
         tg.showConfirm('Данные успешно введены! Хотите выполнить расчет?', (confirmed) => {

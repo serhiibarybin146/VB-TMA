@@ -113,21 +113,23 @@
                 <span>Назад</span>
             </div>
 
-            <div class="forecast-container">
-                <h2 class="forecast-title">Таблица персональных дат</h2>
+            <div class="form-header">
+                <h2>Таблица персональных дат</h2>
+                <p>Введите данные для расчета годового прогноза</p>
+            </div>
 
-                <form class="forecast-form" id="forecastForm">
-                    <div class="form-group-forecast">
-                        <label class="forecast-label">Имя:</label>
-                        <input type="text" id="forecastName" class="forecast-input" required>
+            <div class="date-input-container">
+                <form id="forecastForm">
+                    <div class="date-input-group" style="margin-bottom: 20px;">
+                        <input type="text" id="forecastName" class="tma-input" placeholder="Введите имя" required>
                     </div>
 
-                    <div class="form-group-forecast">
-                        <label class="forecast-label">
-                            Дата
-                            <small>(дата рождения, месяц рождения, искомый год):</small>
-                        </label>
-                        <input type="text" id="forecastDate" class="forecast-input" placeholder="03.09.2022" required>
+                    <div class="date-input-group" style="margin-bottom: 25px;">
+                        <p style="font-size: 13px; color: var(--hint-color); margin-bottom: 8px; margin-left: 4px;">
+                            Дата (дата рождения, месяц рождения, искомый год):
+                        </p>
+                        <input type="text" id="forecastDate" class="tma-input" placeholder="ДД.ММ.ГГГГ"
+                            inputmode="numeric" maxlength="10" required>
                     </div>
 
                     <button type="submit" class="btn-primary full-width">Ввести данные</button>
