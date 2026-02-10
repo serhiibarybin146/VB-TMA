@@ -190,8 +190,7 @@ const YearMatrixLogic = {
             const p1 = pts[i1], p2 = pts[i2], ang = Math.atan2(p2.y - p1.y, p2.x - p1.x);
             lineLayer.append(createSVGElement('line', { x1: p1.x + off * Math.cos(ang), y1: p1.y + off * Math.sin(ang), x2: p2.x - off * Math.cos(ang), y2: p2.y - off * Math.sin(ang), stroke: '#ccc', 'stroke-width': 2 }));
         }
-        connect(0, 2, outerPoints); connect(2, 4, outerPoints); connect(4, 6, outerPoints); connect(6, 0, outerPoints);
-        connect(1, 3, outerPoints); connect(3, 5, outerPoints); connect(5, 7, outerPoints); connect(7, 1, outerPoints);
+        // Lines (Outer and Inner squares removed as per user request)
         connect(0, 4, outerPoints); connect(2, 6, outerPoints);
 
         // Nodes
