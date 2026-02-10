@@ -365,7 +365,6 @@ function navigateTo(pageId) {
         showView('yearForecastView');
         initYearForecastForm();
     }
-    else if (pageId === 'yearResult') showView('yearResultView');
     else if (pageId === 'home') {
         // --- History Logic Init ---
         initHistoryEvents();
@@ -398,44 +397,44 @@ function initYearForecastForm() {
 
     form.onsubmit = function (e) {
         e.preventDefault();
-
-        const dateStr = document.getElementById('forecastDate').value;
-        if (!/^\d{2}\.\d{2}\.\d{4}$/.test(dateStr)) {
-            tg.showAlert('Формат даты должен быть ДД.ММ.ГГГГ');
-            return;
-        }
-
-        const [day, month, fullYear] = dateStr.split('.').map(Number);
-
-        // Logic: The third part of input is the TARGET YEAR or BIRTH YEAR?
-        // User text said: "date of birth, month of birth, search year"
-        // So input is mixed. BUT the placeholder says 03.09.2022.
-        // If user enters 03.09.2025, it means Day 3, Month 9, Target Year 2025.
-        // Assuming this logic for now as per label description.
-
-        if (!day || !month || !fullYear) {
-            tg.showAlert('Некорректная дата');
-            return;
-        }
-
         tg.HapticFeedback.impactOccurred('medium');
-
-        try {
-            // Calculate
-            const result = YearMatrixLogic.calculate(day, month, fullYear);
-
-            // Render
-            document.getElementById('yearResultTitle').textContent = `Прогноз на ${fullYear} год`;
-            YearMatrixLogic.drawSVG(result, 'yearMatrixSvg');
-
-            // Show Result
-            showView('yearResultView');
-
-        } catch (err) {
-            console.error(err);
-            tg.showAlert('Ошибка расчета: ' + err.message);
-        }
+        performYearForecast();
     };
+}
+
+/**
+ * Расчёт и отрисовка годового прогноза
+ * Формат ввода: ДД.ММ.ГГГГ (день рожд., месяц рожд., искомый год)
+ */
+function performYearForecast() {
+    const input = document.getElementById('forecastDate');
+    if (!input) return;
+
+    const val = input.value;
+    if (!/^\d{2}\.\d{2}\.\d{4}$/.test(val)) {
+        tg.showAlert('Пожалуйста, введите дату в формате ДД.ММ.ГГГГ');
+        return;
+    }
+
+    const [dayStr, monthStr, yearStr] = val.split('.');
+    const day = parseInt(dayStr);
+    const month = parseInt(monthStr);
+    const year = parseInt(yearStr);
+
+    if (day < 1 || day > 31 || month < 1 || month > 12 || year < 1900) {
+        tg.showAlert('Проверьте корректность даты');
+        return;
+    }
+
+    try {
+        const result = YearMatrixLogic.calculate(day, month, year);
+        YearMatrixLogic.drawSVG(result, 'yearMatrixContainer');
+        showView('yearForecastResultView');
+        tg.HapticFeedback.notificationOccurred('success');
+    } catch (err) {
+        console.error('Year Forecast Error:', err);
+        tg.showAlert('Ошибка при расчете: ' + err.message);
+    }
 }
 
 /**

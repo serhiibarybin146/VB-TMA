@@ -1,11 +1,15 @@
 /**
- * Yearly Forecast Matrix Logic & Rendering
- * Separated to avoid conflicts with main matrix-logic.js
+ * Year Forecast Matrix — отдельный модуль
+ * Расчёт + рендеринг SVG в стиле основной матрицы
+ * НЕ зависит от MatrixLogic / app.js
  */
 
 const YearMatrixLogic = {
+
+    /* ─── Математика ─── */
+
     /**
-     * Reduces number to <= 22
+     * Свёртка числа до ≤ 22
      */
     reduce(n) {
         let val = parseInt(n) || 0;
@@ -17,45 +21,39 @@ const YearMatrixLogic = {
     },
 
     /**
-     * Calculate Yearly Matrix Data
-     * Based on: Birth Day, Birth Month, and Target Year
+     * Расчёт годовой матрицы
+     * @param {number} day   — день рождения
+     * @param {number} month — месяц рождения
+     * @param {number} targetYear — искомый год (напр. 2026)
      */
     calculate(day, month, targetYear) {
-        // 1. Initial values
-        const rDay = this.reduce(day);       // Left (A)
-        const rMonth = this.reduce(month);   // Top (B)
-        const rYear = this.reduce(targetYear.toString().split('').reduce((a, b) => a + parseInt(b), 0)); // Right (C) - Target Year
+        const r = this.reduce.bind(this);
 
-        // 2. Bottom (D) = A + B + C
-        const sumBottom = this.reduce(rDay + rMonth + rYear);
+        // 1. Основные точки (квадрат)
+        const rDay = r(day);                                                      // Left  (A)
+        const rMonth = r(month);                                                    // Top   (B)
+        const rYear = r(String(targetYear).split('').reduce((a, b) => a + +b, 0)); // Right (C)
+        const sumBot = r(rDay + rMonth + rYear);                                    // Bottom(D)
 
-        // 3. Center (E) = A + B + C + D
-        const center = this.reduce(rDay + rMonth + rYear + sumBottom);
+        // 2. Центр
+        const center = r(rDay + rMonth + rYear + sumBot);
 
-        // 4. Diagonals (Generic matrix logic)
-        // TL = A + B
-        const tl = this.reduce(rDay + rMonth);
-        // TR = B + C
-        const tr = this.reduce(rMonth + rYear);
-        // BR = C + D
-        const br = this.reduce(rYear + sumBottom);
-        // BL = D + A
-        const bl = this.reduce(sumBottom + rDay);
+        // 3. Диагональные углы (родовой квадрат)
+        const tl = r(rDay + rMonth);
+        const tr = r(rMonth + rYear);
+        const br = r(rYear + sumBot);
+        const bl = r(sumBot + rDay);
 
-        // 5. Inner points (closer to center) lines
-        // Usually Center + Corner
-        const innerLeft = this.reduce(rDay + center);
-        const innerTop = this.reduce(rMonth + center);
-        const innerRight = this.reduce(rYear + center);
-        const innerBottom = this.reduce(sumBottom + center);
+        // 4. Inner-точки (на осях ближе к центру)
+        const innerLeft = r(rDay + center);
+        const innerTop = r(rMonth + center);
+        const innerRight = r(rYear + center);
+        const innerBottom = r(sumBot + center);
 
         return {
             points: {
-                left: rDay,
-                top: rMonth,
-                right: rYear,
-                bottom: sumBottom,
-                center: center,
+                left: rDay, top: rMonth, right: rYear, bottom: sumBot,
+                center,
                 tl, tr, br, bl,
                 innerLeft, innerTop, innerRight, innerBottom
             },
@@ -63,117 +61,217 @@ const YearMatrixLogic = {
         };
     },
 
+    /* ─── SVG-рендеринг (стиль основной матрицы) ─── */
+
     /**
-     * Draw SVG for Yearly Matrix
-     * @param {Object} data Calculated data
-     * @param {string} containerId DOM ID to inject SVG into
+     * Рисует годовую матрицу в указанный контейнер
+     * @param {Object} data — результат calculate()
+     * @param {string} containerId — id контейнера (div)
      */
     drawSVG(data, containerId) {
         const container = document.getElementById(containerId);
         if (!container) return;
 
         const p = data.points;
-        const width = 360; // Internal SVG coordinate space
-        const height = 360;
-        const cx = 180;
-        const cy = 180;
 
-        // Colors from screenshot
-        const colors = {
-            purple: '#9059D2',
-            blue: '#2F80ED',
-            cyan: '#56CCF2',
-            green: '#27AE60',
-            yellow: '#F2C94C',
-            orange: '#F2994A',
-            red: '#EB5757',
-            white: '#FFFFFF',
-            text: '#000000',
-            line: 'rgba(0, 0, 0, 0.15)'
+        // --- SVG canvas ---
+        const svgNS = 'http://www.w3.org/2000/svg';
+        const W = 700, H = 700;
+        const svg = document.createElementNS(svgNS, 'svg');
+        svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+        svg.setAttribute('xmlns', svgNS);
+        svg.id = 'yearMatrixSvg';
+
+        const cx = W / 2, cy = H / 2;
+        const radius = 270;
+        const rScale = 1.25;
+        const tScale = 1.20;
+
+        // Layers (same pattern as main matrix)
+        const lineLayer = el('g', { stroke: 'rgba(0,0,0,0.15)', 'stroke-width': 2 });
+        const nodeLayer = el('g');
+        const textLayer = el('g');
+        svg.append(lineLayer, nodeLayer, textLayer);
+
+        // 8 углов на окружности
+        const angles = [
+            Math.PI,           // 0: Left
+            Math.PI * 5 / 4,   // 1: TL
+            Math.PI * 3 / 2,   // 2: Top
+            Math.PI * 7 / 4,   // 3: TR
+            0,                 // 4: Right
+            Math.PI / 4,       // 5: BR
+            Math.PI / 2,       // 6: Bottom
+            Math.PI * 3 / 4    // 7: BL
+        ];
+
+        const pt = (angle, r) => ({
+            x: cx + r * Math.cos(angle),
+            y: cy + r * Math.sin(angle)
+        });
+
+        // Outer points (8)
+        const outer = angles.map(a => pt(a, radius));
+
+        // Inner points (mid-radius)
+        const innerRadius = 140;
+        const inner = angles.map(a => pt(a, innerRadius));
+
+        // ─── Линии ───
+
+        // Personal square: 0-2-4-6
+        connectLine(outer[0], outer[2]);
+        connectLine(outer[2], outer[4]);
+        connectLine(outer[4], outer[6]);
+        connectLine(outer[6], outer[0]);
+
+        // Ancestral square: 1-3-5-7
+        connectLine(outer[1], outer[3]);
+        connectLine(outer[3], outer[5]);
+        connectLine(outer[5], outer[7]);
+        connectLine(outer[7], outer[1]);
+
+        // Main axes
+        connectLine(outer[0], outer[4]);
+        connectLine(outer[2], outer[6]);
+
+        // Inner axes to center
+        const cPt = { x: cx, y: cy };
+        [0, 2, 4, 6].forEach(i => connectLine(inner[i], cPt));
+
+        // ─── Ноды ───
+
+        // Основной квадрат (Left / Top / Right / Bottom)
+        const mainVals = [p.left, null, p.top, null, p.right, null, p.bottom, null];
+        const mainFills = ['#9A71C9', '#fff', '#9A71C9', '#fff', '#F34B47', '#fff', '#F34B47', '#fff'];
+        const mainTxt = ['#fff', '#000', '#fff', '#000', '#fff', '#000', '#fff', '#000'];
+
+        // Diagonal values
+        const diagVals = [null, p.tl, null, p.tr, null, p.br, null, p.bl];
+
+        outer.forEach((op, i) => {
+            const v = mainVals[i] ?? diagVals[i];
+            if (v == null) return; // skip if no value at this index (shouldn't happen, but safety)
+            drawNode(op.x, op.y, 22, mainFills[i], '#000', v, mainTxt[i], 25);
+        });
+
+        // Draw diagonal nodes separately (they always exist)
+        [1, 3, 5, 7].forEach(i => {
+            drawNode(outer[i].x, outer[i].y, 18, '#fff', '#000', diagVals[i], '#000', 20);
+        });
+
+        // Inner points (on axes — Blue / Orange pattern)
+        const innerVals = [p.innerLeft, null, p.innerTop, null, p.innerRight, null, p.innerBottom, null];
+        const innerFills = ['#3EB4F0', '#fff', '#3EB4F0', '#fff', '#D88A4B', '#fff', '#D88A4B', '#fff'];
+        const innerTxt = ['#fff', '#000', '#fff', '#000', '#fff', '#000', '#fff', '#000'];
+
+        [0, 2, 4, 6].forEach(i => {
+            drawNode(inner[i].x, inner[i].y, 16, innerFills[i], '#000', innerVals[i], innerTxt[i], 18);
+        });
+
+        // Center (Yellow — like main matrix)
+        drawNode(cx, cy, 28, '#F4F866', '#000', p.center, '#000', 22);
+
+        // ─── Подписи к основным точкам ───
+        const labels = {
+            0: 'День рожд.',
+            2: 'Месяц рожд.',
+            4: 'Год прогноза',
+            6: 'Сумма'
         };
 
-        // Radii
-        const rOuter = 140;
-        const rInner = 80;
-        const rCenter = 30;
+        const labelOffsets = {
+            0: [-50, 0],   // Left — сдвиг влево
+            2: [0, -45],   // Top  — сдвиг вверх
+            4: [50, 0],    // Right — сдвиг вправо
+            6: [0, 45]     // Bottom — сдвиг вниз
+        };
 
-        // SVG Template
-        let svgHtml = `
-            <svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
-                <!-- Defs for gradients or filters if needed -->
-                <defs>
-                   <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-                      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.15"/>
-                   </filter>
-                </defs>
+        Object.entries(labels).forEach(([idx, label]) => {
+            const i = parseInt(idx);
+            const op = outer[i];
+            const [ox, oy] = labelOffsets[i];
+            const lx = op.x + ox;
+            const ly = op.y + oy;
+            const anchor = i === 0 ? 'end' : i === 4 ? 'start' : 'middle';
+            const t = el('text', {
+                x: lx, y: ly,
+                'text-anchor': anchor,
+                'dominant-baseline': 'central',
+                fill: '#555',
+                'font-size': 11 * tScale,
+                'font-weight': '600',
+                'font-family': 'Manrope, sans-serif'
+            });
+            t.textContent = label;
+            textLayer.append(t);
+        });
 
-                <!-- Background/Lines Layer -->
-                <g stroke="${colors.line}" stroke-width="1.5">
-                    <!-- Octagon/Circle outline -->
-                    <circle cx="${cx}" cy="${cy}" r="${rOuter}" fill="none" />
-                    <!-- Inner Circle -->
-                    <circle cx="${cx}" cy="${cy}" r="${rInner}" fill="none" />
-                    
-                    <!-- Axes -->
-                    <line x1="${cx - rOuter}" y1="${cy}" x2="${cx + rOuter}" y2="${cy}" /> <!-- Horz -->
-                    <line x1="${cx}" y1="${cy - rOuter}" x2="${cx}" y2="${cy + rOuter}" /> <!-- Vert -->
-                    <line x1="${cx - rOuter * 0.707}" y1="${cy - rOuter * 0.707}" x2="${cx + rOuter * 0.707}" y2="${cy + rOuter * 0.707}" /> <!-- Diag 1 -->
-                    <line x1="${cx - rOuter * 0.707}" y1="${cy + rOuter * 0.707}" x2="${cx + rOuter * 0.707}" y2="${cy - rOuter * 0.707}" /> <!-- Diag 2 -->
-                </g>
+        // ─── Year indicator ───
+        const yearLabel = el('text', {
+            x: cx, y: 45,
+            'text-anchor': 'middle',
+            'dominant-baseline': 'central',
+            fill: '#333',
+            'font-size': 18 * tScale,
+            'font-weight': '800',
+            'font-family': 'Manrope, sans-serif'
+        });
+        yearLabel.textContent = `Прогноз на ${data.input.targetYear} год`;
+        textLayer.append(yearLabel);
 
-                <!-- Period Labels (Months on spokes) - Placeholder visual -->
-                <g font-family="Manrope, sans-serif" font-size="6" fill="#3E67EE" text-anchor="middle">
-                   <!-- Logic to place dates would go here, omitting for simplicity/cleanliness first -->
-                </g>
+        // ─── Inject SVG into container ───
+        container.innerHTML = '';
+        container.appendChild(svg);
 
-                <!-- Nodes -->
-                <g>
-                    <!-- CENTER (Yellow) -->
-                    ${this.drawCircle(cx, cy, 26, colors.yellow, p.center, true)}
+        // Fix textContent for nodes that used 'content' attribute
+        svg.querySelectorAll('text').forEach(t => {
+            if (t.getAttribute('content')) {
+                t.textContent = t.getAttribute('content');
+                t.removeAttribute('content');
+            }
+        });
 
-                    <!-- LEFT (Purple) -->
-                    ${this.drawCircle(cx - rOuter, cy, 20, colors.purple, p.left, true)}
-                    <!-- Inner Left (Blue) -->
-                    ${this.drawCircle(cx - rInner, cy, 14, colors.blue, p.innerLeft, true)}
+        /* ── Local helpers ── */
 
-                    <!-- TOP (Purple) -->
-                    ${this.drawCircle(cx, cy - rOuter, 20, colors.purple, p.top, true)}
-                    <!-- Inner Top (Blue) -->
-                    ${this.drawCircle(cx, cy - rInner, 14, colors.blue, p.innerTop, true)}
+        function el(tag, attrs = {}) {
+            const e = document.createElementNS(svgNS, tag);
+            for (const k in attrs) e.setAttribute(k, attrs[k]);
+            return e;
+        }
 
-                    <!-- RIGHT (Red) -->
-                    ${this.drawCircle(cx + rOuter, cy, 20, colors.red, p.right, true)}
-                    <!-- Inner Right (Orange) -->
-                    ${this.drawCircle(cx + rInner, cy, 14, colors.orange, p.innerRight, true)}
+        function connectLine(a, b, col = '#888', width = 2, opacity = 0.5) {
+            const offsetR = 24;
+            const angle = Math.atan2(b.y - a.y, b.x - a.x);
+            const start = { x: a.x + offsetR * Math.cos(angle), y: a.y + offsetR * Math.sin(angle) };
+            const end = { x: b.x - offsetR * Math.cos(angle), y: b.y - offsetR * Math.sin(angle) };
+            lineLayer.append(el('line', {
+                x1: start.x, y1: start.y,
+                x2: end.x, y2: end.y,
+                stroke: col, 'stroke-width': width, opacity
+            }));
+        }
 
-                    <!-- BOTTOM (Red) -->
-                    ${this.drawCircle(cx, cy + rOuter, 20, colors.red, p.bottom, true)}
-                    <!-- Inner Bottom (Orange) -->
-                    ${this.drawCircle(cx, cy + rInner, 14, colors.orange, p.innerBottom, true)}
-
-                    <!-- DIAGONALS (White with black text usually, or specific colors) -->
-                     ${this.drawCircle(cx - rOuter * 0.7, cy - rOuter * 0.7, 16, colors.white, p.tl, false, true)}
-                     ${this.drawCircle(cx + rOuter * 0.7, cy - rOuter * 0.7, 16, colors.white, p.tr, false, true)}
-                     ${this.drawCircle(cx + rOuter * 0.7, cy + rOuter * 0.7, 16, colors.white, p.br, false, true)}
-                     ${this.drawCircle(cx - rOuter * 0.7, cy + rOuter * 0.7, 16, colors.white, p.bl, false, true)}
-                </g>
-            </svg>
-        `;
-
-        container.innerHTML = svgHtml;
-    },
-
-    drawCircle(cx, cy, r, color, val, isColoredTextWhite = false, hasBorder = false) {
-        const textColor = isColoredTextWhite ? '#FFFFFF' : '#000000';
-        const borderAttr = hasBorder ? `stroke="#333" stroke-width="1"` : '';
-        const textSize = r * 1.1;
-
-        return `
-            <circle cx="${cx}" cy="${cy}" r="${r}" fill="${color}" ${borderAttr} filter="url(#shadow)" />
-            <text x="${cx}" y="${cy}" dy=".35em" text-anchor="middle" 
-                  fill="${textColor}" font-family="Manrope, sans-serif" font-weight="700" font-size="${textSize}">
-                ${val}
-            </text>
-        `;
+        function drawNode(x, y, r, fill, stroke, val, txtCol, fontSize) {
+            const scaledR = r * rScale;
+            const scaledFS = fontSize * tScale;
+            nodeLayer.append(el('circle', {
+                cx: x, cy: y, r: scaledR,
+                fill, stroke, 'stroke-width': 2
+            }));
+            const t = el('text', {
+                x, y,
+                'text-anchor': 'middle',
+                'dominant-baseline': 'central',
+                fill: txtCol,
+                'font-weight': 'bold',
+                'font-size': scaledFS,
+                'font-family': 'Manrope, sans-serif'
+            });
+            t.textContent = val;
+            textLayer.append(t);
+        }
     }
 };
+
+window.YearMatrixLogic = YearMatrixLogic;
