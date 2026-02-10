@@ -114,7 +114,7 @@ const YearMatrixLogic = {
         const cx = 350, cy = 350, radius = 270;
         const rScale = 1.25, tScale = 1.20;
         const innerRadius = 220, innerRadius2 = 178.75;
-        const R_MONTHS = 225; // Кольцо месяцев
+        const R_MONTHS = 55; // Смещаем кольцо месяцев к центру (было 225)
 
         const angles = [
             Math.PI, Math.PI * 5 / 4, Math.PI * 3 / 2, Math.PI * 7 / 4,
