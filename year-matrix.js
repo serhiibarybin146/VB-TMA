@@ -62,6 +62,19 @@ const YearMatrixLogic = {
         const femaleCode = [tr, bl, r(tr + bl)];
         const internalCode = [centerValue, ancestralPower, r(centerValue + ancestralPower)];
 
+        // 7. Dates (Periods) - Placeholder logic
+        const dates = [];
+        let cur = new Date(targetYear, month - 1, day);
+        const fmt = d => ('0' + d.getDate()).slice(-2) + '.' + ('0' + (d.getMonth() + 1)).slice(-2) + '.' + d.getFullYear();
+
+        for (let i = 0; i < 8; i++) {
+            let start = new Date(cur);
+            let end = new Date(cur);
+            end.setDate(end.getDate() + 45); // ~1.5 months per sector
+            dates.push([fmt(start), fmt(end)]);
+            cur = end;
+        }
+
         return {
             date: { day, month, year: targetYear },
             points: {
@@ -78,6 +91,7 @@ const YearMatrixLogic = {
                 spiritual, planetary,
                 ancestralPower, maleCode, femaleCode, internalCode
             },
+            dates,
             input: { day, month, targetYear }
         };
     },
@@ -406,6 +420,49 @@ const YearMatrixLogic = {
                 at.textContent = mAges[i]; textLayer.append(at);
             }
         });
+
+        // ─── Date Labels (Monthly Periods) ───
+        // Placeholder date logic for visual structure
+        const dateRadius = 95 * rScale;
+        const dateData = data.dates || [];
+
+        for (let i = 0; i < 8; i++) {
+            const angle = angles[i]; // 0:Left, 1:TL, ...
+            const isLeft = (angle > Math.PI / 2 && angle < Math.PI * 3 / 2);
+
+            // Adjust angle for text rotation
+            let rot = angle * 180 / Math.PI;
+            if (isLeft) rot += 180;
+
+            const cxDate = cx + dateRadius * Math.cos(angle);
+            const cyDate = cy + dateRadius * Math.sin(angle);
+
+            const group = el('g', {
+                transform: `translate(${cxDate}, ${cyDate}) rotate(${rot})`
+            });
+
+            const d1 = dateData[i]?.[0] || '01.01.2025';
+            const d2 = dateData[i]?.[1] || '31.01.2025';
+
+            const t1 = el('text', {
+                x: 0, y: -4 * tScale,
+                'text-anchor': 'middle', 'dominant-baseline': 'middle',
+                fill: '#3E67EE', 'font-size': 6 * tScale, 'font-weight': '700',
+                'font-family': 'Manrope, sans-serif'
+            });
+            t1.textContent = d1;
+
+            const t2 = el('text', {
+                x: 0, y: 4 * tScale,
+                'text-anchor': 'middle', 'dominant-baseline': 'middle',
+                fill: '#3E67EE', 'font-size': 6 * tScale, 'font-weight': '700',
+                'font-family': 'Manrope, sans-serif'
+            });
+            t2.textContent = d2;
+
+            group.append(t1, t2);
+            textLayer.append(group);
+        }
 
         // ─── Inject ───
         container.innerHTML = '';

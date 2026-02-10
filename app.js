@@ -209,7 +209,7 @@ function showView(viewId) {
     const header = document.querySelector('.tma-header');
     const nav = document.querySelector('.tma-nav');
 
-    if (viewId === 'resultView') {
+    if (viewId === 'resultView' || viewId === 'yearForecastResultView') {
         header.style.display = 'none';
         nav.style.display = 'none';
         document.body.style.paddingBottom = '0';
