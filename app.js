@@ -361,12 +361,49 @@ function navigateTo(pageId) {
     tg.HapticFeedback.impactOccurred('light');
     if (pageId === 'calculate') showView('calcView');
     else if (pageId === 'moneyCalc') showView('moneyCalcView');
+    else if (pageId === 'yearForecast') {
+        showView('yearForecastView');
+        initYearForecastForm();
+    }
     else if (pageId === 'home') {
         // --- History Logic Init ---
         initHistoryEvents();
 
         showView('homeView');
     }
+}
+
+/**
+ * YEAR FORECAST FORM
+ */
+function initYearForecastForm() {
+    const form = document.getElementById('forecastForm');
+    if (!form) return;
+
+    // Apply mask to date input if not already applied
+    const dateInput = document.getElementById('forecastDate');
+    if (dateInput && !dateInput.dataset.masked) {
+        dateInput.addEventListener('input', function (e) {
+            let v = this.value.replace(/\D/g, '');
+            if (v.length > 8) v = v.substring(0, 8);
+            let formatted = '';
+            if (v.length > 0) formatted += v.substring(0, 2);
+            if (v.length > 2) formatted += '.' + v.substring(2, 4);
+            if (v.length > 4) formatted += '.' + v.substring(4, 8);
+            this.value = formatted;
+        });
+        dateInput.dataset.masked = "true";
+    }
+
+    form.onsubmit = function(e) {
+        e.preventDefault();
+        tg.HapticFeedback.impactOccurred('medium');
+        tg.showConfirm('Данные успешно введены! Хотите выполнить расчет?', (confirmed) => {
+            if (confirmed) {
+                tg.showAlert('Раздел расчета таблиц находится в разработке.');
+            }
+        });
+    };
 }
 
 /**

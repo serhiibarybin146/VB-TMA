@@ -1110,3 +1110,68 @@ body {
 
 .money-desc-box { font-size: 14px; color: #000 !important; line-height: 1.6; text-align: center; font-weight: 500; }
 
+
+/* YEAR FORECAST VIEW STYLES */
+#yearForecastView {
+    padding: 20px;
+    background: #fdf6f9; /* Special background from screenshot */
+    min-height: 100vh;
+}
+
+.forecast-container {
+    max-width: 400px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 24px;
+    box-shadow: 0 10px 30px rgba(112, 48, 160, 0.1);
+}
+
+.forecast-title {
+    color: #7030a0;
+    font-size: 24px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.form-group-forecast {
+    margin-bottom: 25px;
+}
+
+.forecast-label {
+    display: block;
+    color: #7030a0;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.forecast-label small {
+    display: block;
+    font-size: 12px;
+    font-weight: 400;
+    color: #a080c0;
+    margin-top: 4px;
+}
+
+.forecast-input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #f0e6f5;
+    border-radius: 14px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background: #fcfaff;
+}
+
+.forecast-input:focus {
+    outline: none;
+    border-color: #7030a0;
+    background: #fff;
+}
+
+#yearForecastView .back-link {
+    color: #7030a0;
+    margin-bottom: 20px;
+}

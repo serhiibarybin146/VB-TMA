@@ -79,15 +79,16 @@
                     </div>
                 </div>
 
-                <div class="matrix-card locked" data-feature="year">
+                <!-- Card 3 (Yearly Forecast) - UNLOCKED -->
+                <div class="matrix-card primary" onclick="navigateTo('yearForecast')">
                     <div class="card-glass"></div>
                     <div class="card-content">
-                        <div class="lock-header">
-                            <iconify-icon icon="solar:lock-keyhole-minimalistic-bold"></iconify-icon>
-                            <span class="card-tag gold">Premium</span>
-                        </div>
                         <h3>Прогноз на год</h3>
                         <p>Ваши возможности и вызовы в этом году</p>
+                        <div class="card-footer">
+                            <span>Перейти</span>
+                            <iconify-icon icon="solar:arrow-right-up-linear"></iconify-icon>
+                        </div>
                     </div>
                 </div>
 
@@ -102,6 +103,35 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- YEAR FORECAST VIEW -->
+        <section id="yearForecastView" class="view">
+            <div class="back-link" onclick="navigateTo('home')">
+                <iconify-icon icon="solar:arrow-left-linear"></iconify-icon>
+                <span>Назад</span>
+            </div>
+
+            <div class="forecast-container">
+                <h2 class="forecast-title">Таблица персональных дат</h2>
+
+                <form class="forecast-form" id="forecastForm">
+                    <div class="form-group-forecast">
+                        <label class="forecast-label">Имя:</label>
+                        <input type="text" id="forecastName" class="forecast-input" required>
+                    </div>
+
+                    <div class="form-group-forecast">
+                        <label class="forecast-label">
+                            Дата
+                            <small>(дата рождения, месяц рождения, искомый год):</small>
+                        </label>
+                        <input type="text" id="forecastDate" class="forecast-input" placeholder="03.09.2022" required>
+                    </div>
+
+                    <button type="submit" class="btn-primary full-width">Ввести данные</button>
+                </form>
             </div>
         </section>
 
