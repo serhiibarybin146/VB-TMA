@@ -99,9 +99,17 @@ const YearMatrixLogic = {
     /* ─── ВИЗУАЛИЗАЦИЯ (ТОЧНАЯ КОПИЯ ИЗ app.js + months) ─── */
 
     drawSVG(data, containerId) {
-        const svg = document.getElementById(containerId);
-        if (!svg) return;
-        svg.innerHTML = '';
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = '';
+
+        const W = 700, H = 700;
+        const svgNS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(svgNS, "svg");
+        svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+        svg.style.width = '100%';
+        svg.style.height = 'auto';
+        container.appendChild(svg);
 
         const cx = 350, cy = 350, radius = 270;
         const rScale = 1.25, tScale = 1.20;
@@ -123,7 +131,7 @@ const YearMatrixLogic = {
         svg.append(lineLayer, ageLayer, monthLayer, nodeLayer, textLayer);
 
         function createSVGElement(tag, attrs = {}) {
-            const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+            const el = document.createElementNS(svgNS, tag);
             for (let key in attrs) el.setAttribute(key, attrs[key]);
             return el;
         }
