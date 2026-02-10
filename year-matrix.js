@@ -168,8 +168,26 @@ const YearMatrixLogic = {
         }
 
         // --- ОСТАЛЬНОЕ (Копия из app.js) ---
-        // Ages (Removed for Year Matrix)
-        // (function drawAgeLabels() { ... })();
+        // Ages
+        (function drawAgeLabels() {
+            for (let i = 0; i < 8; i++) {
+                const p1 = outerPoints[i], p2 = outerPoints[(i + 1) % 8];
+                const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
+                const vcx = cx - mx, vcy = cy - my, distC = Math.hypot(vcx, vcy);
+                const nx = vcx / distC, ny = vcy / distC;
+                for (let j = 1; j <= 7; j++) {
+                    const t = 0.5 + (j - 4) / 9;
+                    const x = p1.x + (p2.x - p1.x) * t, y = p1.y + (p2.y - p1.y) * t;
+                    const offset = (j === 4 && [0, 3, 4, 7].includes(i)) ? -4 : -14;
+                    const ageText = createSVGElement('text', { x: x + nx * offset, y: y + ny * offset, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: j === 4 ? '#000' : '#999', 'font-size': (j === 4 ? 10 : 8) * tScale, 'font-weight': j === 4 ? '700' : 'normal', 'font-family': 'Manrope, sans-serif' });
+                    const startAge = i * 10;
+                    if (j === 4) ageText.textContent = `${startAge + 5} лет`;
+                    else if (j < 4) ageText.textContent = `${startAge + j}-${startAge + j + 1}`;
+                    else ageText.textContent = `${startAge + j + 1}-${startAge + j + 2}`;
+                    ageLayer.append(ageText);
+                }
+            }
+        })();
 
         // Lines
         const connect = (i1, i2, pts, off = 22) => {
@@ -218,12 +236,21 @@ const YearMatrixLogic = {
         ray(1, "#3E67EE", "линия мужского рода", true, 'arrowMale'); ray(3, "#F7494C", "линия женского рода", false, 'arrowFemale');
         ray(5, "#3E67EE", "", false, 'arrowMale'); ray(7, "#F7494C", "", true, 'arrowFemale');
 
-        // Perimeter Dots & Labels (Removed for Year Matrix)
-        /*
+        // Perimeter Dots & Labels
         for (let i = 0; i < 8; i++) {
-            ...
+            const p1 = outerPoints[i], p2 = outerPoints[(i + 1) % 8], dx = p2.x - p1.x, dy = p2.y - p1.y, len = Math.hypot(dx, dy);
+            let nx = -dy / len, ny = dx / len; if (nx * ((p1.x + p2.x) / 2 - cx) + ny * ((p1.y + p2.y) / 2 - cy) < 0) { nx = -nx; ny = -ny; }
+            const ux = dx / len, uy = dy / len;
+            lineLayer.append(createSVGElement('line', { x1: p1.x + nx * 30 - ux * 15, y1: p1.y + ny * 30 - uy * 15, x2: p2.x + nx * 30 + ux * 15, y2: p2.y + ny * 30 + uy * 15, stroke: "#000", opacity: 0.3 }));
+            const v1 = data.values[i], v2 = data.values[(i + 1) % 8], p4 = this.reduce(v1 + v2), p2_ = this.reduce(p4 + v1), p1_ = this.reduce(p2_ + v1), p6 = this.reduce(p4 + v2), p7 = this.reduce(p6 + v2);
+            [null, p1_, p2_, this.reduce(p2_ + p4), p4, this.reduce(p4 + p6), p6, p7].forEach((v, j) => {
+                if (j === 0) return;
+                const t = 0.5 + (j - 4) / 9, px = p1.x + ux * len * t + nx * 30, py = p1.y + uy * len * t + ny * 30;
+                nodeLayer.append(createSVGElement('circle', { cx: px, cy: py, r: (j === 4 ? 4 : 2) * rScale, fill: "#cc3366" }));
+                const l = createSVGElement('text', { x: p1.x + ux * len * t + nx * 48, y: p1.y + uy * len * t + ny * 48, 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': (j === 4 ? 13 : 11) * tScale, 'font-weight': j === 4 ? 'bold' : 'normal' });
+                l.textContent = v; textLayer.append(l);
+            });
         }
-        */
 
         // Final Markers
         const mLetters = ["A", "Д", "Б", "Е", "В", "Ж", "Г", "З"], mOffsets = [[-42.5, 0], [-30, -30], [0, -42.5], [30, -30], [42.5, 0], [30, 30], [0, 42.5], [-30, 30]];
