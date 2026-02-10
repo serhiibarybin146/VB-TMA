@@ -193,30 +193,19 @@ const YearMatrixLogic = {
             drawNode(uPoints[i].x, uPoints[i].y, 15, uColors[i], "#000", data.U[i], (i % 2 === 0 ? "#fff" : "#000"), 16);
         }
 
-        // Mids & Extras
+        // Mids & Extras (Removed as per user request: "удали теперь зеленные кружки")
+        /*
         const midU1 = this.reduce(data.U[0] + data.points.centerValue), midU2 = this.reduce(data.U[2] + data.points.centerValue);
         drawNode(cx + (innerRadius2 / 2) * Math.cos(angles[0]), cy + (innerRadius2 / 2) * Math.sin(angles[0]), 15, "#73b55f", "#000", midU1, "#fff", 14);
         drawNode(cx + (innerRadius2 / 2) * Math.cos(angles[2]), cy + (innerRadius2 / 2) * Math.sin(angles[2]), 15, "#73b55f", "#000", midU2, "#fff", 14);
+        */
 
-        // Markers & Rays
+        // Markers & Rays (Removed as per user request: "линии со стрелочками и надписи линии мужского рода, линии женского рода")
+        /*
         const defs = createSVGElement('defs'); svg.appendChild(defs);
-        const mkArrow = (id, col) => {
-            const m = createSVGElement('marker', { id, viewBox: '0 0 10 10', refX: '9', refY: '5', markerWidth: '6', markerHeight: '6', orient: 'auto-start-reverse' });
-            m.append(createSVGElement('path', { d: 'M 0 0 L 10 5 L 0 10 z', fill: col })); return m;
-        };
-        defs.append(mkArrow('arrowMale', '#3E67EE'), mkArrow('arrowFemale', '#F7494C'));
-        const ray = (idx, col, txt, flip, mid) => {
-            const p = uPoints[idx], dx = p.x - cx, dy = p.y - cy, len = Math.hypot(dx, dy), t = (len - 17 * rScale) / len;
-            const line = createSVGElement('line', { x1: cx, y1: cy, x2: cx + dx * t, y2: cy + dy * t, stroke: col, 'stroke-width': 2, 'marker-end': `url(#${mid})` });
-            lineLayer.append(line);
-            if (txt) {
-                const mx = (cx + p.x) / 2, my = (cy + p.y) / 2;
-                const tEl = createSVGElement('text', { x: mx, y: my, 'text-anchor': 'middle', 'font-size': 9 * tScale, transform: `rotate(${angles[idx] * 180 / Math.PI + (flip ? 180 : 0)} ${mx} ${my}) translate(0,-5)` });
-                tEl.textContent = txt; textLayer.append(tEl);
-            }
-        };
-        ray(1, "#3E67EE", "линия мужского рода", true, 'arrowMale'); ray(3, "#F7494C", "линия женского рода", false, 'arrowFemale');
+        ...
         ray(5, "#3E67EE", "", false, 'arrowMale'); ray(7, "#F7494C", "", true, 'arrowFemale');
+        */
 
         // Perimeter Dots & Labels
         for (let i = 0; i < 8; i++) {
