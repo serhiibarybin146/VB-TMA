@@ -179,7 +179,7 @@ const YearMatrixLogic = {
                 textLayer.append(mt);
 
                 // Даты (развернуты горизонтально, с годом)
-                const tx = cx + 82 * Math.cos(angleRad), ty = cy + 82 * Math.sin(angleRad);
+                const tx = cx + 100 * Math.cos(angleRad), ty = cy + 100 * Math.sin(angleRad);
                 const g = createSVGElement('g', { transform: `translate(${tx},${ty})` });
                 const d1 = createSVGElement('text', { x: 0, y: -5, 'text-anchor': 'middle', 'font-size': 7 * tScale, fill: '#3388ff', 'font-weight': 'bold' });
                 d1.textContent = m.dateStart;
