@@ -140,12 +140,16 @@ const YearMatrixLogic = {
             const rD = this.reduce(rA + rB + rC);
             const rE = this.reduce(rA + rB + rC + rD);
 
+            const today = new Date();
+            const isActive = (today >= start && today <= new Date(end.getTime() + 86400000)); // Включая весь последний день
+
             months.push({
                 seq: i,
                 label: i + 1,
                 dateStart: fmt(start),
                 dateEnd: fmt(end),
-                value: rE
+                value: rE,
+                isActive: isActive
             });
 
             // Следующий месяц начинается на следующий день после конца текущего
@@ -236,9 +240,22 @@ const YearMatrixLogic = {
             data.months.forEach((m, i) => {
                 const angleRad = (210 - 15 + i * 30) * Math.PI / 180;
                 const mx = cx + R_MONTHS * Math.cos(angleRad), my = cy + R_MONTHS * Math.sin(angleRad);
+
                 // Малый кружок
-                nodeLayer.append(createSVGElement('circle', { cx: mx, cy: my, r: 10 * rScale, fill: '#fff', stroke: '#3388ff', 'stroke-width': 2 }));
-                const mt = createSVGElement('text', { x: mx, y: my, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: '#3388ff', 'font-weight': 'bold', 'font-size': 10 * tScale });
+                const circleStroke = '#3388ff';
+                const circleRadius = 10 * rScale;
+
+                nodeLayer.append(createSVGElement('circle', {
+                    cx: mx, cy: my, r: circleRadius,
+                    fill: '#fff',
+                    stroke: circleStroke,
+                    'stroke-width': 2
+                }));
+
+                const mt = createSVGElement('text', {
+                    x: mx, y: my, 'text-anchor': 'middle', 'dominant-baseline': 'central',
+                    fill: circleStroke, 'font-weight': 'bold', 'font-size': 10 * tScale
+                });
                 mt.textContent = i + 1;
                 textLayer.append(mt);
 

@@ -58,7 +58,40 @@
             const [y, m, d] = dateVal.split('-').map(Number);
             const data = YearMatrixLogic.calculate(d, m, y);
             YearMatrixLogic.drawSVG(data, 'matrix-container');
-            console.log("Calculated Data:", data);
+
+            // --- ДОПОЛНИТЕЛЬНАЯ ПОДСВЕТКА (ТОЛЬКО ДЛЯ ТЕСТА) ---
+            const activeMonth = data.months.find(m => m.isActive);
+            if (activeMonth) {
+                const svg = document.querySelector('#matrix-container svg');
+                if (!svg) return;
+
+                const texts = Array.from(svg.querySelectorAll('text'));
+                const monthText = texts.find(t => t.textContent == (activeMonth.seq + 1) && parseFloat(t.getAttribute('font-size')) < 15);
+
+                if (monthText) {
+                    const tx = parseFloat(monthText.getAttribute('x'));
+                    const ty = parseFloat(monthText.getAttribute('y'));
+                    const svgNS = "http://www.w3.org/2000/svg";
+
+                    // 1. Находим основной кружок и заливаем его синим цветом
+                    const circles = Array.from(svg.querySelectorAll('circle'));
+                    const mainCircle = circles.find(c =>
+                        Math.abs(parseFloat(c.getAttribute('cx')) - tx) < 1 &&
+                        Math.abs(parseFloat(c.getAttribute('cy')) - ty) < 1 &&
+                        parseFloat(c.getAttribute('r')) < 15
+                    );
+
+                    if (mainCircle) {
+                        mainCircle.setAttribute("fill", "#3388ff"); // Синяя заливка
+                        mainCircle.setAttribute("stroke", "none");
+                    }
+
+                    // 3. Делаем текст внутри белым
+                    monthText.setAttribute("fill", "#ffffff");
+                    monthText.setAttribute("font-weight", "bold");
+                    monthText.setAttribute("font-size", "11");
+                }
+            }
         }
         window.onload = updateMatrix;
     </script>
