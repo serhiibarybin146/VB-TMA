@@ -288,8 +288,10 @@ const YearMatrixLogic = {
         }));
 
         const pMinnerB = lerp(pEdgeStep4, pEdgeStep6, 0.25);
+        const pMinnerA = lerp(pEdgeStep4, pEdgeStep6, 0.50);
         const pMinnerC = lerp(pEdgeStep4, pEdgeStep6, 0.75);
 
+        drawExtra(pMinnerA.x, pMinnerA.y, data.innerA, "К", -17, -17, "#fff", false, false);
         drawExtra(pMinnerB.x, pMinnerB.y, data.innerB, "О", -17, -17, "#fff", true, false);
         drawExtra(pMinnerC.x, pMinnerC.y, data.innerC, "Н", -17, -17, "#fff", false, true);
 
