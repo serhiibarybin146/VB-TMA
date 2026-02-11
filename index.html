@@ -103,6 +103,19 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Month Forecast Section -->
+                <div class="matrix-card primary" onclick="navigateTo('monthForecast')">
+                    <div class="card-glass"></div>
+                    <div class="card-content">
+                        <h3>Прогноз на месяц</h3>
+                        <p>Влияние месяца</p>
+                        <div class="card-footer">
+                            <span>Перейти</span>
+                            <iconify-icon icon="solar:arrow-right-up-linear"></iconify-icon>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -259,6 +272,38 @@
                     <p>Этот код является вашим персональным финансовым ключом. Используйте его для активации денежной
                         энергии: в качестве пароля, пишите на документах или просто держите в фокусе внимания.</p>
                 </div>
+            </div>
+        </section>
+
+        <!-- MONTH FORECAST VIEW -->
+        <section id="monthForecastView" class="view">
+            <div class="back-link" onclick="navigateTo('home')">
+                <iconify-icon icon="solar:arrow-left-linear"></iconify-icon>
+                <span>Назад</span>
+            </div>
+
+            <div class="form-header">
+                <h2>Прогноз на месяц</h2>
+                <p>Узнайте влияния месяца для важных событий</p>
+            </div>
+
+            <div class="date-input-container">
+                <div class="date-input-group" style="margin-bottom: 20px;">
+                    <p style="font-size: 13px; color: var(--hint-color); margin-bottom: 8px; margin-left: 4px;">Дата
+                        рождения:</p>
+                    <input type="text" id="monthForecastBirthInput" class="tma-input" placeholder="ДД.ММ.ГГГГ"
+                        inputmode="numeric" maxlength="10">
+                </div>
+
+                <div class="date-input-group" style="margin-bottom: 20px;">
+                    <p style="font-size: 13px; color: var(--hint-color); margin-bottom: 8px; margin-left: 4px;">Дата
+                        события:</p>
+                    <input type="text" id="monthForecastEventInput" class="tma-input" placeholder="ДД.ММ.ГГГГ"
+                        inputmode="numeric" maxlength="10">
+                </div>
+
+                <button class="btn-primary full-width"
+                    onclick="alert('Функция расчета будет добавлена позже')">Рассчитать</button>
             </div>
         </section>
 

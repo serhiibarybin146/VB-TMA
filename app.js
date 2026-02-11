@@ -377,6 +377,10 @@ function navigateTo(pageId) {
         showView('yearForecastView');
         initYearForecastForm();
     }
+    else if (pageId === 'monthForecast') {
+        showView('monthForecastView');
+        initMonthForecastForm();
+    }
     else if (pageId === 'home') {
         // --- History Logic Init ---
         initHistoryEvents();
@@ -412,6 +416,27 @@ function initYearForecastForm() {
         tg.HapticFeedback.impactOccurred('medium');
         performYearForecast();
     };
+}
+
+/**
+ * MONTH FORECAST FORM
+ */
+function initMonthForecastForm() {
+    ['monthForecastBirthInput', 'monthForecastEventInput'].forEach(id => {
+        const inp = document.getElementById(id);
+        if (inp && !inp.dataset.masked) {
+            inp.addEventListener('input', function (e) {
+                let v = this.value.replace(/\D/g, '');
+                if (v.length > 8) v = v.substring(0, 8);
+                let formatted = '';
+                if (v.length > 0) formatted += v.substring(0, 2);
+                if (v.length > 2) formatted += '.' + v.substring(2, 4);
+                if (v.length > 4) formatted += '.' + v.substring(4, 8);
+                this.value = formatted;
+            });
+            inp.dataset.masked = "true";
+        }
+    });
 }
 
 /**
