@@ -56,15 +56,15 @@ const YearMatrixLogic = {
         const U = values.map(v => this.reduce(v + centerValue));
         const Y = values.map((v, idx) => this.reduce(v + U[idx]));
 
-        const sky = this.reduce(rMonth + sumBottom);
-        const earth = this.reduce(rDay + rYear);
-        const maleLine = this.reduce(tl + br);
-        const femaleLine = this.reduce(tr + bl);
+        const innerA = this.reduce(U[4] + U[6]);
+        const innerB = this.reduce(U[4] + innerA);
+        const innerC = this.reduce(U[6] + innerA);
 
         return {
             date: { day, month, year },
             points: { rDay, rMonth, rYear, sumBottom, centerValue, tl, tr, br, bl },
             values, U, Y,
+            innerA, innerB, innerC,
             destiny: { sky, earth, personal: this.reduce(sky + earth), maleLine, femaleLine, social: this.reduce(maleLine + femaleLine) }
         };
     },
@@ -209,25 +209,46 @@ const YearMatrixLogic = {
 
         // Y and U
         const uColors = ["#3EB4F0", "#fff", "#3EB4F0", "#fff", "#D88A4B", "#fff", "#D88A4B", "#fff"];
+        const uNodePoints = angles.map(a => ({ x: cx + innerRadius2 * Math.cos(a), y: cy + innerRadius2 * Math.sin(a) }));
         for (let i = 0; i < 8; i++) {
             const fillY = (i === 0 || i === 2) ? "#3366CC" : "#fff";
             drawNode(cx + innerRadius * Math.cos(angles[i]), cy + innerRadius * Math.sin(angles[i]), 18, fillY, "#000", data.Y[i], (fillY === "#3366CC" ? "#fff" : "#000"), 20);
-            drawNode(uPoints[i].x, uPoints[i].y, 15, uColors[i], "#000", data.U[i], (i % 2 === 0 ? "#fff" : "#000"), 16);
+            drawNode(uNodePoints[i].x, uNodePoints[i].y, 15, uColors[i], "#000", data.U[i], (i % 2 === 0 ? "#fff" : "#000"), 16);
         }
 
-        // Mids & Extras (Removed as per user request: "удали теперь зеленные кружки")
-        /*
-        const midU1 = this.reduce(data.U[0] + data.points.centerValue), midU2 = this.reduce(data.U[2] + data.points.centerValue);
-        drawNode(cx + (innerRadius2 / 2) * Math.cos(angles[0]), cy + (innerRadius2 / 2) * Math.sin(angles[0]), 15, "#73b55f", "#000", midU1, "#fff", 14);
-        drawNode(cx + (innerRadius2 / 2) * Math.cos(angles[2]), cy + (innerRadius2 / 2) * Math.sin(angles[2]), 15, "#73b55f", "#000", midU2, "#fff", 14);
-        */
+        // Money and Relationship Channel
+        const innerRadiusHalf = innerRadius2 * 0.5;
+        const drawExtra = (angleIdx, offX, offY, val, letter, lOffX, lOffY, col, dol, hrt) => {
+            const x = cx + innerRadiusHalf * Math.cos(angles[angleIdx]) + offX;
+            const y = cy + innerRadiusHalf * Math.sin(angles[angleIdx]) + offY;
+            drawNode(x, y, 12, col, "#000", val, "#000", 14);
+            // Letter Circle
+            nodeLayer.append(createSVGElement('circle', { cx: x + lOffX, cy: y + lOffY, r: 7 * rScale, fill: "#000" }));
+            textLayer.append(createSVGElement('text', { x: x + lOffX, y: y + lOffY, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: "#fff", 'font-weight': 'bold', 'font-size': 9 * tScale, content: letter }));
+            if (dol) {
+                const d = createSVGElement('text', { x: x - 15, y: y - 37, fill: "#04dd00", 'font-weight': 'bold', 'font-size': 26 * tScale });
+                d.textContent = "$"; textLayer.append(d);
+            }
+            if (hrt) {
+                const hx = x - 45, hy = y - 40;
+                const p = createSVGElement('path', { d: `M ${hx} ${hy} c ${-5 * rScale} ${-5 * rScale}, ${-15 * rScale} 0, ${-10 * rScale} ${10 * rScale} c ${5 * rScale} ${10 * rScale}, ${15 * rScale} ${10 * rScale}, ${20 * rScale} 0 c ${5 * rScale} ${-10 * rScale}, ${-5 * rScale} ${-15 * rScale}, ${-10 * rScale} ${-10 * rScale} Z`, fill: "#e84e42", stroke: "#000" });
+                nodeLayer.append(p);
+            }
+        };
 
-        // Markers & Rays (Removed as per user request: "линии со стрелочками и надписи линии мужского рода, линии женского рода")
-        /*
-        const defs = createSVGElement('defs'); svg.appendChild(defs);
-        ...
-        ray(5, "#3E67EE", "", false, 'arrowMale'); ray(7, "#F7494C", "", true, 'arrowFemale');
-        */
+        // Dashed line for channel
+        lineLayer.append(createSVGElement('line', {
+            x1: uNodePoints[4].x, y1: uNodePoints[4].y,
+            x2: uNodePoints[6].x, y2: uNodePoints[6].y,
+            stroke: '#000', 'stroke-width': 1, 'stroke-dasharray': '5,5'
+        }));
+
+        drawExtra(5, 25, 25, data.innerA, "К", -17, -17, "#fff", false, false);
+        drawExtra(5, 95, 25, data.innerB, "О", -17, -17, "#fff", true, false);
+        drawExtra(5, 25, 95, data.innerC, "Н", -17, -17, "#fff", false, true);
+
+        // SVG text post-processing for 'content' attribute (consistent with app.js)
+        svg.querySelectorAll('text').forEach(t => { if (t.getAttribute('content')) { t.textContent = t.getAttribute('content'); t.removeAttribute('content'); } });
 
         // Perimeter Dots & Labels
         for (let i = 0; i < 8; i++) {
