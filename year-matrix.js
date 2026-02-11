@@ -65,41 +65,78 @@ const YearMatrixLogic = {
         const innerB = this.reduce(U[4] + innerA);
         const innerC = this.reduce(U[6] + innerA);
 
+        const moneyChannel = [innerB, innerA, innerC];
+        const relPoint = this.reduce(centerValue + br);
+        const relChannel = [centerValue, relPoint, br];
+
         return {
             date: { day, month, year },
             points: { rDay, rMonth, rYear, sumBottom, centerValue, tl, tr, br, bl },
             values, U, Y,
             innerA, innerB, innerC,
+            moneyChannel, relChannel,
             destiny: { sky, earth, personal: this.reduce(sky + earth), maleLine, femaleLine, social: this.reduce(maleLine + femaleLine) }
         };
     },
 
-    calculate(day, month, year) {
+    getPersonalYear(birthDay, birthMonth) {
+        const today = new Date();
+        const currentYear = today.getFullYear();
+        const bdayThisYear = new Date(currentYear, birthMonth - 1, birthDay);
+        return today >= bdayThisYear ? currentYear : currentYear - 1;
+    },
+
+    isLeapYear(year) {
+        return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+    },
+
+    calculate(day, month, birthYear) {
+        const targetYear = this.getPersonalYear(day, month);
         const pad = n => String(n).padStart(2, '0');
-        const dateStr = `${year}-${pad(month)}-${pad(day)}`;
+
+        // Матрица года на дату рождения в текущем персональном году
+        const dateStr = `${targetYear}-${pad(month)}-${pad(day)}`;
         const base = this.calculateBase(dateStr);
 
-        // 12 месяцев (Прогноз)
+        // 12 персональных месяцев (Прогноз)
+        // Правило длин месяцев по Бондарь: 31, 28/29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+        const leap = this.isLeapYear(targetYear) || this.isLeapYear(targetYear + 1);
+        const monthLengths = [31, (leap ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
         const months = [];
-        let cur = new Date(year, month - 1, day);
+        let cur = new Date(targetYear, month - 1, day);
+
         for (let i = 0; i < 12; i++) {
             let start = new Date(cur);
             let end = new Date(cur);
-            end.setMonth(end.getMonth() + 1);
-            end.setDate(end.getDate() - 1);
-            const fmt = d => ('0' + d.getDate()).slice(-2) + '.' + ('0' + (d.getMonth() + 1)).slice(-2) + '.' + d.getFullYear();
+            end.setDate(end.getDate() + monthLengths[i] - 1);
+
+            const fmt = d => pad(d.getDate()) + '.' + pad(d.getMonth() + 1) + '.' + d.getFullYear();
+
+            // Расчет энергии месяца: Центр матрицы для (день_рожд, номер_месяца, таргет_год)
+            const m_idx = i + 1;
+            const rA = this.reduce(day);
+            const rB = this.reduce(m_idx);
+            const rC = this.reduce(String(targetYear).split('').reduce((a, b) => a + parseInt(b), 0));
+            const rD = this.reduce(rA + rB + rC);
+            const rE = this.reduce(rA + rB + rC + rD);
+
             months.push({
                 seq: i,
-                label: i === 0 ? 12 : i,
+                label: i + 1,
                 dateStart: fmt(start),
                 dateEnd: fmt(end),
-                value: this.reduce(base.points.rYear + i) // Placeholder
+                value: rE
             });
-            cur = new Date(end); cur.setDate(cur.getDate() + 1);
+            cur = new Date(end);
+            cur.setDate(cur.getDate() + 1);
         }
+
         base.months = months;
+        base.targetYear = targetYear;
         return base;
     },
+
 
     /* ─── ВИЗУАЛИЗАЦИЯ (ТОЧНАЯ КОПИЯ ИЗ app.js + months) ─── */
 
@@ -125,6 +162,7 @@ const YearMatrixLogic = {
             Math.PI, Math.PI * 5 / 4, Math.PI * 3 / 2, Math.PI * 7 / 4,
             0, Math.PI / 4, Math.PI / 2, Math.PI * 3 / 4
         ];
+        const lerp = (p1, p2, t) => ({ x: p1.x + (p2.x - p1.x) * t, y: p1.y + (p2.y - p1.y) * t });
         const outerPoints = angles.map(a => ({ x: cx + radius * Math.cos(a), y: cy + radius * Math.sin(a) }));
         const uPoints = angles.map(a => ({ x: cx + innerRadius2 * Math.cos(a), y: cy + innerRadius2 * Math.sin(a) }));
 
@@ -221,40 +259,47 @@ const YearMatrixLogic = {
             drawNode(uNodePoints[i].x, uNodePoints[i].y, 15, uColors[i], "#000", data.U[i], (i % 2 === 0 ? "#fff" : "#000"), 16);
         }
 
-        // Money and Relationship Channel
-        const drawExtra = (x, y, val, letter, lOffX, lOffY, col, dol, hrt) => {
-            drawNode(x, y, 12, col, "#000", val, "#000", 14);
-            // Letter Circle
-            nodeLayer.append(createSVGElement('circle', { cx: x + lOffX, cy: y + lOffY, r: 7 * rScale, fill: "#000" }));
-            textLayer.append(createSVGElement('text', { x: x + lOffX, y: y + lOffY, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: "#fff", 'font-weight': 'bold', 'font-size': 9 * tScale, content: letter }));
-            if (dol) {
-                const d = createSVGElement('text', { x: x - 15, y: y - 28, fill: "#04dd00", 'font-weight': 'bold', 'font-size': 26 * tScale });
-                d.textContent = "$"; textLayer.append(d);
-            }
-            if (hrt) {
-                const hx = x - 45, hy = y - 30;
-                const p = createSVGElement('path', { d: `M ${hx} ${hy} c ${-5 * rScale} ${-5 * rScale}, ${-15 * rScale} 0, ${-10 * rScale} ${10 * rScale} c ${5 * rScale} ${10 * rScale}, ${15 * rScale} ${10 * rScale}, ${20 * rScale} 0 c ${5 * rScale} ${-10 * rScale}, ${-5 * rScale} ${-15 * rScale}, ${-10 * rScale} ${-10 * rScale} Z`, fill: "#e84e42", stroke: "#000" });
-                nodeLayer.append(p);
-            }
-        };
-
-        // Dashed line for channel
-        const pEdgeStep4 = { x: cx + 200 * Math.cos(angles[4]), y: cy + 200 * Math.sin(angles[4]) };
-        const pEdgeStep6 = { x: cx + 200 * Math.cos(angles[6]), y: cy + 200 * Math.sin(angles[6]) };
+        // Dashed line for Money channel (between Inner Right and Inner Bottom)
+        const pInnerRight = uNodePoints[4]; // Point C' (Right)
+        const pInnerBottom = uNodePoints[6]; // Point D' (Bottom)
         lineLayer.append(createSVGElement('line', {
-            x1: pEdgeStep4.x, y1: pEdgeStep4.y,
-            x2: pEdgeStep6.x, y2: pEdgeStep6.y,
-            stroke: '#000', 'stroke-width': 1, 'stroke-dasharray': '5,5'
+            x1: pInnerRight.x, y1: pInnerRight.y,
+            x2: pInnerBottom.x, y2: pInnerBottom.y,
+            stroke: 'rgba(0,0,0,0.3)', 'stroke-width': 1, 'stroke-dasharray': '5,5'
         }));
 
-        const lerp = (p1, p2, t) => ({ x: p1.x + (p2.x - p1.x) * t, y: p1.y + (p2.y - p1.y) * t });
-        const p1 = lerp(pEdgeStep4, pEdgeStep6, 0.25);
-        const p2 = lerp(pEdgeStep4, pEdgeStep6, 0.50);
-        const p3 = lerp(pEdgeStep4, pEdgeStep6, 0.75);
+        const pM2 = lerp(pInnerRight, pInnerBottom, 0.25);
+        const pM1 = lerp(pInnerRight, pInnerBottom, 0.50);
+        const pM3 = lerp(pInnerRight, pInnerBottom, 0.75);
 
-        drawExtra(p2.x, p2.y, data.innerA, "К", -17, -17, "#fff", false, false);
-        drawExtra(p1.x, p1.y, data.innerB, "О", -17, -17, "#fff", true, false);
-        drawExtra(p3.x, p3.y, data.innerC, "Н", -17, -17, "#fff", false, true);
+        drawNode(pM1.x, pM1.y, 12, "#fff", "#000", data.moneyChannel[1], "#000", 14); // MDS/InnerA
+        drawNode(pM2.x, pM2.y, 12, "#fff", "#000", data.moneyChannel[0], "#000", 14); // InnerB
+        drawNode(pM3.x, pM3.y, 12, "#fff", "#000", data.moneyChannel[2], "#000", 14); // InnerC
+
+        // Dollar icon near money channel
+        const dolPos = lerp(pInnerRight, pInnerBottom, 0.1);
+        const dol = createSVGElement('text', { x: dolPos.x + 10, y: dolPos.y - 15, fill: "#04dd00", 'font-weight': 'bold', 'font-size': 24 * tScale });
+        dol.textContent = "$"; textLayer.append(dol);
+
+        // Dashed line for Relationship channel (between Center and Bottom-Right)
+        const pCenter = { x: cx, y: cy };
+        const pBRouter = outerPoints[5]; // Point H (BR)
+        const pBRinner = uNodePoints[5]; // Point H' (inner BR)
+
+        lineLayer.append(createSVGElement('line', {
+            x1: pCenter.x, y1: pCenter.y,
+            x2: pBRinner.x, y2: pBRinner.y,
+            stroke: 'rgba(0,0,0,0.3)', 'stroke-width': 1, 'stroke-dasharray': '5,5'
+        }));
+
+        const pR1 = lerp(pCenter, pBRinner, 0.5);
+        drawNode(pR1.x, pR1.y, 12, "#fff", "#000", data.relChannel[1], "#000", 14);
+
+        // Heart icon near relationship channel
+        const heartPos = { x: pBRinner.x + 10, y: pBRinner.y - 20 };
+        const hx = heartPos.x, hy = heartPos.y;
+        const heart = createSVGElement('path', { d: `M ${hx} ${hy} c ${-5 * rScale} ${-5 * rScale}, ${-15 * rScale} 0, ${-10 * rScale} ${10 * rScale} c ${5 * rScale} ${10 * rScale}, ${15 * rScale} ${10 * rScale}, ${20 * rScale} 0 c ${5 * rScale} ${-10 * rScale}, ${-5 * rScale} ${-15 * rScale}, ${-10 * rScale} ${-10 * rScale} Z`, fill: "#e84e42", stroke: "#000" });
+        nodeLayer.append(heart);
 
         // SVG text post-processing for 'content' attribute (consistent with app.js)
         svg.querySelectorAll('text').forEach(t => { if (t.getAttribute('content')) { t.textContent = t.getAttribute('content'); t.removeAttribute('content'); } });

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Year Matrix Test</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            background: #f0f2f5;
+        }
+
+        #matrix-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 8px 16px;
+            background: #3388ff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="controls">
+        <input type="date" id="birthdate" value="1982-09-30">
+        <button onclick="updateMatrix()">Calculate Year Matrix</button>
+    </div>
+    <div id="matrix-container"></div>
+
+    <script src="year-matrix.js"></script>
+    <script>
+        function updateMatrix() {
+            const dateVal = document.getElementById('birthdate').value;
+            if (!dateVal) return;
+            const [y, m, d] = dateVal.split('-').map(Number);
+            const data = YearMatrixLogic.calculate(d, m, y);
+            YearMatrixLogic.drawSVG(data, 'matrix-container');
+            console.log("Calculated Data:", data);
+        }
+        window.onload = updateMatrix;
+    </script>
+</body>
+
+</html>
