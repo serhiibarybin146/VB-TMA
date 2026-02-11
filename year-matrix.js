@@ -159,11 +159,11 @@ const YearMatrixLogic = {
                 }));
             });
 
-            // Декоративное кольцо вокруг дат (радиус 95)
+            // Декоративное кольцо вокруг дат (радиус 170)
             lineLayer.append(createSVGElement('circle', {
                 cx: cx,
                 cy: cy,
-                r: 95,
+                r: 170,
                 fill: 'none',
                 stroke: '#ccc',
                 'stroke-width': 2
