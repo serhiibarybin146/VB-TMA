@@ -56,6 +56,11 @@ const YearMatrixLogic = {
         const U = values.map(v => this.reduce(v + centerValue));
         const Y = values.map((v, idx) => this.reduce(v + U[idx]));
 
+        const sky = this.reduce(rMonth + sumBottom);
+        const earth = this.reduce(rDay + rYear);
+        const maleLine = this.reduce(tl + br);
+        const femaleLine = this.reduce(tr + bl);
+
         const innerA = this.reduce(U[4] + U[6]);
         const innerB = this.reduce(U[4] + innerA);
         const innerC = this.reduce(U[6] + innerA);
