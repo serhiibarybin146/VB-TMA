@@ -186,9 +186,9 @@ const YearMatrixLogic = {
                 // Даты (развернуты горизонтально, с годом)
                 const tx = cx + 100 * Math.cos(angleRad), ty = cy + 100 * Math.sin(angleRad);
                 const g = createSVGElement('g', { transform: `translate(${tx},${ty})` });
-                const d1 = createSVGElement('text', { x: 0, y: -5, 'text-anchor': 'middle', 'font-size': 7 * tScale, fill: '#3388ff', 'font-weight': 'bold' });
+                const d1 = createSVGElement('text', { x: 0, y: -4, 'text-anchor': 'middle', 'font-size': 5.5 * tScale, fill: '#3388ff', 'font-weight': 'bold' });
                 d1.textContent = m.dateStart;
-                const d2 = createSVGElement('text', { x: 0, y: 5, 'text-anchor': 'middle', 'font-size': 7 * tScale, fill: '#3388ff', 'font-weight': 'bold' });
+                const d2 = createSVGElement('text', { x: 0, y: 4, 'text-anchor': 'middle', 'font-size': 5.5 * tScale, fill: '#3388ff', 'font-weight': 'bold' });
                 d2.textContent = m.dateEnd;
                 g.append(d1, d2);
                 textLayer.append(g);
@@ -222,20 +222,17 @@ const YearMatrixLogic = {
         }
 
         // Money and Relationship Channel
-        const innerRadiusHalf = innerRadius2 * 0.5;
-        const drawExtra = (angleIdx, offX, offY, val, letter, lOffX, lOffY, col, dol, hrt) => {
-            const x = cx + innerRadiusHalf * Math.cos(angles[angleIdx]) + offX;
-            const y = cy + innerRadiusHalf * Math.sin(angles[angleIdx]) + offY;
+        const drawExtra = (x, y, val, letter, lOffX, lOffY, col, dol, hrt) => {
             drawNode(x, y, 12, col, "#000", val, "#000", 14);
             // Letter Circle
             nodeLayer.append(createSVGElement('circle', { cx: x + lOffX, cy: y + lOffY, r: 7 * rScale, fill: "#000" }));
             textLayer.append(createSVGElement('text', { x: x + lOffX, y: y + lOffY, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: "#fff", 'font-weight': 'bold', 'font-size': 9 * tScale, content: letter }));
             if (dol) {
-                const d = createSVGElement('text', { x: x - 15, y: y - 37, fill: "#04dd00", 'font-weight': 'bold', 'font-size': 26 * tScale });
+                const d = createSVGElement('text', { x: x - 15, y: y - 28, fill: "#04dd00", 'font-weight': 'bold', 'font-size': 26 * tScale });
                 d.textContent = "$"; textLayer.append(d);
             }
             if (hrt) {
-                const hx = x - 45, hy = y - 40;
+                const hx = x - 45, hy = y - 30;
                 const p = createSVGElement('path', { d: `M ${hx} ${hy} c ${-5 * rScale} ${-5 * rScale}, ${-15 * rScale} 0, ${-10 * rScale} ${10 * rScale} c ${5 * rScale} ${10 * rScale}, ${15 * rScale} ${10 * rScale}, ${20 * rScale} 0 c ${5 * rScale} ${-10 * rScale}, ${-5 * rScale} ${-15 * rScale}, ${-10 * rScale} ${-10 * rScale} Z`, fill: "#e84e42", stroke: "#000" });
                 nodeLayer.append(p);
             }
@@ -248,9 +245,14 @@ const YearMatrixLogic = {
             stroke: '#000', 'stroke-width': 1, 'stroke-dasharray': '5,5'
         }));
 
-        drawExtra(5, 25, 25, data.innerA, "К", -17, -17, "#fff", false, false);
-        drawExtra(5, 95, 25, data.innerB, "О", -17, -17, "#fff", true, false);
-        drawExtra(5, 25, 95, data.innerC, "Н", -17, -17, "#fff", false, true);
+        const lerp = (p1, p2, t) => ({ x: p1.x + (p2.x - p1.x) * t, y: p1.y + (p2.y - p1.y) * t });
+        const p1 = lerp(uNodePoints[4], uNodePoints[6], 0.25);
+        const p2 = lerp(uNodePoints[4], uNodePoints[6], 0.50);
+        const p3 = lerp(uNodePoints[4], uNodePoints[6], 0.75);
+
+        drawExtra(p2.x, p2.y, data.innerA, "К", -17, -17, "#fff", false, false);
+        drawExtra(p1.x, p1.y, data.innerB, "О", -17, -17, "#fff", true, false);
+        drawExtra(p3.x, p3.y, data.innerC, "Н", -17, -17, "#fff", false, true);
 
         // SVG text post-processing for 'content' attribute (consistent with app.js)
         svg.querySelectorAll('text').forEach(t => { if (t.getAttribute('content')) { t.textContent = t.getAttribute('content'); t.removeAttribute('content'); } });
