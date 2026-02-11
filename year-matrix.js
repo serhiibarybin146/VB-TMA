@@ -159,6 +159,16 @@ const YearMatrixLogic = {
                 }));
             });
 
+            // Декоративное кольцо вокруг дат (радиус 95)
+            lineLayer.append(createSVGElement('circle', {
+                cx: cx,
+                cy: cy,
+                r: 95,
+                fill: 'none',
+                stroke: '#ccc',
+                'stroke-width': 2
+            }));
+
             data.months.forEach((m, i) => {
                 const angleRad = (180 - 15 + i * 30) * Math.PI / 180;
                 const mx = cx + R_MONTHS * Math.cos(angleRad), my = cy + R_MONTHS * Math.sin(angleRad);
