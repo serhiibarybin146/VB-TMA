@@ -242,19 +242,21 @@ const YearMatrixLogic = {
                 const mx = cx + R_MONTHS * Math.cos(angleRad), my = cy + R_MONTHS * Math.sin(angleRad);
 
                 // Малый кружок
-                const circleStroke = '#3388ff';
+                const circleStroke = m.isActive ? 'none' : '#3388ff';
+                const circleFill = m.isActive ? '#3388ff' : '#fff';
+                const textColor = m.isActive ? '#fff' : '#3388ff';
                 const circleRadius = 10 * rScale;
 
                 nodeLayer.append(createSVGElement('circle', {
                     cx: mx, cy: my, r: circleRadius,
-                    fill: '#fff',
+                    fill: circleFill,
                     stroke: circleStroke,
                     'stroke-width': 2
                 }));
 
                 const mt = createSVGElement('text', {
                     x: mx, y: my, 'text-anchor': 'middle', 'dominant-baseline': 'central',
-                    fill: circleStroke, 'font-weight': 'bold', 'font-size': 10 * tScale
+                    fill: textColor, 'font-weight': 'bold', 'font-size': 10 * tScale
                 });
                 mt.textContent = i + 1;
                 textLayer.append(mt);
