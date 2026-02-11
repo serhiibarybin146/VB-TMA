@@ -90,30 +90,49 @@ const YearMatrixLogic = {
         return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
     },
 
-    calculate(day, month, birthYear) {
-        const targetYear = this.getPersonalYear(day, month);
+    calculate(day, month, inputYear) {
+        // Как просил пользователь: вводим 06.11.2026 -> начинаем с 06.11.2025
+        const targetYear = inputYear - 1;
         const pad = n => String(n).padStart(2, '0');
 
-        // Матрица года на дату рождения в текущем персональном году
+        // Матрица года на дату начала персонального года
         const dateStr = `${targetYear}-${pad(month)}-${pad(day)}`;
         const base = this.calculateBase(dateStr);
 
-        // 12 персональных месяцев (Прогноз)
-        // Правило длин месяцев по Бондарь: 31, 28/29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
-        const leap = this.isLeapYear(targetYear) || this.isLeapYear(targetYear + 1);
-        const monthLengths = [31, (leap ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        // ВАРИАНТ 2: Личный ритм (честная математика)
+        // Длины месяцев фиксированы: 31, 28/29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+
+        function hasFeb29(start, end) {
+            for (let y = start.getFullYear(); y <= end.getFullYear(); y++) {
+                const isL = (y % 4 === 0 && y % 100 !== 0) || (y % 400 === 0);
+                if (isL) {
+                    const feb29 = new Date(y, 1, 29);
+                    if (feb29 >= start && feb29 < end) return true;
+                }
+            }
+            return false;
+        }
+
+        const startDate = new Date(targetYear, month - 1, day);
+        const endDate = new Date(targetYear + 1, month - 1, day);
+        const leapInCycle = hasFeb29(startDate, endDate);
+
+        const monthLengths = [31, (leapInCycle ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
         const months = [];
-        let cur = new Date(targetYear, month - 1, day);
+        let curPointer = new Date(targetYear, month - 1, day);
 
         for (let i = 0; i < 12; i++) {
-            let start = new Date(cur);
-            let end = new Date(cur);
-            end.setDate(end.getDate() + monthLengths[i] - 1);
+            let start = new Date(curPointer);
+            let end = new Date(curPointer);
+            const currentLen = monthLengths[i];
+
+            // Конец месяца = старт + длина - 1 день
+            end.setDate(end.getDate() + currentLen - 1);
 
             const fmt = d => pad(d.getDate()) + '.' + pad(d.getMonth() + 1) + '.' + d.getFullYear();
 
-            // Расчет энергии месяца: Центр матрицы для (день_рожд, номер_месяца, таргет_год)
+            // Расчет энергии месяца
             const m_idx = i + 1;
             const rA = this.reduce(day);
             const rB = this.reduce(m_idx);
@@ -128,8 +147,10 @@ const YearMatrixLogic = {
                 dateEnd: fmt(end),
                 value: rE
             });
-            cur = new Date(end);
-            cur.setDate(cur.getDate() + 1);
+
+            // Следующий месяц начинается на следующий день после конца текущего
+            curPointer = new Date(end);
+            curPointer.setDate(curPointer.getDate() + 1);
         }
 
         base.months = months;
@@ -190,7 +211,7 @@ const YearMatrixLogic = {
         if (data.months) {
             // Рисуем радиальные линии между секторами (месяцами)
             data.months.forEach((m, i) => {
-                const lineAngleRad = (180 + i * 30) * Math.PI / 180;
+                const lineAngleRad = (210 + i * 30) * Math.PI / 180;
                 const rStart = 28 * rScale, rEnd = 281;
                 lineLayer.append(createSVGElement('line', {
                     x1: cx + rStart * Math.cos(lineAngleRad),
@@ -213,12 +234,12 @@ const YearMatrixLogic = {
             }));
 
             data.months.forEach((m, i) => {
-                const angleRad = (180 - 15 + i * 30) * Math.PI / 180;
+                const angleRad = (210 - 15 + i * 30) * Math.PI / 180;
                 const mx = cx + R_MONTHS * Math.cos(angleRad), my = cy + R_MONTHS * Math.sin(angleRad);
                 // Малый кружок
                 nodeLayer.append(createSVGElement('circle', { cx: mx, cy: my, r: 10 * rScale, fill: '#fff', stroke: '#3388ff', 'stroke-width': 2 }));
                 const mt = createSVGElement('text', { x: mx, y: my, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: '#3388ff', 'font-weight': 'bold', 'font-size': 10 * tScale });
-                mt.textContent = i === 0 ? 12 : i;
+                mt.textContent = i + 1;
                 textLayer.append(mt);
 
                 // Даты (развернуты горизонтально, с годом)
