@@ -184,7 +184,7 @@ const YearMatrixLogic = {
                 textLayer.append(mt);
 
                 // Даты (развернуты горизонтально, с годом)
-                const tx = cx + 80 * Math.cos(angleRad), ty = cy + 80 * Math.sin(angleRad);
+                const tx = cx + 90 * Math.cos(angleRad), ty = cy + 90 * Math.sin(angleRad);
                 const g = createSVGElement('g', { transform: `translate(${tx},${ty})` });
                 const d1 = createSVGElement('text', { x: 0, y: -4, 'text-anchor': 'middle', 'font-size': 5.5 * tScale, fill: '#3388ff', 'font-weight': 'bold' });
                 d1.textContent = m.dateStart;
@@ -239,8 +239,8 @@ const YearMatrixLogic = {
         };
 
         // Dashed line for channel
-        const pEdgeStep4 = { x: cx + 215 * Math.cos(angles[4]), y: cy + 215 * Math.sin(angles[4]) };
-        const pEdgeStep6 = { x: cx + 215 * Math.cos(angles[6]), y: cy + 215 * Math.sin(angles[6]) };
+        const pEdgeStep4 = { x: cx + 200 * Math.cos(angles[4]), y: cy + 200 * Math.sin(angles[4]) };
+        const pEdgeStep6 = { x: cx + 200 * Math.cos(angles[6]), y: cy + 200 * Math.sin(angles[6]) };
         lineLayer.append(createSVGElement('line', {
             x1: pEdgeStep4.x, y1: pEdgeStep4.y,
             x2: pEdgeStep6.x, y2: pEdgeStep6.y,
