@@ -184,7 +184,7 @@ const YearMatrixLogic = {
                 textLayer.append(mt);
 
                 // Даты (развернуты горизонтально, с годом)
-                const tx = cx + 100 * Math.cos(angleRad), ty = cy + 100 * Math.sin(angleRad);
+                const tx = cx + 80 * Math.cos(angleRad), ty = cy + 80 * Math.sin(angleRad);
                 const g = createSVGElement('g', { transform: `translate(${tx},${ty})` });
                 const d1 = createSVGElement('text', { x: 0, y: -4, 'text-anchor': 'middle', 'font-size': 5.5 * tScale, fill: '#3388ff', 'font-weight': 'bold' });
                 d1.textContent = m.dateStart;
@@ -239,16 +239,18 @@ const YearMatrixLogic = {
         };
 
         // Dashed line for channel
+        const pEdgeStep4 = { x: cx + 215 * Math.cos(angles[4]), y: cy + 215 * Math.sin(angles[4]) };
+        const pEdgeStep6 = { x: cx + 215 * Math.cos(angles[6]), y: cy + 215 * Math.sin(angles[6]) };
         lineLayer.append(createSVGElement('line', {
-            x1: uNodePoints[4].x, y1: uNodePoints[4].y,
-            x2: uNodePoints[6].x, y2: uNodePoints[6].y,
+            x1: pEdgeStep4.x, y1: pEdgeStep4.y,
+            x2: pEdgeStep6.x, y2: pEdgeStep6.y,
             stroke: '#000', 'stroke-width': 1, 'stroke-dasharray': '5,5'
         }));
 
         const lerp = (p1, p2, t) => ({ x: p1.x + (p2.x - p1.x) * t, y: p1.y + (p2.y - p1.y) * t });
-        const p1 = lerp(uNodePoints[4], uNodePoints[6], 0.25);
-        const p2 = lerp(uNodePoints[4], uNodePoints[6], 0.50);
-        const p3 = lerp(uNodePoints[4], uNodePoints[6], 0.75);
+        const p1 = lerp(pEdgeStep4, pEdgeStep6, 0.25);
+        const p2 = lerp(pEdgeStep4, pEdgeStep6, 0.50);
+        const p3 = lerp(pEdgeStep4, pEdgeStep6, 0.75);
 
         drawExtra(p2.x, p2.y, data.innerA, "К", -17, -17, "#fff", false, false);
         drawExtra(p1.x, p1.y, data.innerB, "О", -17, -17, "#fff", true, false);
