@@ -259,47 +259,39 @@ const YearMatrixLogic = {
             drawNode(uNodePoints[i].x, uNodePoints[i].y, 15, uColors[i], "#000", data.U[i], (i % 2 === 0 ? "#fff" : "#000"), 16);
         }
 
-        // Dashed line for Money channel (between Inner Right and Inner Bottom)
-        const pInnerRight = uNodePoints[4]; // Point C' (Right)
-        const pInnerBottom = uNodePoints[6]; // Point D' (Bottom)
+        // Money and Relationship Channel (Restored to previous stable placement)
+        const drawExtra = (x, y, val, letter, lOffX, lOffY, col, dol, hrt) => {
+            drawNode(x, y, 12, col, "#000", val, "#000", 14);
+            // Letter Circle
+            nodeLayer.append(createSVGElement('circle', { cx: x + lOffX, cy: y + lOffY, r: 7 * rScale, fill: "#000" }));
+            textLayer.append(createSVGElement('text', { x: x + lOffX, y: y + lOffY, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: "#fff", 'font-weight': 'bold', 'font-size': 9 * tScale }));
+            const txt = textLayer.lastChild;
+            txt.textContent = letter;
+
+            if (dol) {
+                const d = createSVGElement('text', { x: x - 15, y: y - 28, fill: "#04dd00", 'font-weight': 'bold', 'font-size': 26 * tScale });
+                d.textContent = "$"; textLayer.append(d);
+            }
+            if (hrt) {
+                const hx = x - 45, hy = y - 30;
+                const p = createSVGElement('path', { d: `M ${hx} ${hy} c ${-5 * rScale} ${-5 * rScale}, ${-15 * rScale} 0, ${-10 * rScale} ${10 * rScale} c ${5 * rScale} ${10 * rScale}, ${15 * rScale} ${10 * rScale}, ${20 * rScale} 0 c ${5 * rScale} ${-10 * rScale}, ${-5 * rScale} ${-15 * rScale}, ${-10 * rScale} ${-10 * rScale} Z`, fill: "#e84e42", stroke: "#000" });
+                nodeLayer.append(p);
+            }
+        };
+
+        const pEdgeStep4 = { x: cx + 200 * Math.cos(angles[4]), y: cy + 200 * Math.sin(angles[4]) };
+        const pEdgeStep6 = { x: cx + 200 * Math.cos(angles[6]), y: cy + 200 * Math.sin(angles[6]) };
         lineLayer.append(createSVGElement('line', {
-            x1: pInnerRight.x, y1: pInnerRight.y,
-            x2: pInnerBottom.x, y2: pInnerBottom.y,
-            stroke: 'rgba(0,0,0,0.3)', 'stroke-width': 1, 'stroke-dasharray': '5,5'
+            x1: pEdgeStep4.x, y1: pEdgeStep4.y,
+            x2: pEdgeStep6.x, y2: pEdgeStep6.y,
+            stroke: '#000', 'stroke-width': 1, 'stroke-dasharray': '5,5'
         }));
 
-        const pM2 = lerp(pInnerRight, pInnerBottom, 0.25);
-        const pM1 = lerp(pInnerRight, pInnerBottom, 0.50);
-        const pM3 = lerp(pInnerRight, pInnerBottom, 0.75);
+        const pMinnerB = lerp(pEdgeStep4, pEdgeStep6, 0.25);
+        const pMinnerC = lerp(pEdgeStep4, pEdgeStep6, 0.75);
 
-        drawNode(pM1.x, pM1.y, 12, "#fff", "#000", data.moneyChannel[1], "#000", 14); // MDS/InnerA
-        drawNode(pM2.x, pM2.y, 12, "#fff", "#000", data.moneyChannel[0], "#000", 14); // InnerB
-        drawNode(pM3.x, pM3.y, 12, "#fff", "#000", data.moneyChannel[2], "#000", 14); // InnerC
-
-        // Dollar icon near money channel
-        const dolPos = lerp(pInnerRight, pInnerBottom, 0.1);
-        const dol = createSVGElement('text', { x: dolPos.x + 10, y: dolPos.y - 15, fill: "#04dd00", 'font-weight': 'bold', 'font-size': 24 * tScale });
-        dol.textContent = "$"; textLayer.append(dol);
-
-        // Dashed line for Relationship channel (between Center and Bottom-Right)
-        const pCenter = { x: cx, y: cy };
-        const pBRouter = outerPoints[5]; // Point H (BR)
-        const pBRinner = uNodePoints[5]; // Point H' (inner BR)
-
-        lineLayer.append(createSVGElement('line', {
-            x1: pCenter.x, y1: pCenter.y,
-            x2: pBRinner.x, y2: pBRinner.y,
-            stroke: 'rgba(0,0,0,0.3)', 'stroke-width': 1, 'stroke-dasharray': '5,5'
-        }));
-
-        const pR1 = lerp(pCenter, pBRinner, 0.5);
-        drawNode(pR1.x, pR1.y, 12, "#fff", "#000", data.relChannel[1], "#000", 14);
-
-        // Heart icon near relationship channel
-        const heartPos = { x: pBRinner.x + 10, y: pBRinner.y - 20 };
-        const hx = heartPos.x, hy = heartPos.y;
-        const heart = createSVGElement('path', { d: `M ${hx} ${hy} c ${-5 * rScale} ${-5 * rScale}, ${-15 * rScale} 0, ${-10 * rScale} ${10 * rScale} c ${5 * rScale} ${10 * rScale}, ${15 * rScale} ${10 * rScale}, ${20 * rScale} 0 c ${5 * rScale} ${-10 * rScale}, ${-5 * rScale} ${-15 * rScale}, ${-10 * rScale} ${-10 * rScale} Z`, fill: "#e84e42", stroke: "#000" });
-        nodeLayer.append(heart);
+        drawExtra(pMinnerB.x, pMinnerB.y, data.innerB, "О", -17, -17, "#fff", true, false);
+        drawExtra(pMinnerC.x, pMinnerC.y, data.innerC, "Н", -17, -17, "#fff", false, true);
 
         // SVG text post-processing for 'content' attribute (consistent with app.js)
         svg.querySelectorAll('text').forEach(t => { if (t.getAttribute('content')) { t.textContent = t.getAttribute('content'); t.removeAttribute('content'); } });
