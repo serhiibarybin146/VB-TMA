@@ -178,14 +178,13 @@ const YearMatrixLogic = {
                 mt.textContent = i === 0 ? 12 : i;
                 textLayer.append(mt);
 
-                // Даты
-                const tx = cx + (R_MONTHS + 25) * Math.cos(angleRad), ty = cy + (R_MONTHS + 25) * Math.sin(angleRad);
-                let rot = (180 - 15 + i * 30); if (rot > 90 && rot < 270) rot += 180;
-                const g = createSVGElement('g', { transform: `translate(${tx},${ty}) rotate(${rot})` });
+                // Даты (развернуты горизонтально, с годом)
+                const tx = cx + 110 * Math.cos(angleRad), ty = cy + 110 * Math.sin(angleRad);
+                const g = createSVGElement('g', { transform: `translate(${tx},${ty})` });
                 const d1 = createSVGElement('text', { x: 0, y: -5, 'text-anchor': 'middle', 'font-size': 7 * tScale, fill: '#3388ff', 'font-weight': 'bold' });
-                d1.textContent = m.dateStart.slice(0, 5);
+                d1.textContent = m.dateStart;
                 const d2 = createSVGElement('text', { x: 0, y: 5, 'text-anchor': 'middle', 'font-size': 7 * tScale, fill: '#3388ff', 'font-weight': 'bold' });
-                d2.textContent = m.dateEnd.slice(0, 5);
+                d2.textContent = m.dateEnd;
                 g.append(d1, d2);
                 textLayer.append(g);
             });
