@@ -514,37 +514,32 @@ function performMonthForecast() {
         eventDate.setHours(0, 0, 0, 0);
         const evtTime = eventDate.getTime();
 
-        // 1. Calculate Age (Reduced ey - by)
-        const reducedAge = YearMatrixLogic.reduce(ey - by);
+        // 1. Calculate Age (Same as in test)
+        const currentAge = ey - by;
+        const reducedAge = YearMatrixLogic.reduce(currentAge);
 
         // 2. Top Matrix (Year Forecast)
-        const bdayInEventYear = new Date(ey, bm - 1, bd);
-        bdayInEventYear.setHours(0, 0, 0, 0);
+        // Match test logic: pass the event year directly.
+        // calculate() uses targetYear = inputYear - 1, so it will show the preceding cycle.
+        const dataYear = YearMatrixLogic.calculate(bd, bm, ey, reducedAge);
 
-        // Starts exactly on birthday
-        const personalStartYear = (evtTime >= bdayInEventYear.getTime()) ? ey : ey - 1;
-        const dataYear = YearMatrixLogic.calculate(bd, bm, personalStartYear + 1, reducedAge);
+        // Match test logic for highlighting: use the calendar month index of the event date.
+        const highlightMonthIndex = eventDate.getMonth(); // Jan=0, Feb=1...
 
-        // Find match in Top Matrix
-        let highlightMonthIndex = -1;
         let personalMonthRange = null;
         let pMonthNumber = em; // fallback
 
-        if (dataYear.months) {
-            dataYear.months.forEach((m, idx) => {
-                const d1 = new Date(m.d1).getTime();
-                const d2 = new Date(m.d2).getTime();
-
-                if (evtTime >= d1 && evtTime <= d2) {
-                    highlightMonthIndex = idx;
-                    personalMonthRange = { start: new Date(m.d1), end: new Date(m.d2) };
-                    pMonthNumber = m.label;
-                }
-            });
+        if (dataYear.months && dataYear.months[highlightMonthIndex]) {
+            const m = dataYear.months[highlightMonthIndex];
+            personalMonthRange = { start: new Date(m.d1), end: new Date(m.d2) };
+            pMonthNumber = m.label;
         }
 
         // 3. Month Matrix (Bottom)
-        // Pillars: Left=BirthDay, Top=PersonalMonthNumber(1-12), Right=ReducedAge
+        // Pillars (Following test logic exactly):
+        // Left: Birth Day (bd)
+        // Top: Personal Month Number (1-12)
+        // Right: Reduced Age (reducedAge)
         const dataMonth = MonthMatrixLogic.calculate(bd, pMonthNumber, reducedAge, personalMonthRange);
 
         // 4. Render
