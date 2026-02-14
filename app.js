@@ -74,6 +74,7 @@ async function initTMA() {
     try {
         tg.ready();
         tg.expand();
+        if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
 
         // Request true fullscreen for deeper immersion (SDK 7.10+)
         if (tg.requestFullscreen) {
