@@ -512,18 +512,17 @@ function performMonthForecast() {
     try {
         const eventDate = new Date(ey, em - 1, ed);
         eventDate.setHours(0, 0, 0, 0);
+        const evtTime = eventDate.getTime();
 
         // 1. Calculate Age (Reduced ey - by)
         const reducedAge = YearMatrixLogic.reduce(ey - by);
 
         // 2. Top Matrix (Year Forecast)
-        // Find personal start year for the 12-month cycle
         const bdayInEventYear = new Date(ey, bm - 1, bd);
         bdayInEventYear.setHours(0, 0, 0, 0);
 
-        const personalStartYear = (eventDate >= bdayInEventYear) ? ey : ey - 1;
-
-        // YearMatrixLogic.calculate starting year is (inputYear - 1).
+        // Starts exactly on birthday
+        const personalStartYear = (evtTime >= bdayInEventYear.getTime()) ? ey : ey - 1;
         const dataYear = YearMatrixLogic.calculate(bd, bm, personalStartYear + 1, reducedAge);
 
         // Find match in Top Matrix
@@ -533,22 +532,19 @@ function performMonthForecast() {
 
         if (dataYear.months) {
             dataYear.months.forEach((m, idx) => {
-                const d1 = new Date(m.d1);
-                const d2 = new Date(m.d2);
-                d1.setHours(0, 0, 0, 0);
-                d2.setHours(23, 59, 59, 999);
+                const d1 = new Date(m.d1).getTime();
+                const d2 = new Date(m.d2).getTime();
 
-                const evtTime = eventDate.getTime();
-                if (evtTime >= d1.getTime() && evtTime <= d2.getTime()) {
+                if (evtTime >= d1 && evtTime <= d2) {
                     highlightMonthIndex = idx;
-                    personalMonthRange = { start: d1, end: d2 };
+                    personalMonthRange = { start: new Date(m.d1), end: new Date(m.d2) };
                     pMonthNumber = m.label;
                 }
             });
         }
 
         // 3. Month Matrix (Bottom)
-        // Pillars: Left=BirthDay, Top=PersonalMonthLabel, Right=ReducedAge
+        // Pillars: Left=BirthDay, Top=PersonalMonthNumber(1-12), Right=ReducedAge
         const dataMonth = MonthMatrixLogic.calculate(bd, pMonthNumber, reducedAge, personalMonthRange);
 
         // 4. Render
