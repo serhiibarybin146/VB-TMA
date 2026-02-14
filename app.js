@@ -510,36 +510,37 @@ function performMonthForecast() {
     const [ed, em, ey] = eVal.split('.').map(Number);
 
     try {
-        const birthDate = new Date(by, bm - 1, bd);
         const eventDate = new Date(ey, em - 1, ed);
 
-        // 1. Calculate Age (Total full years)
-        let age = ey - by;
-        const bdayThisYear = new Date(ey, bm - 1, bd);
-        if (eventDate < bdayThisYear) age--;
+        // 1. Calculate Age (Same as test: ey - by, then reduce)
+        let ageValue = ey - by;
+        // In some systems, age only increments AFTER birthday. 
+        // Our test logic used: age = ey - by; then reduce.
+        // Let's stick strictly to what the user said "on test was correct".
+        const reducedAge = YearMatrixLogic.reduce(ageValue);
 
-        const reducedAge = YearMatrixLogic.reduce(age);
-
-        // 2. Year Matrix (Top) - uses reducedAge for the Right Pillar
+        // 2. Year Matrix (Top)
         const dataYear = YearMatrixLogic.calculate(bd, bm, ey, reducedAge);
 
         // Find which personal month the event date falls into
         let highlightMonthIndex = -1;
         let personalMonthRange = null;
+        let monthToUseForMatrix = em; // fallback to calendar month
 
         if (dataYear.months) {
             dataYear.months.forEach((m, idx) => {
+                // YearMatrix months are simple objects with d1, d2 dates
                 if (eventDate >= m.d1 && eventDate <= m.d2) {
                     highlightMonthIndex = idx;
                     personalMonthRange = { start: m.d1, end: m.d2 };
+                    monthToUseForMatrix = m.label; // The energy of that personal month
                 }
             });
         }
 
         // 3. Month Matrix (Bottom)
-        // Uses: Left (Birth Day), Top (Event Month), Right (Reduced Event Year)
-        // and its own internal date ring logic based on the personalMonthRange
-        const dataMonth = MonthMatrixLogic.calculate(bd, bm, ed, em, ey, personalMonthRange);
+        // Pillars: Left (Birth Day), Top (Personal Month Label), Right (Reduced Age)
+        const dataMonth = MonthMatrixLogic.calculate(bd, monthToUseForMatrix, reducedAge, personalMonthRange);
 
         // 4. Render
         YearMatrixLogic.drawSVG(dataYear, 'monthYearMatrixContainer', highlightMonthIndex);

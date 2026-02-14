@@ -17,7 +17,7 @@ const MonthMatrixLogic = {
         return YearMatrixLogic.calculateBase(dateStr);
     },
 
-    calculate(birthDay, birthMonth, eventDay, eventMonth, eventYear, range = null) {
+    calculate(birthDay, eventMonth, energyAgeRight, range = null) {
         const reduce = (n) => {
             let val = parseInt(n) || 0;
             if (val === 0) return 0;
@@ -26,9 +26,9 @@ const MonthMatrixLogic = {
         };
 
         // 1. Calculate Custom Month Matrix Pillars
-        const rDay = reduce(birthDay);             // Left
-        const rMonth = reduce(eventMonth);         // Top (Event Month)
-        const rYear = reduce(eventYear);           // Right (Reduced Event Year)
+        const rDay = reduce(birthDay);             // Left pillar (Birth Day)
+        const rMonth = reduce(eventMonth);         // Top pillar (Event Month)
+        const rYear = reduce(energyAgeRight);      // Right pillar (Age)
         const sumBottom = reduce(rDay + rMonth + rYear);
         const centerValue = reduce(rDay + rMonth + rYear + sumBottom);
 
@@ -64,10 +64,12 @@ const MonthMatrixLogic = {
         if (range && range.start && range.end) {
             startDate = new Date(range.start);
             endDate = new Date(range.end);
-            endDate.setDate(endDate.getDate() + 1);
+            // endDate from YearMatrixLogic is the start of the next month, which is perfect for '<' loop
         } else {
-            startDate = new Date(eventYear, eventMonth - 1, 1);
-            endDate = new Date(eventYear, eventMonth, 1);
+            // Fallback
+            const now = new Date();
+            startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+            endDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
         }
 
         const days = [];
