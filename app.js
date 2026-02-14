@@ -511,15 +511,13 @@ function performMonthForecast() {
 
     try {
         const eventDate = new Date(ey, em - 1, ed);
+        eventDate.setHours(0, 0, 0, 0); // Strip time
 
         // 1. Calculate Age (Same as test: ey - by, then reduce)
         let ageValue = ey - by;
-        // In some systems, age only increments AFTER birthday. 
-        // Our test logic used: age = ey - by; then reduce.
-        // Let's stick strictly to what the user said "on test was correct".
         const reducedAge = YearMatrixLogic.reduce(ageValue);
 
-        // 2. Year Matrix (Top)
+        // 2. Year Matrix (Top) - start year = ey
         const dataYear = YearMatrixLogic.calculate(bd, bm, ey, reducedAge);
 
         // Find which personal month the event date falls into
@@ -529,17 +527,27 @@ function performMonthForecast() {
 
         if (dataYear.months) {
             dataYear.months.forEach((m, idx) => {
-                // YearMatrix months are simple objects with d1, d2 dates
-                if (eventDate >= m.d1 && eventDate <= m.d2) {
+                const d1 = new Date(m.d1);
+                const d2 = new Date(m.d2);
+                d1.setHours(0, 0, 0, 0);
+                d2.setHours(0, 0, 0, 0);
+
+                if (eventDate >= d1 && eventDate <= d2) {
                     highlightMonthIndex = idx;
-                    personalMonthRange = { start: m.d1, end: m.d2 };
-                    monthToUseForMatrix = m.label; // The energy of that personal month
+                    personalMonthRange = { start: d1, end: d2 };
+                    monthToUseForMatrix = m.label;
                 }
             });
         }
 
+        console.log('Month Forecast debug:', {
+            eventDate: eventDate.toLocaleDateString(),
+            highlightMonthIndex,
+            monthToUseForMatrix,
+            reducedAge
+        });
+
         // 3. Month Matrix (Bottom)
-        // Pillars: Left (Birth Day), Top (Personal Month Label), Right (Reduced Age)
         const dataMonth = MonthMatrixLogic.calculate(bd, monthToUseForMatrix, reducedAge, personalMonthRange);
 
         // 4. Render

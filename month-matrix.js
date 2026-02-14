@@ -74,7 +74,7 @@ const MonthMatrixLogic = {
 
         const days = [];
         const iterDate = new Date(startDate);
-        while (iterDate < endDate) {
+        while (iterDate <= endDate) {
             const d = iterDate.getDate();
             const m = iterDate.getMonth() + 1;
             const fmt = n => String(n).padStart(2, '0');

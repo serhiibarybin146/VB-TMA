@@ -183,6 +183,8 @@ const YearMatrixLogic = {
                 label: i + 1,
                 dateStart: fmt(start),
                 dateEnd: fmt(end),
+                d1: new Date(start),
+                d2: new Date(end),
                 value: rE,
                 isActive: isActive
             });
