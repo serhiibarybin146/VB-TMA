@@ -195,6 +195,19 @@ function initEventListeners() {
     if (yearMatrixResultContainer) {
         yearMatrixResultContainer.onclick = () => openMatrixZoom('yearMatrixContainer');
     }
+
+    // Month Forecast Matrices
+    const monthYearContainer = document.getElementById('monthYearMatrixContainer');
+    if (monthYearContainer) {
+        monthYearContainer.parentElement.onclick = () => openMatrixZoom('monthYearMatrixContainer');
+        monthYearContainer.parentElement.style.cursor = 'pointer';
+    }
+
+    const monthForecastContainer = document.getElementById('monthForecastMatrixContainer');
+    if (monthForecastContainer) {
+        monthForecastContainer.parentElement.onclick = () => openMatrixZoom('monthForecastMatrixContainer');
+        monthForecastContainer.parentElement.style.cursor = 'pointer';
+    }
 }
 
 /**
@@ -545,6 +558,18 @@ function performMonthForecast() {
         // 4. Render
         YearMatrixLogic.drawSVG(dataYear, 'monthYearMatrixContainer', highlightMonthIndex);
         MonthMatrixLogic.drawSVG(dataMonth, 'monthForecastMatrixContainer');
+
+        // 5. Enable Zoom
+        const yearCont = document.getElementById('monthYearMatrixContainer');
+        if (yearCont) {
+            yearCont.style.cursor = 'pointer';
+            yearCont.onclick = () => openMatrixZoom('monthYearMatrixContainer');
+        }
+        const monthCont = document.getElementById('monthForecastMatrixContainer');
+        if (monthCont) {
+            monthCont.style.cursor = 'pointer';
+            monthCont.onclick = () => openMatrixZoom('monthForecastMatrixContainer');
+        }
 
         showView('monthForecastResultView');
         tg.HapticFeedback.notificationOccurred('success');
