@@ -513,23 +513,23 @@ function performMonthForecast() {
         const eventDate = new Date(ey, em - 1, ed);
         eventDate.setHours(0, 0, 0, 0);
 
-        // 1. Top Matrix (Year Forecast)
-        // Find which personal year the event date belongs to.
-        // A personal year starts ON the birthday.
+        // 1. Calculate Age (Reduced ey - by)
+        const reducedAge = YearMatrixLogic.reduce(ey - by);
+
+        // 2. Top Matrix (Year Forecast)
+        // Find personal start year for the 12-month cycle
         const bdayInEventYear = new Date(ey, bm - 1, bd);
         bdayInEventYear.setHours(0, 0, 0, 0);
 
         const personalStartYear = (eventDate >= bdayInEventYear) ? ey : ey - 1;
-        const currentAge = personalStartYear - by;
 
-        // YearMatrixLogic.calculate starting year starts from Y-1.
-        // To show the year starting from personalStartYear, we pass personalStartYear + 1.
-        const dataYear = YearMatrixLogic.calculate(bd, bm, personalStartYear + 1, YearMatrixLogic.reduce(currentAge));
+        // YearMatrixLogic.calculate starting year is (inputYear - 1).
+        const dataYear = YearMatrixLogic.calculate(bd, bm, personalStartYear + 1, reducedAge);
 
         // Find match in Top Matrix
         let highlightMonthIndex = -1;
         let personalMonthRange = null;
-        let monthEnergy = em;
+        let pMonthNumber = em; // fallback
 
         if (dataYear.months) {
             dataYear.months.forEach((m, idx) => {
@@ -538,23 +538,20 @@ function performMonthForecast() {
                 d1.setHours(0, 0, 0, 0);
                 d2.setHours(23, 59, 59, 999);
 
-                if (eventDate >= d1 && eventDate <= d2) {
+                const evtTime = eventDate.getTime();
+                if (evtTime >= d1.getTime() && evtTime <= d2.getTime()) {
                     highlightMonthIndex = idx;
                     personalMonthRange = { start: d1, end: d2 };
-                    monthEnergy = m.value; // Energy of personal month
+                    pMonthNumber = m.label;
                 }
             });
         }
 
-        // 2. Month Matrix (Bottom)
-        // Pillars (based on corrected user request):
-        // Left: Birth Day (bd)
-        // Top: Energy of the Personal Month (m.value)
-        // Right: Reduced YEAR OF BIRTH (by)
-        const reducedYearOfBirth = YearMatrixLogic.reduce(by);
-        const dataMonth = MonthMatrixLogic.calculate(bd, monthEnergy, reducedYearOfBirth, personalMonthRange);
+        // 3. Month Matrix (Bottom)
+        // Pillars: Left=BirthDay, Top=PersonalMonthLabel, Right=ReducedAge
+        const dataMonth = MonthMatrixLogic.calculate(bd, pMonthNumber, reducedAge, personalMonthRange);
 
-        // 3. Render
+        // 4. Render
         YearMatrixLogic.drawSVG(dataYear, 'monthYearMatrixContainer', highlightMonthIndex);
         MonthMatrixLogic.drawSVG(dataMonth, 'monthForecastMatrixContainer');
 
