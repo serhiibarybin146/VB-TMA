@@ -511,46 +511,43 @@ function performMonthForecast() {
 
     try {
         const eventDate = new Date(ey, em - 1, ed);
-        eventDate.setHours(0, 0, 0, 0); // Strip time
+        eventDate.setHours(0, 0, 0, 0);
 
-        // 1. Calculate Age (Same as test: ey - by, then reduce)
-        let ageValue = ey - by;
-        const reducedAge = YearMatrixLogic.reduce(ageValue);
+        // 1. Top Matrix (Year Forecast)
+        // We calculate for the personal year containing the event date
+        const bdayInEventYear = new Date(ey, bm - 1, bd);
+        const personalStartYear = (eventDate >= bdayInEventYear) ? ey : ey - 1;
+        // calculate(..., Y) starts from Y-1. To start from personalStartYear, pass personalStartYear + 1.
+        const dataYear = YearMatrixLogic.calculate(bd, bm, personalStartYear + 1, YearMatrixLogic.reduce(ey - by));
 
-        // 2. Year Matrix (Top) - start year = ey
-        const dataYear = YearMatrixLogic.calculate(bd, bm, ey, reducedAge);
-
-        // Find which personal month the event date falls into
+        // Find match in Top Matrix
         let highlightMonthIndex = -1;
         let personalMonthRange = null;
-        let monthToUseForMatrix = em; // fallback to calendar month
 
         if (dataYear.months) {
             dataYear.months.forEach((m, idx) => {
                 const d1 = new Date(m.d1);
                 const d2 = new Date(m.d2);
                 d1.setHours(0, 0, 0, 0);
-                d2.setHours(0, 0, 0, 0);
+                d2.setHours(23, 59, 59, 999);
 
                 if (eventDate >= d1 && eventDate <= d2) {
                     highlightMonthIndex = idx;
                     personalMonthRange = { start: d1, end: d2 };
-                    monthToUseForMatrix = m.label;
                 }
             });
         }
 
-        console.log('Month Forecast debug:', {
-            eventDate: eventDate.toLocaleDateString(),
-            highlightMonthIndex,
-            monthToUseForMatrix,
-            reducedAge
-        });
+        // 2. Month Matrix (Bottom)
+        // Pillars (based on OCR rule analysis):
+        // Left: Birth Day (bd)
+        // Top: Calendar Month of EVENT (em)
+        // Right: Calendar Year of EVENT (ey)
+        const dataMonth = MonthMatrixLogic.calculate(bd, em, YearMatrixLogic.reduce(ey), personalMonthRange);
 
-        // 3. Month Matrix (Bottom)
-        const dataMonth = MonthMatrixLogic.calculate(bd, monthToUseForMatrix, reducedAge, personalMonthRange);
-
-        // 4. Render
+        // 3. Render
+        // The user said: highlight based on Event Date input. 
+        // If highlightMonthIndex was not found above (should not happen), fallback.
         YearMatrixLogic.drawSVG(dataYear, 'monthYearMatrixContainer', highlightMonthIndex);
         MonthMatrixLogic.drawSVG(dataMonth, 'monthForecastMatrixContainer');
 
