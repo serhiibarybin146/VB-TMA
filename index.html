@@ -302,8 +302,28 @@
                         inputmode="numeric" maxlength="10">
                 </div>
 
-                <button class="btn-primary full-width"
-                    onclick="alert('Функция расчета будет добавлена позже')">Рассчитать</button>
+                <button class="btn-primary full-width" onclick="performMonthForecast()">Рассчитать</button>
+            </div>
+        </section>
+
+        <!-- MONTH FORECAST RESULT VIEW -->
+        <section id="monthForecastResultView" class="view">
+            <div class="result-top-row">
+                <div class="back-link" onclick="navigateTo('monthForecast')">
+                    <iconify-icon icon="solar:arrow-left-linear"></iconify-icon>
+                    <span>К вводу даты</span>
+                </div>
+            </div>
+
+            <div class="matrix-svg-container" style="margin-bottom: 20px;">
+                <h4 style="text-align: center; margin-bottom: 15px; color: var(--accent-color);">Матрица года (Возраст)
+                </h4>
+                <div id="monthYearMatrixContainer"></div>
+            </div>
+
+            <div class="matrix-svg-container">
+                <h4 style="text-align: center; margin-bottom: 15px; color: var(--accent-color);">Прогноз на месяц</h4>
+                <div id="monthForecastMatrixContainer"></div>
             </div>
         </section>
 
@@ -505,10 +525,11 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="year-matrix.js?v=1.0.1"></script>
-    <script src="matrix-logic.js?v=1.0.4"></script>
-    <script src="supabase-client.js?v=1.0.4"></script>
-    <script src="app.js?v=1.0.4"></script>
+    <script src="year-matrix.js?v=1.0.2"></script>
+    <script src="month-matrix.js?v=1.0.2"></script>
+    <script src="matrix-logic.js?v=1.0.5"></script>
+    <script src="supabase-client.js?v=1.0.5"></script>
+    <script src="app.js?v=1.0.5"></script>
 </body>
 
 </html>

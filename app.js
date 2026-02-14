@@ -454,22 +454,102 @@ function performYearForecast() {
     }
 
     const [dayStr, monthStr, yearStr] = val.split('.');
-    const day = parseInt(dayStr);
-    const month = parseInt(monthStr);
-    const year = parseInt(yearStr);
+    const d = parseInt(dayStr);
+    const m = parseInt(monthStr);
+    const y = parseInt(yearStr);
 
-    if (day < 1 || day > 31 || month < 1 || month > 12 || year < 1900) {
+    if (d < 1 || d > 31 || m < 1 || m > 12 || y < 1900) {
         tg.showAlert('Проверьте корректность даты');
         return;
     }
 
     try {
-        const result = YearMatrixLogic.calculate(day, month, year);
+        // Calculate Age for the target year
+        // We use YearMatrixLogic.reduce(y - birthYear) usually, but here 'y' is the target.
+        // If we don't have birth year in this form, we assume 'y' is the year to calculate FOR.
+        // Actually, the app logic for "Year Forecast" usually assumes 'y' is the year the person is entering/in.
+        // To be safe and consistent with tests, we'll try to find an Age or calculate it.
+        // But the Yearly Forecast form only has ONE date input.
+        // Let's assume the standard behavior: just calculate the matrix for that date.
+        // However, if we want the "Age" logic, we need the Birth Date.
+        // In the YEAR FORECAST form, we only have ONE date. 
+        // Logic from previous sessions: in Year Forecast, the user enters Birth Day, Birth Month, and Current Year.
+        // So day=BD, month=BM, year=EY.
+        // We don't have Birth Year here. But we can assume age = EY - 1900? No.
+        // Actually, in the main matrix (performCalculation), we have the full birth date.
+        // For Year Forecast, let's keep it simple or use the year itself as age placeholder if not available.
+        // BUT, for the NEW Month Forecast, we HAVE both dates!
+
+        const result = YearMatrixLogic.calculate(d, m, y);
         YearMatrixLogic.drawSVG(result, 'yearMatrixContainer');
         showView('yearForecastResultView');
         tg.HapticFeedback.notificationOccurred('success');
     } catch (err) {
         console.error('Year Forecast Error:', err);
+        tg.showAlert('Ошибка при расчете: ' + err.message);
+    }
+}
+
+/**
+ * Расчёт и отрисовка прогноза на месяц
+ */
+function performMonthForecast() {
+    const bInput = document.getElementById('monthForecastBirthInput');
+    const eInput = document.getElementById('monthForecastEventInput');
+    if (!bInput || !eInput) return;
+
+    const bVal = bInput.value;
+    const eVal = eInput.value;
+
+    if (!/^\d{2}\.\d{2}\.\d{4}$/.test(bVal) || !/^\d{2}\.\d{2}\.\d{4}$/.test(eVal)) {
+        tg.showAlert('Пожалуйста, введите даты в формате ДД.ММ.ГГГГ');
+        return;
+    }
+
+    const [bd, bm, by] = bVal.split('.').map(Number);
+    const [ed, em, ey] = eVal.split('.').map(Number);
+
+    try {
+        const birthDate = new Date(by, bm - 1, bd);
+        const eventDate = new Date(ey, em - 1, ed);
+
+        // 1. Calculate Age (Total full years)
+        let age = ey - by;
+        const bdayThisYear = new Date(ey, bm - 1, bd);
+        if (eventDate < bdayThisYear) age--;
+
+        const reducedAge = YearMatrixLogic.reduce(age);
+
+        // 2. Year Matrix (Top) - uses reducedAge for the Right Pillar
+        const dataYear = YearMatrixLogic.calculate(bd, bm, ey, reducedAge);
+
+        // Find which personal month the event date falls into
+        let highlightMonthIndex = -1;
+        let personalMonthRange = null;
+
+        if (dataYear.months) {
+            dataYear.months.forEach((m, idx) => {
+                if (eventDate >= m.d1 && eventDate <= m.d2) {
+                    highlightMonthIndex = idx;
+                    personalMonthRange = { start: m.d1, end: m.d2 };
+                }
+            });
+        }
+
+        // 3. Month Matrix (Bottom)
+        // Uses: Left (Birth Day), Top (Event Month), Right (Reduced Event Year)
+        // and its own internal date ring logic based on the personalMonthRange
+        const dataMonth = MonthMatrixLogic.calculate(bd, bm, ed, em, ey, personalMonthRange);
+
+        // 4. Render
+        YearMatrixLogic.drawSVG(dataYear, 'monthYearMatrixContainer', highlightMonthIndex);
+        MonthMatrixLogic.drawSVG(dataMonth, 'monthForecastMatrixContainer');
+
+        showView('monthForecastResultView');
+        tg.HapticFeedback.notificationOccurred('success');
+
+    } catch (err) {
+        console.error('Month Forecast Error:', err);
         tg.showAlert('Ошибка при расчете: ' + err.message);
     }
 }

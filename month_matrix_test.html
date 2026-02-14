@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Month Matrix Test</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            background: #f0f2f5;
+        }
+
+        #matrix-container,
+        #month-forecast-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 8px 16px;
+            background: #3388ff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="controls">
+        <label>Дата рождения:</label>
+        <input type="date" id="birthdate" value="1982-09-30">
+        <br><br>
+        <label>Дата события:</label>
+        <input type="date" id="eventdate" value="2026-02-12">
+        <br><br>
+        <button onclick="updateMatrix()">Calculate Month Matrix</button>
+    </div>
+    <div id="matrix-container"></div>
+    <div style="height: 20px;"></div>
+
+    <!-- Second Matrix Container -->
+    <div id="month-forecast-container"></div>
+
+    <script src="year-matrix.js"></script>
+    <script src="month-matrix.js"></script>
+    <script>
+        function updateMatrix() {
+            const birthVal = document.getElementById('birthdate').value;
+            const eventVal = document.getElementById('eventdate').value;
+
+            if (!birthVal || !eventVal) return;
+
+            // Use the same year matrix logic for both
+            const [y, m, d] = birthVal.split('-').map(Number);
+
+            // User Logic: Top Matrix uses AGE as the "Year" parameter
+            const birthDate = new Date(birthVal);
+            const eventDate = new Date(eventVal);
+            const eY = eventDate.getFullYear();
+            const bY = birthDate.getFullYear();
+
+            let age = eY - bY;
+
+            // Helper reduce function
+            const reduce = (n) => {
+                let v = parseInt(n);
+                while (v > 22) {
+                    v = String(v).split('').reduce((a, b) => a + parseInt(b), 0);
+                }
+                return v;
+            };
+
+            age = reduce(age); // Reduced Age for Right Angle
+
+            // Top Matrix (Year/Age Matrix)
+            const dataYear = YearMatrixLogic.calculate(d, m, eY, age);
+
+            // Highlight the Event Month in Top Matrix
+            // Since YearMatrixLogic generates Jan-Dec (0-11), we match the Event Date's month index.
+            if (dataYear.months) {
+                // Clear any default highlighting (based on 'today')
+                dataYear.months.forEach(m => m.isActive = false);
+
+                // Set active based on Event Date
+                const evtMonthIdx = eventDate.getMonth();
+                if (dataYear.months[evtMonthIdx]) {
+                    dataYear.months[evtMonthIdx].isActive = true;
+                }
+            }
+
+            YearMatrixLogic.drawSVG(dataYear, 'matrix-container');
+
+            // Bottom Matrix (Month Matrix)
+            // Inputs: Left = Birth Day, Top = Event Month, Right = Event Year (Reduced)
+            // Sync logic: use the exact dates of the Personal Month from the year matrix
+            const eventMonth = eventDate.getMonth() + 1;
+            const reducedYear = reduce(eY);
+
+            const activeMonth = dataYear.months.find(m => m.isActive);
+            let monthRange = eventVal;
+            let monthToUse = eventMonth;
+
+            if (activeMonth) {
+                const parseDMY = (s) => {
+                    const [dd, mm, yyyy] = s.split('.').map(Number);
+                    return new Date(yyyy, mm - 1, dd);
+                };
+                monthRange = {
+                    start: parseDMY(activeMonth.dateStart),
+                    end: parseDMY(activeMonth.dateEnd)
+                };
+                monthToUse = activeMonth.label;
+            }
+
+            const dataMonth = MonthMatrixLogic.calculate(d, monthToUse, age, monthRange);
+
+            MonthMatrixLogic.drawSVG(dataMonth, 'month-forecast-container');
+
+            // --- Highlight Logic (Applied to BOTH) ---
+            const highlightActiveMonth = (containerId, matrixData) => {
+                if (!matrixData || !matrixData.months) return;
+                const activeMonth = matrixData.months.find(m => m.isActive);
+                if (activeMonth) {
+                    const svg = document.querySelector(`#${containerId} svg`);
+                    if (!svg) return;
+
+                    const texts = Array.from(svg.querySelectorAll('text'));
+                    const monthText = texts.find(t => t.textContent == (activeMonth.seq + 1) && parseFloat(t.getAttribute('font-size')) < 15);
+
+                    if (monthText) {
+                        const tx = parseFloat(monthText.getAttribute('x'));
+                        const ty = parseFloat(monthText.getAttribute('y'));
+
+                        // Find circle
+                        const circles = Array.from(svg.querySelectorAll('circle'));
+                        const mainCircle = circles.find(c =>
+                            Math.abs(parseFloat(c.getAttribute('cx')) - tx) < 1 &&
+                            Math.abs(parseFloat(c.getAttribute('cy')) - ty) < 1 &&
+                            parseFloat(c.getAttribute('r')) < 15
+                        );
+
+                        if (mainCircle) {
+                            mainCircle.setAttribute("fill", "#3388ff");
+                            mainCircle.setAttribute("stroke", "none");
+                        }
+
+                        // Style text
+                        monthText.setAttribute("fill", "#ffffff");
+                        monthText.setAttribute("font-weight", "bold");
+                        monthText.setAttribute("font-size", "11");
+                    }
+                }
+            };
+
+            // Apply highlighting to both matrices
+            highlightActiveMonth('matrix-container', dataYear);
+            highlightActiveMonth('month-forecast-container', dataMonth);
+        }
+        window.onload = updateMatrix;
+    </script>
+</body>
+
+</html>

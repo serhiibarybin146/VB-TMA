@@ -90,17 +90,52 @@ const YearMatrixLogic = {
         return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
     },
 
-    calculate(day, month, inputYear) {
-        // Как просил пользователь: вводим 06.11.2026 -> начинаем с 06.11.2025
+    calculate(day, month, inputYear, energyYearOverride = null) {
+        // Как просил пользователь: вводим 2026 -> начинаем с 2025 для покрытия периода
         const targetYear = inputYear - 1;
         const pad = n => String(n).padStart(2, '0');
 
-        // Матрица года на дату начала персонального года
+        // Базовый расчет матрицы. Если передан override дня (возраст), используем его для правого угла
         const dateStr = `${targetYear}-${pad(month)}-${pad(day)}`;
         const base = this.calculateBase(dateStr);
 
-        // ВАРИАНТ 2: Личный ритм (честная математика)
-        // Длины месяцев фиксированы: 31, 28/29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+        if (energyYearOverride !== null) {
+            const rDay = base.points.rDay;
+            const rMonth = base.points.rMonth;
+            const rYearOverride = this.reduce(energyYearOverride); // Use override for rYear
+            const sumBottom = this.reduce(rDay + rMonth + rYearOverride);
+
+            const centerValue = this.reduce(rDay + rMonth + rYearOverride + sumBottom);
+
+            const tl = this.reduce(rDay + rMonth);
+            const tr = this.reduce(rMonth + rYearOverride);
+            const br = this.reduce(rYearOverride + sumBottom);
+            const bl = this.reduce(sumBottom + rDay);
+
+            const values = [rDay, tl, rMonth, tr, rYearOverride, br, sumBottom, bl];
+            const U = values.map(v => this.reduce(v + centerValue));
+            const Y = values.map((v, idx) => this.reduce(v + U[idx]));
+
+            // Update base object with recalculated values
+            base.points = { rDay, rMonth, rYear: rYearOverride, sumBottom, centerValue, tl, tr, br, bl };
+            base.values = values;
+            base.U = U;
+            base.Y = Y;
+
+            // Recalculate inner channels and destiny points if they depend on rYear or sumBottom
+            base.innerA = this.reduce(U[4] + U[6]);
+            base.innerB = this.reduce(U[4] + base.innerA);
+            base.innerC = this.reduce(U[6] + base.innerA);
+            base.moneyChannel = [base.innerB, base.innerA, base.innerC];
+            base.relChannel = [centerValue, this.reduce(centerValue + br), br];
+
+            base.destiny.sky = this.reduce(rMonth + sumBottom);
+            base.destiny.earth = this.reduce(rDay + rYearOverride);
+            base.destiny.personal = this.reduce(base.destiny.sky + base.destiny.earth);
+            base.destiny.maleLine = this.reduce(tl + br);
+            base.destiny.femaleLine = this.reduce(tr + bl);
+            base.destiny.social = this.reduce(base.destiny.maleLine + base.destiny.femaleLine);
+        }
 
         function hasFeb29(start, end) {
             for (let y = start.getFullYear(); y <= end.getFullYear(); y++) {
@@ -132,11 +167,11 @@ const YearMatrixLogic = {
 
             const fmt = d => pad(d.getDate()) + '.' + pad(d.getMonth() + 1) + '.' + d.getFullYear();
 
-            // Расчет энергии месяца
+            // Расчет энергии месяца (согласно логике Таблицы - ПМ основана на Личном Годе)
             const m_idx = i + 1;
-            const rA = this.reduce(day);
+            const rA = this.reduce(base.points.centerValue); // Считаем от центра года
             const rB = this.reduce(m_idx);
-            const rC = this.reduce(String(targetYear).split('').reduce((a, b) => a + parseInt(b), 0));
+            const rC = this.reduce(base.points.rYear); // Возраст/Год (rYear from base, potentially overridden)
             const rD = this.reduce(rA + rB + rC);
             const rE = this.reduce(rA + rB + rC + rD);
 
@@ -165,7 +200,7 @@ const YearMatrixLogic = {
 
     /* ─── ВИЗУАЛИЗАЦИЯ (ТОЧНАЯ КОПИЯ ИЗ app.js + months) ─── */
 
-    drawSVG(data, containerId) {
+    drawSVG(data, containerId, highlightMonthIndex = null) {
         const container = document.getElementById(containerId);
         if (!container) return;
         container.innerHTML = '';
@@ -242,9 +277,10 @@ const YearMatrixLogic = {
                 const mx = cx + R_MONTHS * Math.cos(angleRad), my = cy + R_MONTHS * Math.sin(angleRad);
 
                 // Малый кружок
-                const circleStroke = m.isActive ? 'none' : '#3388ff';
-                const circleFill = m.isActive ? '#3388ff' : '#fff';
-                const textColor = m.isActive ? '#fff' : '#3388ff';
+                const isActive = (i === highlightMonthIndex);
+                const circleStroke = isActive ? 'none' : '#3388ff';
+                const circleFill = isActive ? '#3388ff' : '#fff';
+                const textColor = isActive ? '#fff' : '#3388ff';
                 const circleRadius = 10 * rScale;
 
                 nodeLayer.append(createSVGElement('circle', {
@@ -309,12 +345,19 @@ const YearMatrixLogic = {
             txt.textContent = letter;
 
             if (dol) {
-                const d = createSVGElement('text', { x: x - 15, y: y - 28, fill: "#04dd00", 'font-weight': 'bold', 'font-size': 26 * tScale });
+                const d = createSVGElement('text', { x: x - 15, y: y - 30, fill: "#04dd00", 'font-weight': 'bold', 'font-size': 18 * tScale });
                 d.textContent = "$"; textLayer.append(d);
             }
             if (hrt) {
-                const hx = x - 45, hy = y - 30;
-                const p = createSVGElement('path', { d: `M ${hx} ${hy} c ${-5 * rScale} ${-5 * rScale}, ${-15 * rScale} 0, ${-10 * rScale} ${10 * rScale} c ${5 * rScale} ${10 * rScale}, ${15 * rScale} ${10 * rScale}, ${20 * rScale} 0 c ${5 * rScale} ${-10 * rScale}, ${-5 * rScale} ${-15 * rScale}, ${-10 * rScale} ${-10 * rScale} Z`, fill: "#e84e42", stroke: "#000" });
+                const hx = x - 35, hy = y - 32;
+                const p = createSVGElement('path', {
+                    d: `M ${hx} ${hy}
+                        c ${-1.5 * rScale} ${-3 * rScale}, ${-8 * rScale} ${-3 * rScale}, ${-8 * rScale} ${1.5 * rScale}
+                        c 0 ${4.5 * rScale}, ${5.5 * rScale} ${8 * rScale}, ${8 * rScale} ${11 * rScale}
+                        c ${2.5 * rScale} ${-3 * rScale}, ${8 * rScale} ${-6.5 * rScale}, ${8 * rScale} ${-11 * rScale}
+                        c 0 ${-4.5 * rScale}, ${-6.5 * rScale} ${-4.5 * rScale}, ${-8 * rScale} ${-1.5 * rScale} Z`,
+                    fill: "#e84e42", stroke: "#000", 'stroke-width': 0.7
+                });
                 nodeLayer.append(p);
             }
         };
@@ -345,11 +388,20 @@ const YearMatrixLogic = {
             const ux = dx / len, uy = dy / len;
             lineLayer.append(createSVGElement('line', { x1: p1.x + nx * 30 - ux * 15, y1: p1.y + ny * 30 - uy * 15, x2: p2.x + nx * 30 + ux * 15, y2: p2.y + ny * 30 + uy * 15, stroke: "#000", opacity: 0.3 }));
             const v1 = data.values[i], v2 = data.values[(i + 1) % 8], p4 = this.reduce(v1 + v2), p2_ = this.reduce(p4 + v1), p1_ = this.reduce(p2_ + v1), p6 = this.reduce(p4 + v2), p7 = this.reduce(p6 + v2);
+            const pStart = { x: p1.x + nx * 30 - ux * 15, y: p1.y + ny * 30 - uy * 15 };
+            const pEnd = { x: p2.x + nx * 30 + ux * 15, y: p2.y + ny * 30 + uy * 15 };
+
             [null, p1_, p2_, this.reduce(p2_ + p4), p4, this.reduce(p4 + p6), p6, p7].forEach((v, j) => {
                 if (j === 0) return;
-                const t = 0.5 + (j - 4) / 9, px = p1.x + ux * len * t + nx * 30, py = p1.y + uy * len * t + ny * 30;
+                const t = j / 8;
+                const px = pStart.x + (pEnd.x - pStart.x) * t;
+                const py = pStart.y + (pEnd.y - pStart.y) * t;
+
                 nodeLayer.append(createSVGElement('circle', { cx: px, cy: py, r: (j === 4 ? 4 : 2) * rScale, fill: "#cc3366" }));
-                const l = createSVGElement('text', { x: p1.x + ux * len * t + nx * 48, y: p1.y + uy * len * t + ny * 48, 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': (j === 4 ? 13 : 11) * tScale, 'font-weight': j === 4 ? 'bold' : 'normal' });
+
+                const tx = px + nx * 18;
+                const ty = py + ny * 18;
+                const l = createSVGElement('text', { x: tx, y: ty, 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': (j === 4 ? 13 : 11) * tScale, 'font-weight': j === 4 ? 'bold' : 'normal' });
                 l.textContent = v; textLayer.append(l);
             });
         }
