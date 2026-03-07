@@ -236,9 +236,10 @@ function showView(viewId) {
         if (header) header.style.display = 'flex';
     }
 
-    // Nav logic (hide on anything that is not the main home tab)
+    // Nav logic (hide on anything that is not a main tab: Home, History, Services)
     if (nav) {
-        if (viewId === 'homeView') {
+        const isTab = viewId === 'homeView' || viewId === 'historyView' || viewId === 'servicesView';
+        if (isTab) {
             nav.style.display = 'flex';
             document.body.style.paddingBottom = 'calc(80px + var(--safe-area-bottom))';
         } else {
