@@ -230,14 +230,20 @@ function showView(viewId) {
     const header = document.querySelector('.tma-header');
     const nav = document.querySelector('.tma-nav');
 
-    if (viewId === 'resultView' || viewId === 'yearForecastResultView') {
-        header.style.display = 'none';
-        nav.style.display = 'none';
-        document.body.style.paddingBottom = '0';
+    if (viewId === 'resultView' || viewId === 'yearForecastResultView' || viewId === 'moneyResultView' || viewId === 'monthForecastResultView') {
+        if (header) header.style.display = 'none';
     } else {
-        header.style.display = 'flex';
-        nav.style.display = 'flex';
-        document.body.style.paddingBottom = 'calc(80px + var(--safe-area-bottom))';
+        if (header) header.style.display = 'flex';
+    }
+
+    if (nav) {
+        if (viewId === 'homeView') {
+            nav.style.display = 'flex';
+            document.body.style.paddingBottom = 'calc(80px + var(--safe-area-bottom))';
+        } else {
+            nav.style.display = 'none';
+            document.body.style.paddingBottom = '0';
+        }
     }
 }
 
