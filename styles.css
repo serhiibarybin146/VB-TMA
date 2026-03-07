@@ -1086,8 +1086,17 @@ body {
 
 .star-visualization {
     width: 100%;
-    max-width: 380px;
-    aspect-ratio: 1;
+    max-width: 340px;
+}
+
+.star-wrapper {
+    width: 100%;
+}
+
+.star-wrapper svg {
+    width: 100%;
+    height: auto;
+    display: block;
 }
 
 /* Numbers at star tips (new white circle design) */
