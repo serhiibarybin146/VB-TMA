@@ -1379,3 +1379,95 @@ body {
 .history-item:active, .history-item:hover {
     background: #F7F8FA !important;
 }
+/* ========================================= */
+/* 2026 RESULT VIEW & MATRIX STYLES */
+/* ========================================= */
+
+.result-info {
+    color: #111111 !important;
+}
+
+.result-date, .result-age, .result-separator {
+    color: #111111 !important;
+    font-weight: 700 !important;
+}
+
+.matrix-svg-container, .info-card {
+    background: #FFFFFF !important;
+    box-shadow: 0 10px 40px -10px rgba(0,0,0,0.06) !important;
+    border-radius: 24px !important;
+    border: none !important;
+}
+
+.info-card h4 {
+    color: #111111 !important;
+    font-weight: 800 !important;
+    font-size: 13px !important;
+    letter-spacing: 0.5px !important;
+}
+
+/* Data Tables inside info cards */
+.health-table {
+    border: 1px solid #EAEAEA !important;
+    border-radius: 12px !important;
+}
+
+.health-table th {
+    background: #F7F8FA !important;
+    color: #666666 !important;
+    border-color: #EAEAEA !important;
+}
+
+.health-table td {
+    border-color: #EAEAEA !important;
+    color: #111111 !important;
+}
+
+.health-table th.clickable {
+    background: #F0F0F0 !important;
+}
+
+.destiny-subtitle {
+    color: #666666 !important;
+    font-weight: 600 !important;
+}
+
+.destiny-cell {
+    border-color: #EAEAEA !important;
+}
+
+.borders-right {
+    border-right-color: #EAEAEA !important;
+}
+
+.borders-bottom {
+    border-bottom-color: #EAEAEA !important;
+}
+
+.d-row {
+    color: #111111 !important;
+}
+
+.d-val.circled, .d-val.big-circle {
+    border-color: #EBE3BD !important;
+    background: #FFFFFF !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+    color: #111111 !important;
+}
+
+.brace-symbol {
+    color: #AAAAAA !important;
+}
+
+.code-label {
+    color: #666666 !important;
+}
+
+.code-value {
+    color: #111111 !important;
+    text-decoration-color: #D2C5EB !important;
+}
+
+.code-row {
+    border-color: #EAEAEA !important;
+}
