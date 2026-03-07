@@ -804,7 +804,7 @@ body {
     font-weight: 700;
 }
 
-/* --- Destiny Block (Р СџРЎР‚Р ВµР Т‘Р Р…Р В°Р В·Р Р…Р В°РЎвЂЎР ВµР Р…Р С‘Р Вµ) --- */
+/* --- Destiny Block (Р В РЎСџР РЋР вЂљР В Р’ВµР В РўвЂР В Р вЂ¦Р В Р’В°Р В Р’В·Р В Р вЂ¦Р В Р’В°Р РЋРІР‚РЋР В Р’ВµР В Р вЂ¦Р В РЎвЂР В Р’Вµ) --- */
 .destiny-block {
     padding: 12px 10px !important;
     background: #F8F6F2;
@@ -1286,4 +1286,27 @@ body {
 
 .tma-nav .nav-item.active span {
     display: none !important;
+}
+
+/* ========================================= */
+/* CARD FOOTER ACTION BUTTONS */
+/* ========================================= */
+.matrix-card .card-footer {
+    background: #111111 !important;
+    color: #FFFFFF !important;
+    border-radius: 20px !important;
+    padding: 12px 20px !important;
+    margin-top: 24px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-weight: 600 !important;
+}
+.matrix-card .card-footer span {
+    color: #FFFFFF !important;
+}
+.matrix-card .card-footer iconify-icon {
+    font-size: 18px !important;
+    color: #FFFFFF !important;
 }
