@@ -804,7 +804,7 @@ body {
     font-weight: 700;
 }
 
-/* --- Destiny Block (РџСЂРµРґРЅР°Р·РЅР°С‡РµРЅРёРµ) --- */
+/* --- Destiny Block (Р СџРЎР‚Р ВµР Т‘Р Р…Р В°Р В·Р Р…Р В°РЎвЂЎР ВµР Р…Р С‘Р Вµ) --- */
 .destiny-block {
     padding: 12px 10px !important;
     background: #F8F6F2;
@@ -1223,7 +1223,8 @@ body {
     bottom: 24px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
-    width: 85% !important;
+    width: auto !important;
+    min-width: 260px !important;
     max-width: 400px !important;
     background: rgba(164, 148, 136, 0.9) !important;
     backdrop-filter: blur(20px) !important;
@@ -1231,7 +1232,8 @@ body {
     padding: 8px 16px !important;
     border: none !important;
     box-shadow: 0 20px 40px -10px rgba(0,0,0,0.2) !important;
-    justify-content: space-between !important;
+    justify-content: space-evenly !important;
+    gap: 16px !important;
     align-items: center !important;
     z-index: 1000 !important;
 }
