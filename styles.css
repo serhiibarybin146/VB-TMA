@@ -1471,3 +1471,23 @@ body {
 .code-row {
     border-color: #EAEAEA !important;
 }
+/* ========================================= */
+/* 2026 FORCE LIGHT THEME VARIABLES & SDK */
+/* ========================================= */
+:root {
+    /* Override Telegram SDK Themes entirely to enforce Light Mode */
+    --tg-theme-bg-color: #F7F8FA !important;
+    --tg-theme-secondary-bg-color: #FFFFFF !important;
+    --tg-theme-text-color: #111111 !important;
+    --tg-theme-hint-color: #666666 !important;
+    --tg-theme-section-bg-color: #FFFFFF !important;
+    --bg-color: #F7F8FA !important;
+    --secondary-bg: #FFFFFF !important;
+    --text-color: #111111 !important;
+    --hint-color: #666666 !important;
+}
+
+body, html, #appContent, .view {
+    background-color: #F7F8FA !important;
+    color: #111111 !important;
+}
