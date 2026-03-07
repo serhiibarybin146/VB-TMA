@@ -804,7 +804,7 @@ body {
     font-weight: 700;
 }
 
-/* --- Destiny Block (Предназначение) --- */
+/* --- Destiny Block (РџСЂРµРґРЅР°Р·РЅР°С‡РµРЅРёРµ) --- */
 .destiny-block {
     padding: 12px 10px !important;
     background: #F8F6F2;
@@ -1212,7 +1212,12 @@ body {
     color: #111111 !important;
 }
 
-/* Bottom Floating Nav */
+
+/* ========================================= */
+/* 2026 UNIVERSAL NAV ACTIVE STATES */
+/* ========================================= */
+
+/* Container */
 .tma-nav {
     position: fixed !important;
     bottom: 24px !important;
@@ -1226,113 +1231,57 @@ body {
     padding: 8px 16px !important;
     border: none !important;
     box-shadow: 0 20px 40px -10px rgba(0,0,0,0.2) !important;
-    justify-content: space-around !important;
+    justify-content: space-between !important;
+    align-items: center !important;
     z-index: 1000 !important;
 }
 
+/* Base Inactive Button */
 .tma-nav .nav-item {
-    color: rgba(255, 255, 255, 0.6) !important;
-    padding: 8px !important;
-}
-
-.tma-nav .nav-item.active {
-    color: #FFFFFF !important;
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    padding: 0 !important;
+    width: 60px !important; /* Fixed width to avoid layout jumping */
+    height: 48px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 12px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: none !important;
+    transform: scale(0.95);
 }
 
 .tma-nav .nav-item iconify-icon {
     font-size: 24px !important;
     margin-bottom: 2px !important;
+    transition: all 0.3s ease !important;
 }
 
-/* Center ADD button styling (mapping to the second item: History -> Add) */
-.tma-nav .nav-item:nth-child(1) { transform: translateX(10px); }
-.tma-nav .nav-item:nth-child(4) { transform: translateX(-10px); }
-
-.tma-nav .nav-item:nth-child(2) {
-    background: #FFFFFF !important;
-    color: #111111 !important;
-    border-radius: 50% !important;
-    width: 48px !important;
-    height: 48px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    transform: translateY(-5px) !important;
-    box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2) !important;
-}
-.tma-nav .nav-item:nth-child(2) span {
-    display: none !important;
+.tma-nav .nav-item span {
+    font-size: 10px !important;
+    display: block !important;
+    transition: all 0.3s ease !important;
 }
 
-/* Card Button Footer */
-.matrix-card .card-footer {
-    background: #111111 !important;
-    color: #FFFFFF !important;
-    border-radius: 20px !important;
-    padding: 12px 20px !important;
-    margin-top: 24px !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    gap: 8px !important;
-    font-weight: 600 !important;
-}
-.matrix-card .card-footer span {
-    color: #FFFFFF !important;
-}
-.matrix-card .card-footer iconify-icon {
-    font-size: 18px !important;
-    color: #FFFFFF !important;
-}
-
-/* ========================================= */
-/* 2026 NAV ACTIVE STATES & CENTERING */
-/* ========================================= */
-
-.tma-nav .nav-item {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    position: relative;
-    border-radius: 12px !important;
-}
-
-/* Side buttons active background bubble */
+/* Base Active Button (The White Circle) */
 .tma-nav .nav-item.active {
-    background: rgba(255, 255, 255, 0.2) !important;
-    color: #FFFFFF !important;
-}
-
-/* 3-Button Layout Centering (History, Home, Services) */
-.tma-nav .nav-item:nth-child(1) { transform: translateX(15px) !important; }
-.tma-nav .nav-item:nth-child(3) { transform: translateX(-15px) !important; }
-.tma-nav .nav-item:nth-child(4) { display: none !important; }
-
-/* The Center Button (Home / Matrix) base styling */
-.tma-nav .nav-item:nth-child(2) {
+    background: #FFFFFF !important;
+    color: #111111 !important;
     border-radius: 50% !important;
     width: 48px !important;
     height: 48px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-.tma-nav .nav-item:nth-child(2) span {
-    display: none !important;
-}
-
-/* Center Button INACTIVE State */
-.tma-nav .nav-item:nth-child(2):not(.active) {
-    background: rgba(255, 255, 255, 0.25) !important;
-    color: rgba(255, 255, 255, 0.8) !important;
-    box-shadow: none !important;
-    transform: translateY(0px) scale(0.9) !important;
-}
-
-/* Center Button ACTIVE State */
-.tma-nav .nav-item:nth-child(2).active {
-    background: #FFFFFF !important;
-    color: #111111 !important;
+    margin: 0 6px !important;
     box-shadow: 0 10px 24px -4px rgba(255, 255, 255, 0.5) !important;
-    transform: translateY(-5px) scale(1) !important;
+    transform: scale(1) translateY(-5px) !important;
+}
+
+.tma-nav .nav-item.active iconify-icon {
+    margin-bottom: 0 !important;
+    transform: scale(1.1) !important;
+}
+
+.tma-nav .nav-item.active span {
+    display: none !important;
 }
