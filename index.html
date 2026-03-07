@@ -48,8 +48,8 @@
         <!-- HOME VIEW -->
         <section id="homeView" class="view active">
             <div class="welcome-card">
-                <h2>Ваша Матрица Судьбы</h2>
-                <p>Раскройте свой потенциал и узнайте предназначение по дате рождения.</p>
+                <h2>Твоя Матрица Судьбы</h2>
+                <p>Раскрой свой потенциал и узнай предназначение по дате рождения.</p>
             </div>
 
             <div class="matrix-grid">
@@ -57,7 +57,7 @@
                 <div class="matrix-card primary" onclick="navigateTo('calculate')">
                     <div class="card-glass"></div>
                     <div class="card-content">
-                        <h3>Основная матрица</h3>
+                        <h3>Личная Матрица</h3>
                         <p>Базовый разбор личности и талантов</p>
                         <div class="card-footer">
                             <span>Рассчитать</span>
@@ -150,7 +150,7 @@
             <div class="result-top-row">
                 <div class="back-link" onclick="navigateTo('yearForecast')">
                     <iconify-icon icon="solar:arrow-left-linear"></iconify-icon>
-                    <span>К вводу даты</span>
+                    <span>Назад</span>
                 </div>
             </div>
 
@@ -175,7 +175,7 @@
                         inputmode="numeric" maxlength="10">
                     <div id="historyDropdown" class="history-dropdown"></div> <!-- History Dropdown -->
                 </div>
-                <button class="btn-primary full-width" onclick="performCalculation()">Рассчитать</button>
+                <button class="btn-primary full-width" onclick="performCalculation()">Открыть Матрицу</button>
             </div>
         </section>
 
@@ -213,7 +213,7 @@
             <div class="result-top-row">
                 <div class="back-link" onclick="navigateTo('moneyCalc')">
                     <iconify-icon icon="solar:arrow-left-linear"></iconify-icon>
-                    <span>К вводу даты</span>
+                    <span>Назад</span>
                 </div>
             </div>
 
@@ -311,7 +311,7 @@
             <div class="result-top-row">
                 <div class="back-link" onclick="navigateTo('monthForecast')">
                     <iconify-icon icon="solar:arrow-left-linear"></iconify-icon>
-                    <span>К вводу даты</span>
+                    <span>Назад</span>
                 </div>
             </div>
 
@@ -332,7 +332,7 @@
             <div class="result-top-row">
                 <div class="back-link" onclick="navigateTo('calculate')">
                     <iconify-icon icon="solar:arrow-left-linear"></iconify-icon>
-                    <span>К вводу даты</span>
+                    <span>Назад</span>
                 </div>
                 <div class="result-info">
                     <span id="resultDate" class="result-date">01.01.1990</span>
@@ -390,8 +390,8 @@
                             <div class="destiny-subtitle">Социальное</div>
                             <div class="destiny-group">
                                 <div class="destiny-values">
-                                    <div class="d-row">М: <span class="d-val circled" id="val-male">0</span></div>
-                                    <div class="d-row">Ж: <span class="d-val circled" id="val-female">0</span></div>
+                                    <div class="d-row">♂️ М: <span class="d-val circled" id="val-male">0</span></div>
+                                    <div class="d-row">♀️ Ж: <span class="d-val circled" id="val-female">0</span></div>
                                 </div>
                                 <div class="brace-wrapper">
                                     <span class="brace-symbol">}</span>

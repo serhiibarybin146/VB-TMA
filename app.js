@@ -175,7 +175,7 @@ function initEventListeners() {
             if (checkPermission(feature)) {
                 // Feature is unlocked, but might not be implemented yet
                 if (feature === 'compatibility' || feature === 'year') {
-                    tg.showAlert('Этот раздел находится в разработке и скоро будет доступен!');
+                    tg.showAlert('Этот раздел сейчас в разработке, он скоро будет готов для тебя!');
                 } else {
                     navigateTo(feature);
                 }
@@ -525,7 +525,7 @@ function performMonthForecast() {
     const eVal = eInput.value;
 
     if (!/^\d{2}\.\d{2}\.\d{4}$/.test(bVal) || !/^\d{2}\.\d{2}\.\d{4}$/.test(eVal)) {
-        tg.showAlert('Пожалуйста, введите даты в формате ДД.ММ.ГГГГ');
+        tg.showAlert('Пожалуйста, введи даты в формате ДД.ММ.ГГГГ');
         return;
     }
 
@@ -678,7 +678,7 @@ async function performMoneyCalculation() {
     const input = document.getElementById('moneyDateInput');
     const dateStr = input.value;
     if (!/^\d{2}\.\d{2}\.\d{4}$/.test(dateStr)) {
-        tg.showAlert('Пожалуйста, введите дату в формате ДД.ММ.ГГГГ');
+        tg.showAlert('Пожалуйста, введи дату в формате ДД.ММ.ГГГГ');
         return;
     }
 
@@ -767,7 +767,7 @@ async function performCalculation() {
     const val = birthDateInput.value;
     const parts = val.split('.');
     if (parts.length !== 3 || parts[2].length !== 4) {
-        tg.showAlert('Пожалуйста, введите дату в формате ДД.ММ.ГГГГ');
+        tg.showAlert('Пожалуйста, введи дату в формате ДД.ММ.ГГГГ');
         return;
     }
 
@@ -793,7 +793,7 @@ function populateResultUI(data, health) {
     const today = new Date();
     let age = today.getFullYear() - bDate.getFullYear();
     if (today.getMonth() < bDate.getMonth() || (today.getMonth() === bDate.getMonth() && today.getDate() < bDate.getDate())) age--;
-    document.getElementById('resultAge').textContent = `${age} лет`;
+    document.getElementById('resultAge').textContent = `${age} ${getAgeLabel(age)}`;
 
     const summary = document.getElementById('destinySummary');
     // Populate destiny values
@@ -1312,6 +1312,18 @@ function updatePremiumUI() {
             }
         }
     });
+}
+
+/**
+ * Helper to get correct Russian grammar for age
+ */
+function getAgeLabel(age) {
+    let lastDigit = age % 10;
+    let lastTwoDigits = age % 100;
+    if (lastTwoDigits >= 11 && lastTwoDigits <= 14) return 'лет';
+    if (lastDigit === 1) return 'год';
+    if (lastDigit >= 2 && lastDigit <= 4) return 'года';
+    return 'лет';
 }
 
 initZoomEvents();
