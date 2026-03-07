@@ -804,7 +804,7 @@ body {
     font-weight: 700;
 }
 
-/* --- Destiny Block (Р В РЎСџР РЋР вЂљР В Р’ВµР В РўвЂР В Р вЂ¦Р В Р’В°Р В Р’В·Р В Р вЂ¦Р В Р’В°Р РЋРІР‚РЋР В Р’ВµР В Р вЂ¦Р В РЎвЂР В Р’Вµ) --- */
+/* --- Destiny Block (Р В Р’В Р РЋРЎСџР В Р Р‹Р В РІР‚С™Р В Р’В Р вЂ™Р’ВµР В Р’В Р СћРІР‚ВР В Р’В Р В РІР‚В¦Р В Р’В Р вЂ™Р’В°Р В Р’В Р вЂ™Р’В·Р В Р’В Р В РІР‚В¦Р В Р’В Р вЂ™Р’В°Р В Р Р‹Р Р†Р вЂљР Р‹Р В Р’В Р вЂ™Р’ВµР В Р’В Р В РІР‚В¦Р В Р’В Р РЋРІР‚ВР В Р’В Р вЂ™Р’Вµ) --- */
 .destiny-block {
     padding: 12px 10px !important;
     background: #F8F6F2;
@@ -1309,4 +1309,73 @@ body {
 .matrix-card .card-footer iconify-icon {
     font-size: 18px !important;
     color: #FFFFFF !important;
+}
+/* ========================================= */
+/* 2026 CALCULATION & FORM VIEWS */
+/* ========================================= */
+
+.view {
+    background-color: #F7F8FA !important;
+}
+
+.back-link {
+    color: #111111 !important;
+}
+
+.back-link iconify-icon {
+    background: #FFFFFF !important;
+    padding: 6px !important;
+    border-radius: 50% !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+}
+
+.form-header h2 {
+    color: #111111 !important;
+    background: none !important;
+    -webkit-text-fill-color: initial !important;
+}
+
+.form-header p {
+    color: #666666 !important;
+}
+
+.tma-input {
+    background: #FFFFFF !important;
+    color: #111111 !important;
+    border: 1px solid #EAEAEA !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.02) !important;
+}
+
+.tma-input::placeholder {
+    color: #AAAAAA !important;
+}
+
+.tma-input:focus {
+    border-color: #D2C5EB !important;
+    box-shadow: 0 4px 16px rgba(210, 197, 235, 0.2) !important;
+}
+
+.btn-primary {
+    background: #111111 !important;
+    color: #FFFFFF !important;
+    border-radius: 16px !important;
+    box-shadow: 0 10px 24px -8px rgba(0,0,0,0.4) !important;
+}
+
+/* History Dropdown below input */
+.history-dropdown {
+    background: #FFFFFF !important;
+    border: 1px solid #EAEAEA !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05) !important;
+}
+
+.history-item {
+    color: #111111 !important;
+    border-bottom: 1px solid #F0F0F0 !important;
+}
+
+.history-item:active, .history-item:hover {
+    background: #F7F8FA !important;
 }
