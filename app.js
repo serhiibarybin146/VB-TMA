@@ -690,12 +690,12 @@ async function performMoneyCalculation() {
     try {
         const result = MatrixLogic.calculateMoneyCode(d, m, y);
 
-        // Update Corner Labels
-        document.getElementById('c1').textContent = result.corners[0];
-        document.getElementById('c2').textContent = result.corners[1];
-        document.getElementById('c3').textContent = result.corners[2];
-        document.getElementById('c4').textContent = result.corners[3];
-        document.getElementById('c5').textContent = result.corners[4];
+        // Update Corner Labels (Shifted 1 position counter-clockwise per user request)
+        document.getElementById('c1').textContent = result.corners[1];
+        document.getElementById('c2').textContent = result.corners[2];
+        document.getElementById('c3').textContent = result.corners[3];
+        document.getElementById('c4').textContent = result.corners[4];
+        document.getElementById('c5').textContent = result.corners[0];
 
         // Update center code inside star
         document.getElementById('centerCode').textContent = result.code;
