@@ -1,5 +1,5 @@
 /**
- * Мой личный Нумеролог - Telegram Mini App Logic
+ * РњРѕР№ Р»РёС‡РЅС‹Р№ РќСѓРјРµСЂРѕР»РѕРі - Telegram Mini App Logic
  */
 
 const tg = window.Telegram.WebApp;
@@ -25,42 +25,42 @@ let currentState = {
  * CHAKRA DATA
  */
 const CHAKRA_INFO = {
-    'САХАСРАРА': {
+    'РЎРђРҐРђРЎР РђР Рђ': {
         image: 'assets/chakras/sahasrara.png',
-        aspects: 'духовность, соединение с Высшим Я, осознание, просветление.',
-        organs: 'верхняя часть головного мозга, шишковидная железа, центральная нервная система (депрессия, потеря смысла жизни, циклы сна).'
+        aspects: 'РґСѓС…РѕРІРЅРѕСЃС‚СЊ, СЃРѕРµРґРёРЅРµРЅРёРµ СЃ Р’С‹СЃС€РёРј РЇ, РѕСЃРѕР·РЅР°РЅРёРµ, РїСЂРѕСЃРІРµС‚Р»РµРЅРёРµ.',
+        organs: 'РІРµСЂС…РЅСЏСЏ С‡Р°СЃС‚СЊ РіРѕР»РѕРІРЅРѕРіРѕ РјРѕР·РіР°, С€РёС€РєРѕРІРёРґРЅР°СЏ Р¶РµР»РµР·Р°, С†РµРЅС‚СЂР°Р»СЊРЅР°СЏ РЅРµСЂРІРЅР°СЏ СЃРёСЃС‚РµРјР° (РґРµРїСЂРµСЃСЃРёСЏ, РїРѕС‚РµСЂСЏ СЃРјС‹СЃР»Р° Р¶РёР·РЅРё, С†РёРєР»С‹ СЃРЅР°).'
     },
-    'АДЖНА': {
+    'РђР”Р–РќРђ': {
         image: 'assets/chakras/adjna.png',
-        aspects: 'интуиция, мудрость, способность видеть за пределы очевидного (в большую картину), интуитивное и более глубокое понимания мира.',
-        organs: 'глаза, носовые пазухи, лоб, виски, затылок, головной мозг, нервная система, эндокринная система.'
+        aspects: 'РёРЅС‚СѓРёС†РёСЏ, РјСѓРґСЂРѕСЃС‚СЊ, СЃРїРѕСЃРѕР±РЅРѕСЃС‚СЊ РІРёРґРµС‚СЊ Р·Р° РїСЂРµРґРµР»С‹ РѕС‡РµРІРёРґРЅРѕРіРѕ (РІ Р±РѕР»СЊС€СѓСЋ РєР°СЂС‚РёРЅСѓ), РёРЅС‚СѓРёС‚РёРІРЅРѕРµ Рё Р±РѕР»РµРµ РіР»СѓР±РѕРєРѕРµ РїРѕРЅРёРјР°РЅРёСЏ РјРёСЂР°.',
+        organs: 'РіР»Р°Р·Р°, РЅРѕСЃРѕРІС‹Рµ РїР°Р·СѓС…Рё, Р»РѕР±, РІРёСЃРєРё, Р·Р°С‚С‹Р»РѕРє, РіРѕР»РѕРІРЅРѕР№ РјРѕР·Рі, РЅРµСЂРІРЅР°СЏ СЃРёСЃС‚РµРјР°, СЌРЅРґРѕРєСЂРёРЅРЅР°СЏ СЃРёСЃС‚РµРјР°.'
     },
-    'ВИШУДХА': {
+    'Р’РРЁРЈР”РҐРђ': {
         image: 'assets/chakras/vishuddha.png',
-        aspects: 'коммуникация, самовыражение, творческое искусство через речь и пение, способность слушать и быть услышанным.',
-        organs: 'горло, руки, голосовые связки, щитовидная железа, трахея, уши, рот (включая зубы и десны), шея, гортань, глотка, челюсти, голосовой аппарат, плечевой пояс.'
+        aspects: 'РєРѕРјРјСѓРЅРёРєР°С†РёСЏ, СЃР°РјРѕРІС‹СЂР°Р¶РµРЅРёРµ, С‚РІРѕСЂС‡РµСЃРєРѕРµ РёСЃРєСѓСЃСЃС‚РІРѕ С‡РµСЂРµР· СЂРµС‡СЊ Рё РїРµРЅРёРµ, СЃРїРѕСЃРѕР±РЅРѕСЃС‚СЊ СЃР»СѓС€Р°С‚СЊ Рё Р±С‹С‚СЊ СѓСЃР»С‹С€Р°РЅРЅС‹Рј.',
+        organs: 'РіРѕСЂР»Рѕ, СЂСѓРєРё, РіРѕР»РѕСЃРѕРІС‹Рµ СЃРІСЏР·РєРё, С‰РёС‚РѕРІРёРґРЅР°СЏ Р¶РµР»РµР·Р°, С‚СЂР°С…РµСЏ, СѓС€Рё, СЂРѕС‚ (РІРєР»СЋС‡Р°СЏ Р·СѓР±С‹ Рё РґРµСЃРЅС‹), С€РµСЏ, РіРѕСЂС‚Р°РЅСЊ, РіР»РѕС‚РєР°, С‡РµР»СЋСЃС‚Рё, РіРѕР»РѕСЃРѕРІРѕР№ Р°РїРїР°СЂР°С‚, РїР»РµС‡РµРІРѕР№ РїРѕСЏСЃ.'
     },
-    'АНАХАТА': {
+    'РђРќРђРҐРђРўРђ': {
         image: 'assets/chakras/anahata.png',
-        aspects: 'любовь, сострадание, принятие, гармония, способность к эмпатии и прощению, душа, эмоциональные травмы.',
-        organs: 'сердце, легкие, бронхи, ребра, диафрагма, грудная клетка, тимус (вилочковая железа).'
+        aspects: 'Р»СЋР±РѕРІСЊ, СЃРѕСЃС‚СЂР°РґР°РЅРёРµ, РїСЂРёРЅСЏС‚РёРµ, РіР°СЂРјРѕРЅРёСЏ, СЃРїРѕСЃРѕР±РЅРѕСЃС‚СЊ Рє СЌРјРїР°С‚РёРё Рё РїСЂРѕС‰РµРЅРёСЋ, РґСѓС€Р°, СЌРјРѕС†РёРѕРЅР°Р»СЊРЅС‹Рµ С‚СЂР°РІРјС‹.',
+        organs: 'СЃРµСЂРґС†Рµ, Р»РµРіРєРёРµ, Р±СЂРѕРЅС…Рё, СЂРµР±СЂР°, РґРёР°С„СЂР°РіРјР°, РіСЂСѓРґРЅР°СЏ РєР»РµС‚РєР°, С‚РёРјСѓСЃ (РІРёР»РѕС‡РєРѕРІР°СЏ Р¶РµР»РµР·Р°).'
     },
-    'МАНИПУРА': {
+    'РњРђРќРРџРЈР Рђ': {
         image: 'assets/chakras/manipura.png',
-        aspects: 'статус, достижения, уверенность, способность к контролю и управлению в своей жизни, целеустремленность.',
-        organs: 'пищеварительная система (желудок, печень, желчный пузырь, поджелудочная железа, селезенка, верхняя часть тонкого кишечника, толстый кишечник), надпочечники, обмен веществ.'
+        aspects: 'СЃС‚Р°С‚СѓСЃ, РґРѕСЃС‚РёР¶РµРЅРёСЏ, СѓРІРµСЂРµРЅРЅРѕСЃС‚СЊ, СЃРїРѕСЃРѕР±РЅРѕСЃС‚СЊ Рє РєРѕРЅС‚СЂРѕР»СЋ Рё СѓРїСЂР°РІР»РµРЅРёСЋ РІ СЃРІРѕРµР№ Р¶РёР·РЅРё, С†РµР»РµСѓСЃС‚СЂРµРјР»РµРЅРЅРѕСЃС‚СЊ.',
+        organs: 'РїРёС‰РµРІР°СЂРёС‚РµР»СЊРЅР°СЏ СЃРёСЃС‚РµРјР° (Р¶РµР»СѓРґРѕРє, РїРµС‡РµРЅСЊ, Р¶РµР»С‡РЅС‹Р№ РїСѓР·С‹СЂСЊ, РїРѕРґР¶РµР»СѓРґРѕС‡РЅР°СЏ Р¶РµР»РµР·Р°, СЃРµР»РµР·РµРЅРєР°, РІРµСЂС…РЅСЏСЏ С‡Р°СЃС‚СЊ С‚РѕРЅРєРѕРіРѕ РєРёС€РµС‡РЅРёРєР°, С‚РѕР»СЃС‚С‹Р№ РєРёС€РµС‡РЅРёРє), РЅР°РґРїРѕС‡РµС‡РЅРёРєРё, РѕР±РјРµРЅ РІРµС‰РµСЃС‚РІ.'
     },
-    'СВАДХИСТАНА': {
+    'РЎР’РђР”РҐРРЎРўРђРќРђ': {
         image: 'assets/chakras/svadhisthana.png',
-        aspects: 'эмоции, сексуальность, творчество, детство, удовольствие от жизни, границы и уважение с партнером.',
-        organs: 'половые органы, яичники у женщин и яички у мужчин, матка, влагалище, шейка матки, простата, репродуктивная система, мочевая система, почки, мочевой пузырь, толстый кишечник.'
+        aspects: 'СЌРјРѕС†РёРё, СЃРµРєСЃСѓР°Р»СЊРЅРѕСЃС‚СЊ, С‚РІРѕСЂС‡РµСЃС‚РІРѕ, РґРµС‚СЃС‚РІРѕ, СѓРґРѕРІРѕР»СЊСЃС‚РІРёРµ РѕС‚ Р¶РёР·РЅРё, РіСЂР°РЅРёС†С‹ Рё СѓРІР°Р¶РµРЅРёРµ СЃ РїР°СЂС‚РЅРµСЂРѕРј.',
+        organs: 'РїРѕР»РѕРІС‹Рµ РѕСЂРіР°РЅС‹, СЏРёС‡РЅРёРєРё Сѓ Р¶РµРЅС‰РёРЅ Рё СЏРёС‡РєРё Сѓ РјСѓР¶С‡РёРЅ, РјР°С‚РєР°, РІР»Р°РіР°Р»РёС‰Рµ, С€РµР№РєР° РјР°С‚РєРё, РїСЂРѕСЃС‚Р°С‚Р°, СЂРµРїСЂРѕРґСѓРєС‚РёРІРЅР°СЏ СЃРёСЃС‚РµРјР°, РјРѕС‡РµРІР°СЏ СЃРёСЃС‚РµРјР°, РїРѕС‡РєРё, РјРѕС‡РµРІРѕР№ РїСѓР·С‹СЂСЊ, С‚РѕР»СЃС‚С‹Р№ РєРёС€РµС‡РЅРёРє.'
     },
-    'МУЛАДХАРА': {
+    'РњРЈР›РђР”РҐРђР Рђ': {
         image: 'assets/chakras/muladhara.png',
-        aspects: 'безопасность, базовые потребности, финансовая стабильность.',
-        organs: 'копчик, кости/скелет, ноги, стопы, зубы, ногти, мочевой пузырь, нижняя часть кишечника, прямая кишка, анус, клетки крови, иммунная система, кожа.'
+        aspects: 'Р±РµР·РѕРїР°СЃРЅРѕСЃС‚СЊ, Р±Р°Р·РѕРІС‹Рµ РїРѕС‚СЂРµР±РЅРѕСЃС‚Рё, С„РёРЅР°РЅСЃРѕРІР°СЏ СЃС‚Р°Р±РёР»СЊРЅРѕСЃС‚СЊ.',
+        organs: 'РєРѕРїС‡РёРє, РєРѕСЃС‚Рё/СЃРєРµР»РµС‚, РЅРѕРіРё, СЃС‚РѕРїС‹, Р·СѓР±С‹, РЅРѕРіС‚Рё, РјРѕС‡РµРІРѕР№ РїСѓР·С‹СЂСЊ, РЅРёР¶РЅСЏСЏ С‡Р°СЃС‚СЊ РєРёС€РµС‡РЅРёРєР°, РїСЂСЏРјР°СЏ РєРёС€РєР°, Р°РЅСѓСЃ, РєР»РµС‚РєРё РєСЂРѕРІРё, РёРјРјСѓРЅРЅР°СЏ СЃРёСЃС‚РµРјР°, РєРѕР¶Р°.'
     },
-    'ЧАКРА': {
+    'Р§РђРљР Рђ': {
         image: 'assets/chakras/Chakra.jpg',
         aspects: '',
         organs: ''
@@ -89,7 +89,7 @@ async function initTMA() {
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
             currentState.user = u;
-            if (userName) userName.textContent = u.username || u.first_name || 'Гость';
+            if (userName) userName.textContent = u.username || u.first_name || 'Р“РѕСЃС‚СЊ';
 
             if (u.photo_url && userAvatar) {
                 userAvatar.innerHTML = `<img src="${u.photo_url}" alt="${u.first_name || 'User'}">`;
@@ -130,7 +130,7 @@ async function initTMA() {
             }
         } else {
             console.warn('Telegram User Data not found, using Guest mode');
-            if (userName) userName.textContent = 'Гость';
+            if (userName) userName.textContent = 'Р“РѕСЃС‚СЊ';
         }
     } catch (err) {
         console.error('Fatal Init Error:', err);
@@ -173,7 +173,7 @@ function initEventListeners() {
             if (checkPermission(feature)) {
                 // Feature is unlocked, but might not be implemented yet
                 if (feature === 'compatibility' || feature === 'year') {
-                    tg.showAlert('Этот раздел находится в разработке и скоро будет доступен!');
+                    tg.showAlert('Р­С‚РѕС‚ СЂР°Р·РґРµР» РЅР°С…РѕРґРёС‚СЃСЏ РІ СЂР°Р·СЂР°Р±РѕС‚РєРµ Рё СЃРєРѕСЂРѕ Р±СѓРґРµС‚ РґРѕСЃС‚СѓРїРµРЅ!');
                 } else {
                     navigateTo(feature);
                 }
@@ -454,8 +454,8 @@ function initMonthForecastForm() {
 }
 
 /**
- * Расчёт и отрисовка годового прогноза
- * Формат ввода: ДД.ММ.ГГГГ (день рожд., месяц рожд., искомый год)
+ * Р Р°СЃС‡С‘С‚ Рё РѕС‚СЂРёСЃРѕРІРєР° РіРѕРґРѕРІРѕРіРѕ РїСЂРѕРіРЅРѕР·Р°
+ * Р¤РѕСЂРјР°С‚ РІРІРѕРґР°: Р”Р”.РњРњ.Р“Р“Р“Р“ (РґРµРЅСЊ СЂРѕР¶Рґ., РјРµСЃСЏС† СЂРѕР¶Рґ., РёСЃРєРѕРјС‹Р№ РіРѕРґ)
  */
 function performYearForecast() {
     const input = document.getElementById('forecastDate');
@@ -463,7 +463,7 @@ function performYearForecast() {
 
     const val = input.value;
     if (!/^\d{2}\.\d{2}\.\d{4}$/.test(val)) {
-        tg.showAlert('Пожалуйста, введите дату в формате ДД.ММ.ГГГГ');
+        tg.showAlert('РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РІРІРµРґРёС‚Рµ РґР°С‚Сѓ РІ С„РѕСЂРјР°С‚Рµ Р”Р”.РњРњ.Р“Р“Р“Р“');
         return;
     }
 
@@ -473,7 +473,7 @@ function performYearForecast() {
     const y = parseInt(yearStr);
 
     if (d < 1 || d > 31 || m < 1 || m > 12 || y < 1900) {
-        tg.showAlert('Проверьте корректность даты');
+        tg.showAlert('РџСЂРѕРІРµСЂСЊС‚Рµ РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ РґР°С‚С‹');
         return;
     }
 
@@ -500,12 +500,12 @@ function performYearForecast() {
         tg.HapticFeedback.notificationOccurred('success');
     } catch (err) {
         console.error('Year Forecast Error:', err);
-        tg.showAlert('Ошибка при расчете: ' + err.message);
+        tg.showAlert('РћС€РёР±РєР° РїСЂРё СЂР°СЃС‡РµС‚Рµ: ' + err.message);
     }
 }
 
 /**
- * Расчёт и отрисовка прогноза на месяц
+ * Р Р°СЃС‡С‘С‚ Рё РѕС‚СЂРёСЃРѕРІРєР° РїСЂРѕРіРЅРѕР·Р° РЅР° РјРµСЃСЏС†
  */
 function performMonthForecast() {
     const bInput = document.getElementById('monthForecastBirthInput');
@@ -516,7 +516,7 @@ function performMonthForecast() {
     const eVal = eInput.value;
 
     if (!/^\d{2}\.\d{2}\.\d{4}$/.test(bVal) || !/^\d{2}\.\d{2}\.\d{4}$/.test(eVal)) {
-        tg.showAlert('Пожалуйста, введите даты в формате ДД.ММ.ГГГГ');
+        tg.showAlert('РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РІРІРµРґРёС‚Рµ РґР°С‚С‹ РІ С„РѕСЂРјР°С‚Рµ Р”Р”.РњРњ.Р“Р“Р“Р“');
         return;
     }
 
@@ -577,7 +577,7 @@ function performMonthForecast() {
 
     } catch (err) {
         console.error('Month Forecast Error:', err);
-        tg.showAlert('Ошибка при расчете: ' + err.message);
+        tg.showAlert('РћС€РёР±РєР° РїСЂРё СЂР°СЃС‡РµС‚Рµ: ' + err.message);
     }
 }
 
@@ -669,7 +669,7 @@ async function performMoneyCalculation() {
     const input = document.getElementById('moneyDateInput');
     const dateStr = input.value;
     if (!/^\d{2}\.\d{2}\.\d{4}$/.test(dateStr)) {
-        tg.showAlert('Пожалуйста, введите дату в формате ДД.ММ.ГГГГ');
+        tg.showAlert('РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РІРІРµРґРёС‚Рµ РґР°С‚Сѓ РІ С„РѕСЂРјР°С‚Рµ Р”Р”.РњРњ.Р“Р“Р“Р“');
         return;
     }
 
@@ -698,7 +698,7 @@ async function performMoneyCalculation() {
 
     } catch (e) {
         console.error('Money Calculation Failed:', e);
-        tg.showAlert('Ошибка при расчете: ' + e.message);
+        tg.showAlert('РћС€РёР±РєР° РїСЂРё СЂР°СЃС‡РµС‚Рµ: ' + e.message);
     }
 }
 
@@ -758,7 +758,7 @@ async function performCalculation() {
     const val = birthDateInput.value;
     const parts = val.split('.');
     if (parts.length !== 3 || parts[2].length !== 4) {
-        tg.showAlert('Пожалуйста, введите дату в формате ДД.ММ.ГГГГ');
+        tg.showAlert('РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РІРІРµРґРёС‚Рµ РґР°С‚Сѓ РІ С„РѕСЂРјР°С‚Рµ Р”Р”.РњРњ.Р“Р“Р“Р“');
         return;
     }
 
@@ -784,7 +784,7 @@ function populateResultUI(data, health) {
     const today = new Date();
     let age = today.getFullYear() - bDate.getFullYear();
     if (today.getMonth() < bDate.getMonth() || (today.getMonth() === bDate.getMonth() && today.getDate() < bDate.getDate())) age--;
-    document.getElementById('resultAge').textContent = `${age} лет`;
+    document.getElementById('resultAge').textContent = `${age} Р»РµС‚`;
 
     const summary = document.getElementById('destinySummary');
     // Populate destiny values
@@ -819,8 +819,8 @@ function populateResultUI(data, health) {
                 </tr>
             `;
         }).join('') + `
-            <tr class="row-sum"><td>${health.totals.body}</td><td>${health.totals.energy}</td><td>${health.totals.emotion}</td><td class="cell-name">Сумма</td></tr>
-            <tr class="row-total"><td>${health.totals.reducedBody}</td><td>${health.totals.reducedEnergy}</td><td>${health.totals.reducedEmotion}</td><td class="cell-name">Итого</td></tr>
+            <tr class="row-sum"><td>${health.totals.body}</td><td>${health.totals.energy}</td><td>${health.totals.emotion}</td><td class="cell-name">РЎСѓРјРјР°</td></tr>
+            <tr class="row-total"><td>${health.totals.reducedBody}</td><td>${health.totals.reducedEnergy}</td><td>${health.totals.reducedEmotion}</td><td class="cell-name">РС‚РѕРіРѕ</td></tr>
         `;
     }
 }
@@ -849,7 +849,7 @@ function showChakraModal(name, colorKey) {
     const aspects = document.getElementById('chakraAspects');
     const organs = document.getElementById('chakraOrgans');
 
-    const isGeneral = name.toUpperCase() === 'ЧАКРА';
+    const isGeneral = name.toUpperCase() === 'Р§РђРљР Рђ';
     title.textContent = isGeneral ? '' : name;
     title.style.display = isGeneral ? 'none' : 'block';
 
@@ -1001,13 +1001,13 @@ function drawFullMatrixSVG(data) {
                 // j=1 -> 1-2
                 // j=2 -> 2-3
                 // j=3 -> 3-4
-                // j=4 -> 5 лет (midpoint)
+                // j=4 -> 5 Р»РµС‚ (midpoint)
                 // j=5 -> 6-7
                 // j=6 -> 7-8
                 // j=7 -> 8-9
 
                 if (j === 4) {
-                    labelText = `${startAge + 5} лет`; // e.g. 5 лет, 15 лет...
+                    labelText = `${startAge + 5} Р»РµС‚`; // e.g. 5 Р»РµС‚, 15 Р»РµС‚...
                 } else if (j < 4) {
                     // j=1 => start+1 - start+2
                     // j=2 => start+2 - start+3
@@ -1078,7 +1078,7 @@ function drawFullMatrixSVG(data) {
     // ZK
     const zkDotY = cy + 50;
     nodeLayer.append(createSVGElement('circle', { cx: cx, cy: zkDotY, r: 10 * rScale, fill: "#F4F866", stroke: "#000", 'stroke-width': 1 }));
-    textLayer.append(createSVGElement('text', { x: cx, y: zkDotY, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: "#000", 'font-weight': 'bold', 'font-size': 10 * tScale, content: "ЗК" }));
+    textLayer.append(createSVGElement('text', { x: cx, y: zkDotY, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: "#000", 'font-weight': 'bold', 'font-size': 10 * tScale, content: "Р—Рљ" }));
     // Note: 'content' is for later textContent assignment
     svg.querySelectorAll('text').forEach(t => { if (t.getAttribute('content')) { t.textContent = t.getAttribute('content'); t.removeAttribute('content'); } });
 
@@ -1130,9 +1130,9 @@ function drawFullMatrixSVG(data) {
     }
     // Shifted (+15, +15) to avoid overlap with center/arrows
     // lOffX/Y reduced to -17 so circles "touch" edges (R1+R2 approx 24px diagonal)
-    drawExtra(5, 25, 25, innerA, "К", -17, -17, "#fff", false, false);
-    drawExtra(5, 95, 25, innerB, "О", -17, -17, "#fff", true, false);
-    drawExtra(5, 25, 95, innerC, "Н", -17, -17, "#fff", false, true);
+    drawExtra(5, 25, 25, innerA, "Рљ", -17, -17, "#fff", false, false);
+    drawExtra(5, 95, 25, innerB, "Рћ", -17, -17, "#fff", true, false);
+    drawExtra(5, 25, 95, innerC, "Рќ", -17, -17, "#fff", false, true);
 
     // --- markers ---
     const defs = createSVGElement('defs');
@@ -1195,9 +1195,9 @@ function drawFullMatrixSVG(data) {
         }
     }
     // Male: 1 (Top-Left) and 5 (Bottom-Right)
-    drawRay(1, "#3E67EE", "линия мужского рода", true, 'arrowMale');
+    drawRay(1, "#3E67EE", "Р»РёРЅРёСЏ РјСѓР¶СЃРєРѕРіРѕ СЂРѕРґР°", true, 'arrowMale');
     // Female: 3 (Top-Right) and 7 (Bottom-Left)
-    drawRay(3, "#F7494C", "линия женского рода", false, 'arrowFemale');
+    drawRay(3, "#F7494C", "Р»РёРЅРёСЏ Р¶РµРЅСЃРєРѕРіРѕ СЂРѕРґР°", false, 'arrowFemale');
 
     // Bottom diagonals (no text, but needs arrows)
     drawRay(5, "#3E67EE", "", false, 'arrowMale');
@@ -1249,14 +1249,14 @@ function drawFullMatrixSVG(data) {
     for (let i = 0; i < 8; i++) drawPerimeter(i, (i + 1) % 8, values[i], values[(i + 1) % 8]);
 
     // Age Markers (Outer labels)
-    const mLetters = ["A", "Д", "Б", "Е", "В", "Ж", "Г", "З"], mAges = ["0 лет", "10 лет", "20 лет", "30 лет", "40 лет", "50 лет", "60 лет", "70 лет"];
+    const mLetters = ["A", "Р”", "Р‘", "Р•", "Р’", "Р–", "Р“", "Р—"], mAges = ["0 Р»РµС‚", "10 Р»РµС‚", "20 Р»РµС‚", "30 Р»РµС‚", "40 Р»РµС‚", "50 Р»РµС‚", "60 Р»РµС‚", "70 Р»РµС‚"];
     const mOffsets = [[-42.5, 0], [-30, -30], [0, -42.5], [30, -30], [42.5, 0], [30, 30], [0, 42.5], [-30, 30]];
     const mAligns = ["end", "end", "start", "start", "start", "start", "start", "end"];
     outerPoints.forEach((p, i) => {
         const mx = p.x + mOffsets[i][0], my = p.y + mOffsets[i][1];
-        nodeLayer.append(createSVGElement('circle', { cx: mx, cy: my, r: 12 * rScale, fill: (["В", "Г"].includes(mLetters[i]) ? "#e84e42" : (i % 2 !== 0 ? "#000" : "#a185c8")) }));
+        nodeLayer.append(createSVGElement('circle', { cx: mx, cy: my, r: 12 * rScale, fill: (["Р’", "Р“"].includes(mLetters[i]) ? "#e84e42" : (i % 2 !== 0 ? "#000" : "#a185c8")) }));
         textLayer.append(createSVGElement('text', { x: mx, y: my, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: "#fff", 'font-weight': 'bold', 'font-size': 15 * tScale, content: mLetters[i] }));
-        // Position age text: for 0 лет (i=0) and 40 лет (i=4) place below circle, others to the side
+        // Position age text: for 0 Р»РµС‚ (i=0) and 40 Р»РµС‚ (i=4) place below circle, others to the side
         if (i === 0) {
             textLayer.append(createSVGElement('text', { x: mx, y: my + 22 * tScale, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: "#000", 'font-weight': "bold", 'font-size': 13 * tScale, content: mAges[i] }));
         } else if (i === 4) {
@@ -1279,8 +1279,8 @@ function createSVGElement(tag, attrs = {}) {
 
 function showLockedModal(feature) {
     const modalTitle = document.getElementById('modalTitle');
-    if (feature === 'compatibility') modalTitle.textContent = 'Совместимость';
-    else if (feature === 'year') modalTitle.textContent = 'Прогноз на год';
+    if (feature === 'compatibility') modalTitle.textContent = 'РЎРѕРІРјРµСЃС‚РёРјРѕСЃС‚СЊ';
+    else if (feature === 'year') modalTitle.textContent = 'РџСЂРѕРіРЅРѕР· РЅР° РіРѕРґ';
     lockedModal.classList.add('active');
     tg.HapticFeedback.notificationOccurred('warning');
 }
