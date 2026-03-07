@@ -226,11 +226,6 @@ function showView(viewId) {
         target.classList.add('active');
     }
 
-    // SPECIAL CASE: Hide Header and Footer on Result View
-    const header = document.querySelector('.tma-header');
-    const nav = document.querySelector('.tma-nav');
-
-        // SPECIAL CASE: Hide Header on Result Views, Hide Nav on ALL non-main views
     const header = document.querySelector('.tma-header');
     const nav = document.querySelector('.tma-nav');
 
@@ -251,7 +246,6 @@ function showView(viewId) {
             document.body.style.paddingBottom = '0';
         }
     }
-}
 }
 
 function switchTab(tabId, element) {
