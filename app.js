@@ -1315,19 +1315,41 @@ function showLockedModal(feature) {
 function hideLockedModal() { lockedModal.classList.remove('active'); }
 
 function updatePremiumUI() {
+    const featureViewMap = {
+        'money_code': 'moneyCalc',
+        'compatibility': null,
+        'year_forecast': 'yearForecast',
+        'month_forecast': 'monthForecast'
+    };
+
     lockedCards.forEach(card => {
         const feature = card.getAttribute('data-feature');
         if (checkPermission(feature)) {
             card.classList.remove('locked');
-            // Remove lock icon if present
-            const lockIcon = card.querySelector('iconify-icon[icon="solar:lock-keyhole-minimalistic-bold"]');
-            if (lockIcon) lockIcon.style.display = 'none';
-            // Update tag if present
-            const tag = card.querySelector('.card-tag.gold');
-            if (tag) {
-                tag.textContent = 'Unlocked';
-                tag.style.background = 'var(--accent-gradient)';
+            card.classList.add('primary');
+
+            // Remove entire lock-header (icon + Premium tag)
+            const lockHeader = card.querySelector('.lock-header');
+            if (lockHeader) lockHeader.remove();
+
+            // Add card-footer with button
+            const cardContent = card.querySelector('.card-content');
+            if (cardContent && !cardContent.querySelector('.card-footer')) {
+                const footer = document.createElement('div');
+                footer.className = 'card-footer';
+                footer.innerHTML = '<span>Перейти</span><iconify-icon icon="solar:arrow-right-up-linear"></iconify-icon>';
+                cardContent.appendChild(footer);
             }
+
+            // Add click to navigate
+            const viewName = featureViewMap[feature];
+            card.onclick = () => {
+                if (viewName) {
+                    navigateTo(viewName);
+                } else {
+                    tg.showAlert('Этот раздел сейчас в разработке, он скоро будет готов для тебя!');
+                }
+            };
         }
     });
 }
