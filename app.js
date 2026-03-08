@@ -1349,7 +1349,7 @@ async function purchaseFeature(featureKey) {
         buyBtn.textContent = 'Загрузка...';
         
         // Call Supabase Edge Function
-        const { data, error } = await supabase.functions.invoke('create-checkout', {
+        const { data, error } = await supabaseClient.functions.invoke('create-checkout', {
             body: { 
                 user_id: currentState.user?.id || tg.initDataUnsafe.user?.id,
                 feature_key: featureKey 
