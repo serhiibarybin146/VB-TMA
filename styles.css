@@ -1051,7 +1051,7 @@ body {
 
 .cell-name.clickable:active {
     opacity: 0.6;
-}/* MONEY CODE RESULTS — PREMIUM 2026 */
+}/* MONEY CODE RESULTS - PREMIUM 2026 */
 .money-code-container {
     padding: 16px;
     display: flex;
@@ -1064,48 +1064,81 @@ body {
     text-align: center;
 }
 
-.money-header h2 { font-size: 26px; color: #000 !important; margin-bottom: 4px; background: none; -webkit-text-fill-color: initial; }
+.money-header h2 { font-size: 26px; color: #111 !important; margin-bottom: 4px; background: none; -webkit-text-fill-color: initial; }
 
 .money-header p {
-    color: var(--hint-color);
+    color: #888;
     font-size: 14px;
 }
 
-.money-star-box {
-    cursor: default !important;
+/* Star pentagon layout */
+.money-star-section {
+    width: 100%;
     display: flex;
     justify-content: center;
+    padding: 10px 0;
+}
+
+.star-layout {
+    position: relative;
+    width: 280px;
+    height: 280px;
+}
+
+.star-point {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #D2C5EB, #EBE3BD);
+    display: flex;
     align-items: center;
-    padding: 16px 8px !important;
-    height: auto !important;
-    min-height: auto;
-    background: linear-gradient(145deg, #FFFEF5, #FFF8E1) !important;
-    border: 1px solid rgba(201, 142, 14, 0.15) !important;
-    box-shadow: 0 12px 48px -12px rgba(201, 142, 14, 0.15), inset 0 1px 0 rgba(255,255,255,0.8) !important;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    z-index: 2;
 }
 
-.star-visualization {
-    width: 100%;
-    max-width: 340px;
+.star-point span {
+    font-size: 20px;
+    font-weight: 800;
+    color: #111;
+    font-family: "Manrope", sans-serif;
 }
 
-.star-wrapper {
-    width: 100%;
+/* Pentagon positions (5 points) */
+.star-top          { top: 0;    left: 50%;  transform: translateX(-50%); }
+.star-right        { top: 34%;  right: 0; }
+.star-bottom-right { bottom: 4%; right: 14%; }
+.star-bottom-left  { bottom: 4%; left: 14%; }
+.star-left         { top: 34%;  left: 0; }
+
+.star-center-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -55%);
+    font-size: 80px;
+    line-height: 1;
+    z-index: 1;
+    filter: drop-shadow(0 6px 20px rgba(201, 142, 14, 0.3));
 }
 
-.star-wrapper svg {
-    width: 100%;
-    height: auto;
-    display: block;
+.star-center-label {
+    position: absolute;
+    bottom: 32%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.7);
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    font-family: "Manrope", sans-serif;
+    z-index: 3;
+    white-space: nowrap;
 }
-
-/* Numbers at star tips (new white circle design) */
-.star-num { fill: #111 !important; font-size: 20px; font-weight: 800; font-family: 'Manrope', sans-serif; }
-/* Center code inside dark pill */
-.star-center-code { fill: #FFF !important; font-size: 16px; font-weight: 800; letter-spacing: 4px; font-family: 'Manrope', sans-serif; }
-/* Legacy compat */
-.star-val { fill: #111 !important; font-size: 20px; font-weight: 800; font-family: 'Manrope', sans-serif; }
-.star-code { fill: #FFF !important; font-size: 16px; font-weight: 800; letter-spacing: 4px; }
 
 .money-final-box {
     text-align: center;
@@ -1119,7 +1152,7 @@ body {
 }
 
 .money-final-box::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 50%;

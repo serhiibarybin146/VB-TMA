@@ -243,81 +243,32 @@
 
             <div class="money-code-container">
                 <div class="money-header">
-                    <h2>Ваш Денежный Код</h2>
-                    <p>5 ключевых энергий вашего финансового потока</p>
+                    <h2>Твой Денежный Код</h2>
+                    <p>5 ключевых энергий твоего финансового потока</p>
                 </div>
 
-                <!-- Premium Star Visualization -->
-                <div class="matrix-svg-container money-star-box">
-                    <div class="star-visualization">
-                        <div class="star-wrapper" id="moneyStar">
-                            <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                                <defs>
-                                    <!-- Star body gradient -->
-                                    <linearGradient id="starGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="#FFE17D"/>
-                                        <stop offset="35%" stop-color="#FFCD3C"/>
-                                        <stop offset="70%" stop-color="#E5A91A"/>
-                                        <stop offset="100%" stop-color="#C98E0E"/>
-                                    </linearGradient>
-                                    <!-- Inner highlight -->
-                                    <radialGradient id="starHighlight" cx="40%" cy="35%" r="50%">
-                                        <stop offset="0%" stop-color="rgba(255,255,255,0.5)"/>
-                                        <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
-                                    </radialGradient>
-                                    <!-- Soft shadow -->
-                                    <filter id="starShadow" x="-25%" y="-25%" width="150%" height="150%">
-                                        <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#C98E0E" flood-opacity="0.35"/>
-                                    </filter>
-                                    <!-- Number circle bg -->
-                                    <filter id="numShadow" x="-50%" y="-50%" width="200%" height="200%">
-                                        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.12"/>
-                                    </filter>
-                                </defs>
-
-                                <!-- Star body -->
-                                <polygon
-                                    points="150,22 172,108 262,108 190,160 212,248 150,198 88,248 110,160 38,108 128,108"
-                                    fill="url(#starGradient)" filter="url(#starShadow)"/>
-                                <!-- Highlight overlay -->
-                                <polygon
-                                    points="150,22 172,108 262,108 190,160 212,248 150,198 88,248 110,160 38,108 128,108"
-                                    fill="url(#starHighlight)"/>
-
-                                <!-- Number circles at each tip -->
-                                <!-- Top -->
-                                <circle cx="150" cy="16" r="18" fill="#fff" filter="url(#numShadow)"/>
-                                <text x="150" y="16" id="c1" class="star-num" text-anchor="middle" dominant-baseline="central">0</text>
-                                <!-- Top-Right -->
-                                <circle cx="272" cy="108" r="18" fill="#fff" filter="url(#numShadow)"/>
-                                <text x="272" y="108" id="c2" class="star-num" text-anchor="middle" dominant-baseline="central">0</text>
-                                <!-- Bottom-Right -->
-                                <circle cx="220" cy="258" r="18" fill="#fff" filter="url(#numShadow)"/>
-                                <text x="220" y="258" id="c3" class="star-num" text-anchor="middle" dominant-baseline="central">0</text>
-                                <!-- Bottom-Left -->
-                                <circle cx="80" cy="258" r="18" fill="#fff" filter="url(#numShadow)"/>
-                                <text x="80" y="258" id="c4" class="star-num" text-anchor="middle" dominant-baseline="central">0</text>
-                                <!-- Top-Left -->
-                                <circle cx="28" cy="108" r="18" fill="#fff" filter="url(#numShadow)"/>
-                                <text x="28" y="108" id="c5" class="star-num" text-anchor="middle" dominant-baseline="central">0</text>
-
-                                <!-- Center code pill -->
-                                <rect x="105" y="140" rx="14" ry="14" width="90" height="28" fill="rgba(0,0,0,0.65)" />
-                                <text x="150" y="154" id="centerCode" class="star-center-code" text-anchor="middle" dominant-baseline="central">00000</text>
-                            </svg>
-                        </div>
+                <!-- Star with numbers -->
+                <div class="money-star-section">
+                    <div class="star-layout">
+                        <div class="star-point star-top"><span id="c1">0</span></div>
+                        <div class="star-point star-right"><span id="c2">0</span></div>
+                        <div class="star-point star-bottom-right"><span id="c3">0</span></div>
+                        <div class="star-point star-bottom-left"><span id="c4">0</span></div>
+                        <div class="star-point star-left"><span id="c5">0</span></div>
+                        <div class="star-center-icon">⭐</div>
+                        <div class="star-center-label" id="centerCode">00000</div>
                     </div>
                 </div>
 
-                <!-- Using info-card class for consistency -->
+                <!-- Wealth Code -->
                 <div class="info-card money-final-box">
                     <span>Код богатства:</span>
                     <strong id="finalMoneyCode">00000</strong>
                 </div>
 
                 <div class="info-card money-desc-box">
-                    <p>Этот код является вашим персональным финансовым ключом. Используйте его для активации денежной
-                        энергии: в качестве пароля, пишите на документах или просто держите в фокусе внимания.</p>
+                    <p>Этот код является твоим персональным финансовым ключом. Используй его для активации денежной
+                        энергии: в качестве пароля, пиши на документах или просто держи в фокусе внимания.</p>
                 </div>
             </div>
         </section>
