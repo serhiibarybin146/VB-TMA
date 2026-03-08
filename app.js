@@ -1335,9 +1335,10 @@ function updatePremiumUI() {
             // Add card-footer with button
             const cardContent = card.querySelector('.card-content');
             if (cardContent && !cardContent.querySelector('.card-footer')) {
+                const btnText = feature === 'money_code' ? 'Рассчитать' : 'Перейти';
                 const footer = document.createElement('div');
                 footer.className = 'card-footer';
-                footer.innerHTML = '<span>Перейти</span><iconify-icon icon="solar:arrow-right-up-linear"></iconify-icon>';
+                footer.innerHTML = `<span>${btnText}</span><iconify-icon icon="solar:arrow-right-up-linear"></iconify-icon>`;
                 cardContent.appendChild(footer);
             }
 
