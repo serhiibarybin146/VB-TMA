@@ -129,18 +129,7 @@ async function initTMA() {
                     if (userError) console.error('Supabase User Sync Error:', userError);
 
                     // Fetch Permissions
-                    const { data: permData, error: permError } = await supabaseClient
-                        .from('user_permissions')
-                        .select('permission_key')
-                        .eq('user_id', u.id);
-
-                    if (permError) console.error('Fetch Permissions Error:', permError);
-
-                    if (permData) {
-                        currentState.permissions = permData.map(p => p.permission_key);
-                        console.log('User Permissions:', currentState.permissions);
-                        updatePremiumUI(); // Unlock features if permission exists
-                    }
+                    await fetchUserPermissions(u.id);
                 } catch (e) {
                     console.error('Supabase Init Failed:', e);
                 }
@@ -1358,6 +1347,8 @@ async function purchaseFeature(featureKey) {
 
         if (error) throw error;
         if (data && data.url) {
+            // Set flag for auto-check on return
+            localStorage.setItem('pending_purchase', featureKey);
             // Open Stripe Checkout
             tg.openLink(data.url);
         } else {
@@ -1371,6 +1362,50 @@ async function purchaseFeature(featureKey) {
         buyBtn.textContent = originalText;
     }
 }
+
+/**
+ * Re-fetch permissions and update UI
+ */
+async function fetchUserPermissions(userId) {
+    if (!supabaseClient) return;
+    try {
+        const { data: permData, error: permError } = await supabaseClient
+            .from('user_permissions')
+            .select('permission_key')
+            .eq('user_id', userId);
+
+        if (permError) throw permError;
+
+        if (permData) {
+            const oldPermsCount = currentState.permissions.length;
+            currentState.permissions = permData.map(p => p.permission_key);
+            console.log('Updated Permissions:', currentState.permissions);
+            
+            updatePremiumUI();
+
+            // If we found new permissions while checking for a pending purchase
+            const pending = localStorage.getItem('pending_purchase');
+            if (pending && currentState.permissions.includes(pending)) {
+                localStorage.removeItem('pending_purchase');
+                hideLockedModal();
+                tg.HapticFeedback.notificationOccurred('success');
+                tg.showAlert('Поздравляем! Доступ открыт. ✨');
+            }
+        }
+    } catch (e) {
+        console.error('Fetch Permissions Error:', e);
+    }
+}
+
+// Auto-check on app resume
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && localStorage.getItem('pending_purchase')) {
+        const userId = currentState.user?.id || tg.initDataUnsafe.user?.id;
+        if (userId) {
+            fetchUserPermissions(userId);
+        }
+    }
+});
 
 function hideLockedModal() { lockedModal.classList.remove('active'); }
 
