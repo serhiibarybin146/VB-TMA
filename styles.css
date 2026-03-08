@@ -1117,7 +1117,7 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -55%);
-    font-size: 220px;
+    font-size: 240px;
     line-height: 1;
     z-index: 1;
     filter: drop-shadow(0 6px 20px rgba(201, 142, 14, 0.3));
