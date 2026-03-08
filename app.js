@@ -21,6 +21,11 @@ let currentState = {
     permissions: [] // Array of permission_key strings
 };
 
+// Check if user has permission for a feature
+function checkPermission(featureKey) {
+    return currentState.permissions.includes(featureKey);
+}
+
 /**
  * CHAKRA DATA
  */
@@ -1296,8 +1301,13 @@ function createSVGElement(tag, attrs = {}) {
 
 function showLockedModal(feature) {
     const modalTitle = document.getElementById('modalTitle');
-    if (feature === 'compatibility') modalTitle.textContent = 'Совместимость';
-    else if (feature === 'year') modalTitle.textContent = 'Прогноз на год';
+    const featureNames = {
+        'money_code': 'Денежный код',
+        'compatibility': 'Совместимость',
+        'year_forecast': 'Прогноз на год',
+        'month_forecast': 'Прогноз на месяц'
+    };
+    modalTitle.textContent = featureNames[feature] || 'Premium';
     lockedModal.classList.add('active');
     tg.HapticFeedback.notificationOccurred('warning');
 }
