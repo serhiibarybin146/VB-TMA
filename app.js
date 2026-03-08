@@ -169,15 +169,22 @@ function initEventListeners() {
     if (moneyDateInput) moneyDateInput.addEventListener('input', applyMask);
 
     // Locked Cards Click
+    const featureViewMap = {
+        'money_code': 'moneyCalc',
+        'compatibility': null, // Not yet implemented
+        'year_forecast': 'yearForecast',
+        'month_forecast': 'monthForecast'
+    };
+
     lockedCards.forEach(card => {
         card.addEventListener('click', () => {
             const feature = card.getAttribute('data-feature');
             if (checkPermission(feature)) {
-                // Feature is unlocked, but might not be implemented yet
-                if (feature === 'compatibility' || feature === 'year') {
-                    tg.showAlert('Этот раздел сейчас в разработке, он скоро будет готов для тебя!');
+                const viewName = featureViewMap[feature];
+                if (viewName) {
+                    navigateTo(viewName);
                 } else {
-                    navigateTo(feature);
+                    tg.showAlert('Этот раздел сейчас в разработке, он скоро будет готов для тебя!');
                 }
             } else {
                 showLockedModal(feature);

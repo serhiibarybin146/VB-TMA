@@ -1265,15 +1265,15 @@ body {
     color: #8C6A2E !important;
 }
 
-/* 2. Compatibility (Orange Premium Card Tag) */
-.matrix-card[data-feature="compatibility"] .card-tag.gold {
+/* Premium Card Tag (all locked cards) */
+.matrix-card.locked .card-tag.gold {
     background: #FFFFFF !important;
     color: #111111 !important;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     border-radius: 12px !important;
     padding: 6px 12px !important;
 }
-.matrix-card[data-feature="compatibility"] .lock-header iconify-icon {
+.matrix-card.locked .lock-header iconify-icon {
     color: #111111 !important;
 }
 

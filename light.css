@@ -1,0 +1,174 @@
+
+/* ========================================= */
+/* 2026 LIGHT APP THEME OVERRIDES */
+/* ========================================= */
+
+body {
+    background-color: #F7F8FA !important;
+}
+
+.tma-main#appContent {
+    background-color: #F7F8FA !important;
+}
+
+/* Force Light Theme on Home View */
+#homeView {
+    background-color: #F7F8FA !important;
+    color: #111111;
+}
+
+/* Header Text Color */
+.tma-header {
+    background-color: #F7F8FA !important;
+    color: #111111;
+}
+
+.tma-header .user-name {
+    color: #111111;
+}
+
+.tma-header .icon-btn {
+    background: #FFFFFF !important;
+    color: #111111 !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.welcome-card h2 {
+    background: none !important;
+    -webkit-text-fill-color: initial !important;
+    color: #111111 !important;
+}
+
+.welcome-card p {
+    color: #666666 !important;
+}
+
+/* Cards Overall Styling */
+.matrix-grid {
+    gap: 20px;
+    padding-bottom: 60px;
+}
+
+/* ALL MATRIX CARDS (Purple -> Yellow Gradient) */
+.matrix-card {
+    border: none !important;
+    border-radius: 2rem !important;
+    box-shadow: 0 10px 40px -10px rgba(0,0,0,0.08) !important;
+    background: linear-gradient(135deg, #D2C5EB 0%, #EBE3BD 50%, #FFDE4D 100%) !important;
+    color: #111111 !important;
+}
+
+.matrix-card .card-glass {
+    display: none !important;
+}
+
+.matrix-card h3 {
+    color: #111111 !important;
+}
+
+.matrix-card p {
+    color: #666666 !important;
+}
+
+/* Modals Light Theme */
+.modal-sheet {
+    background: #FFFFFF !important;
+    color: #111111 !important;
+}
+#modalTitle, #modalDesc {
+    color: #111111 !important;
+}
+.modal-benefits .benefit-item {
+    background: #F7F8FA !important;
+    border-color: #EEEEEE !important;
+    color: #111111 !important;
+}
+.modal-icon.gold {
+    background: #FCDFA6 !important;
+    color: #8C6A2E !important;
+}
+
+/* Premium Card Tag (all locked cards) */
+.matrix-card.locked .card-tag.gold {
+    background: #FFFFFF !important;
+    color: #111111 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-radius: 12px !important;
+    padding: 6px 12px !important;
+}
+.matrix-card.locked .lock-header iconify-icon {
+    color: #111111 !important;
+}
+
+/* Bottom Floating Nav */
+.tma-nav {
+    position: fixed !important;
+    bottom: 24px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 85% !important;
+    max-width: 400px !important;
+    background: rgba(164, 148, 136, 0.9) !important;
+    backdrop-filter: blur(20px) !important;
+    border-radius: 2rem !important;
+    padding: 8px 16px !important;
+    border: none !important;
+    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.2) !important;
+    justify-content: space-around !important;
+    z-index: 1000 !important;
+}
+
+.tma-nav .nav-item {
+    color: rgba(255, 255, 255, 0.6) !important;
+    padding: 8px !important;
+}
+
+.tma-nav .nav-item.active {
+    color: #FFFFFF !important;
+}
+
+.tma-nav .nav-item iconify-icon {
+    font-size: 24px !important;
+    margin-bottom: 2px !important;
+}
+
+/* Center ADD button styling (mapping to the second item: History -> Add) */
+.tma-nav .nav-item:nth-child(1) { transform: translateX(10px); }
+.tma-nav .nav-item:nth-child(4) { transform: translateX(-10px); }
+
+.tma-nav .nav-item:nth-child(2) {
+    background: #FFFFFF !important;
+    color: #111111 !important;
+    border-radius: 50% !important;
+    width: 48px !important;
+    height: 48px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transform: translateY(-5px) !important;
+    box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2) !important;
+}
+.tma-nav .nav-item:nth-child(2) span {
+    display: none !important;
+}
+
+/* Card Button Footer */
+.matrix-card .card-footer {
+    background: #111111 !important;
+    color: #FFFFFF !important;
+    border-radius: 20px !important;
+    padding: 12px 20px !important;
+    margin-top: 24px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-weight: 600 !important;
+}
+.matrix-card .card-footer span {
+    color: #FFFFFF !important;
+}
+.matrix-card .card-footer iconify-icon {
+    font-size: 18px !important;
+    color: #FFFFFF !important;
+}
