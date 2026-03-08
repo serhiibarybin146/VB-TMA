@@ -341,6 +341,29 @@ body {
     color: var(--gold);
 }
 
+.modal-price-tag {
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    border-radius: 12px;
+    padding: 12px 20px;
+    margin: 16px 0;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.price-val {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--gold);
+}
+
+.price-cur {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--hint-color);
+}
+
 .modal-body h3 {
     font-size: 24px;
     margin-bottom: 12px;

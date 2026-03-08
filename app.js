@@ -21,6 +21,16 @@ let currentState = {
     permissions: [] // Array of permission_key strings
 };
 
+// Stripe Configuration
+const STRIPE_PK = 'pk_test_51SEphPJv9UJiHKB8bX98I9tkRDTh5zSmsWxwa2eeJjpbyODyxIcva41WTcTLJcc9DK77gG7QeQ1Np2lqdHXCo4Mj00qIcky0oi';
+const FEATURE_PRICES = {
+    'money_code': '1.00',
+    'compatibility': '2.00',
+    'year_forecast': '3.00',
+    'month_forecast': '4.00'
+};
+let currentActionFeature = null;
+
 // Check if user has permission for a feature
 function checkPermission(featureKey) {
     return currentState.permissions.includes(featureKey);
@@ -172,6 +182,16 @@ function initEventListeners() {
 
     if (birthDateInput) birthDateInput.addEventListener('input', applyMask);
     if (moneyDateInput) moneyDateInput.addEventListener('input', applyMask);
+
+    // Buy Button Click
+    const buyBtn = document.getElementById('buyBtn');
+    if (buyBtn) {
+        buyBtn.addEventListener('click', () => {
+            if (currentActionFeature) {
+                purchaseFeature(currentActionFeature);
+            }
+        });
+    }
 
     // Locked Cards Click
     const featureViewMap = {
@@ -1300,16 +1320,56 @@ function createSVGElement(tag, attrs = {}) {
 }
 
 function showLockedModal(feature) {
+    currentActionFeature = feature;
     const modalTitle = document.getElementById('modalTitle');
+    const modalPrice = document.getElementById('modalPrice');
+    
     const featureNames = {
         'money_code': 'Денежный код',
         'compatibility': 'Совместимость',
         'year_forecast': 'Прогноз на год',
         'month_forecast': 'Прогноз на месяц'
     };
+    
     modalTitle.textContent = featureNames[feature] || 'Premium';
+    if (modalPrice) {
+        modalPrice.textContent = FEATURE_PRICES[feature] || '0.00';
+    }
+
     lockedModal.classList.add('active');
     tg.HapticFeedback.notificationOccurred('warning');
+}
+
+async function purchaseFeature(featureKey) {
+    const buyBtn = document.getElementById('buyBtn');
+    const originalText = buyBtn.textContent;
+    
+    try {
+        buyBtn.disabled = true;
+        buyBtn.textContent = 'Загрузка...';
+        
+        // Call Supabase Edge Function
+        const { data, error } = await supabase.functions.invoke('create-checkout', {
+            body: { 
+                user_id: currentState.user?.id || tg.initDataUnsafe.user?.id,
+                feature_key: featureKey 
+            }
+        });
+
+        if (error) throw error;
+        if (data && data.url) {
+            // Open Stripe Checkout
+            tg.openLink(data.url);
+        } else {
+            throw new Error('Не удалось создать сессию оплаты');
+        }
+    } catch (err) {
+        console.error('Purchase error:', err);
+        tg.showAlert('Ошибка при создании платежа. Попробуйте позже.');
+    } finally {
+        buyBtn.disabled = false;
+        buyBtn.textContent = originalText;
+    }
 }
 
 function hideLockedModal() { lockedModal.classList.remove('active'); }
