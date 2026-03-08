@@ -32,7 +32,7 @@ serve(async (req) => {
 
       const supabaseClient = createClient(
         Deno.env.get('SUPABASE_URL') ?? '',
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '' // Need service role to bypass RLS/update permissions
+        Deno.env.get('SERVICE_ROLE_KEY') ?? '' // Need service role to bypass RLS/update permissions
       )
 
       // Insert permission for user
