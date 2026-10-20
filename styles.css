@@ -1579,3 +1579,10 @@ body, html, #appContent, .view {
     background-color: #F7F8FA !important;
     color: #111111 !important;
 }
+
+/* Visible insertion cursor in the year forecast form. */
+#forecastDate,
+#forecastYear {
+    caret-color: #8b5cf6;
+    cursor: text;
+}

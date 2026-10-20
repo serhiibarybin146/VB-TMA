@@ -441,9 +441,6 @@ function initYearForecastForm() {
     if (!form) return;
 
     // Apply mask to date input if not already applied
-    const yearInput = document.getElementById('forecastYear');
-    if (yearInput && !yearInput.value) yearInput.value = new Date().getFullYear();
-
     const dateInput = document.getElementById('forecastDate');
     if (dateInput && !dateInput.dataset.masked) {
         dateInput.addEventListener('input', function (e) {
