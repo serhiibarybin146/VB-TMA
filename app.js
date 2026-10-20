@@ -209,6 +209,7 @@ function initEventListeners() {
     closeModal.addEventListener('click', hideLockedModal);
     lockedModal.querySelector('.modal-overlay').addEventListener('click', hideLockedModal);
 
+    initRecentInputSuggestions();
     initInlineMatrixZoom();
     initZoomEvents();
 }
@@ -569,7 +570,7 @@ async function getRecentDates() {
     if (!currentState.user) {
         try {
             const stored = localStorage.getItem(RECENT_DATES_KEY);
-            return stored ? JSON.parse(stored) : [];
+            return stored ? JSON.parse(stored).slice(0, 3) : [];
         } catch (e) {
             return [];
         }
@@ -586,7 +587,7 @@ async function getRecentDates() {
 
             if (error) throw error;
             // Map to expected format (DD.MM.YYYY)
-            return data.map(item => {
+            return data.slice(0, 3).map(item => {
                 const [y, m, d] = item.birth_date.split('-');
                 return `${d}.${m}.${y}`;
             });
@@ -596,7 +597,7 @@ async function getRecentDates() {
     }
 
     const saved = localStorage.getItem(RECENT_DATES_KEY);
-    return saved ? JSON.parse(saved) : [];
+    return saved ? JSON.parse(saved).slice(0, 3) : [];
 }
 
 async function saveRecentDate(date) {
@@ -608,8 +609,8 @@ async function saveRecentDate(date) {
     dates = dates.filter(d => d !== dateStr);
     // Add to front
     dates.unshift(dateStr);
-    // Keep max 10
-    if (dates.length > 10) dates = dates.slice(0, 10);
+    // Keep the three most recent dates.
+    dates = dates.slice(0, 3);
     localStorage.setItem(RECENT_DATES_KEY, JSON.stringify(dates));
 
     // Supabase Store if logged in
@@ -1483,5 +1484,41 @@ function initInlineMatrixZoom() {
             openMatrixZoom(svg.id);
         };
         apply();
+    });
+}
+
+// Keep browser autofill separate from the app's three recent values.
+function initRecentInputSuggestions() {
+    document.querySelectorAll('input.tma-input').forEach(input => {
+        input.autocomplete = 'off';
+        if (input.form) input.form.autocomplete = 'off';
+        if (input.id === 'birthDateInput') return; // Existing history dropdown.
+        const key = `tma_recent_input_${input.id}`;
+        const list = document.createElement('datalist');
+        list.id = `${input.id}-recent-values`;
+        input.setAttribute('list', list.id);
+        input.after(list);
+        const read = () => {
+            try {
+                const values = JSON.parse(localStorage.getItem(key) || '[]');
+                return Array.isArray(values) ? [...new Set(values.filter(v => typeof v === 'string'))].slice(0, 3) : [];
+            } catch { return []; }
+        };
+        const render = values => {
+            list.replaceChildren(...values.map(value => {
+                const option = document.createElement('option');
+                option.value = value;
+                return option;
+            }));
+        };
+        render(read());
+        input.addEventListener('change', () => {
+            const value = input.value.trim();
+            if (!value || !input.checkValidity()) return;
+            if (input.type !== 'number' && !/^\d{2}\.\d{2}\.\d{4}$/.test(value)) return;
+            const values = [value, ...read().filter(v => v !== value)].slice(0, 3);
+            try { localStorage.setItem(key, JSON.stringify(values)); } catch {}
+            render(values);
+        });
     });
 }
