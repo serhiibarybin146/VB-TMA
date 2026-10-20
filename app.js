@@ -649,23 +649,28 @@ async function performMoneyCalculation() {
     const input = document.getElementById('moneyDateInput');
     const dateStr = input.value;
     if (!/^\d{2}\.\d{2}\.\d{4}$/.test(dateStr)) {
-        tg.showAlert('Пожалуйста, введи дату в формате ДД.ММ.ГГГГ');
+        tg.showAlert('Пожалуйста, введите дату в формате ДД.ММ.ГГГГ');
         return;
     }
 
     const [d, m, y] = dateStr.split('.').map(n => parseInt(n));
+    const birthDate = new Date(y, m - 1, d);
+    if (y < 1 || birthDate.getFullYear() !== y || birthDate.getMonth() !== m - 1 || birthDate.getDate() !== d) {
+        tg.showAlert('Такой даты не существует. Проверьте дату рождения');
+        return;
+    }
 
     tg.HapticFeedback.impactOccurred('medium');
 
     try {
         const result = MatrixLogic.calculateMoneyCode(d, m, y);
 
-        // Update Corner Labels (Shifted 1 position counter-clockwise per user request)
-        document.getElementById('c1').textContent = result.corners[1];
-        document.getElementById('c2').textContent = result.corners[2];
-        document.getElementById('c3').textContent = result.corners[3];
-        document.getElementById('c4').textContent = result.corners[4];
-        document.getElementById('c5').textContent = result.corners[0];
+        // Update Corner Labels
+        document.getElementById('c1').textContent = result.corners[0];
+        document.getElementById('c2').textContent = result.corners[1];
+        document.getElementById('c3').textContent = result.corners[2];
+        document.getElementById('c4').textContent = result.corners[3];
+        document.getElementById('c5').textContent = result.corners[4];
 
         // Update center code inside star
         document.getElementById('centerCode').textContent = result.code;

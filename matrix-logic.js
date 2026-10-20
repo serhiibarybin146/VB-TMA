@@ -45,7 +45,7 @@ const MatrixLogic = {
 
         return {
             corners: [c1, c2, c3, c4, c5],
-            code: `${c1}${c2}${c3}${c4}${c5}`
+            code: `${c5}${c1}${c2}${c3}${c4}`
         };
     },
 
