@@ -522,16 +522,7 @@ function performYearForecast() {
         YearMatrixLogic.drawSVG(previous, 'yearMatrixContainer', activeMonth(previous));
         YearMatrixLogic.drawSVG(current, 'yearCurrentMatrixContainer', activeMonth(current));
 
-        const fmt = date => `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
-        const birthdayIn = y => new Date(y, month - 1, day);
-        const birthday = birthdayIn(year);
-        const beforeBirthday = new Date(birthday);
-        beforeBirthday.setDate(beforeBirthday.getDate() - 1);
         document.getElementById('yearForecastSummary').textContent = `Дата рождения: ${input.value}. Прогноз на ${year} год.`;
-        document.getElementById('yearPreviousPeriod').textContent = month === 1 && day === 1
-            ? `Матрица ${year - 1} года — предыдущий цикл завершён`
-            : `До дня рождения: 01.01.${year}–${fmt(beforeBirthday)} · Матрица ${year - 1} года`;
-        document.getElementById('yearCurrentPeriod').textContent = `С дня рождения: ${fmt(birthday)}–31.12.${year} · Матрица ${year} года`;
         showView('yearForecastResultView');
         tg.HapticFeedback.notificationOccurred('success');
     } catch (err) {
