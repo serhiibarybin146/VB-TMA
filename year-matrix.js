@@ -408,6 +408,39 @@ const YearMatrixLogic = {
             });
         }
 
+        // Shared sphere captions for both year-forecast entry points.
+        const sphereLayer = createSVGElement('g', { class: 'year-sphere-labels', 'pointer-events': 'none' });
+        const spheres = [
+            { text: 'Семья', angle: 180, radius: 235, offset: 36 },
+            { text: 'Карьера', angle: 225, radius: 235, offset: 34, rotation: 50 },
+            { text: 'Точка роста', angle: 270, radius: 235, offset: -40 },
+            { text: 'Отношения', angle: 315, radius: 235, offset: -34, rotation: -50 },
+            { text: 'Здоровье и финансы', angle: 0, radius: 235, offset: -36, fontSize: 10.5 },
+            { text: 'Карьера', angle: 45, radius: 235, offset: 34, rotation: 50 },
+            { text: 'Задача года', angle: 90, radius: 235, offset: 40 },
+            { text: 'Отношения', angle: 135, radius: 235, offset: -34, rotation: -50 }
+        ];
+        spheres.forEach(sphere => {
+            // Diagonal captions follow the three-node axis; other captions follow their ray.
+            // Keep labels upright on the left half of the matrix.
+            const angle = sphere.angle * Math.PI / 180;
+            const x = cx + sphere.radius * Math.cos(angle) - sphere.offset * Math.sin(angle);
+            const y = cy + sphere.radius * Math.sin(angle) + sphere.offset * Math.cos(angle);
+            let rotation = sphere.angle;
+            if (rotation > 90 && rotation < 270) rotation -= 180;
+            if (rotation === 270) rotation = -90;
+            if (sphere.rotation !== undefined) rotation = sphere.rotation;
+            const text = createSVGElement('text', {
+                transform: `translate(${x},${y}) rotate(${rotation})`,
+                x: 0, y: 0, 'text-anchor': 'middle', 'dominant-baseline': 'central',
+                'font-family': 'inherit', 'font-size': sphere.fontSize || 12,
+                'font-weight': 500, fill: '#4b4350'
+            });
+            text.textContent = sphere.text;
+            sphereLayer.append(text);
+        });
+        svg.append(sphereLayer);
+
         // Final Markers
         const mLetters = ["A", "Д", "Б", "Е", "В", "Ж", "Г", "З"], mOffsets = [[-42.5, 0], [-30, -30], [0, -42.5], [30, -30], [42.5, 0], [30, 30], [0, 42.5], [-30, 30]];
         outerPoints.forEach((p, i) => {

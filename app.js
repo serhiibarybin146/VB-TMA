@@ -215,10 +215,9 @@ function initEventListeners() {
         matrixContainer.onclick = () => openMatrixZoom('matrixSvg');
     }
 
-    const yearMatrixResultContainer = document.querySelector('#yearForecastResultView .matrix-svg-container');
-    if (yearMatrixResultContainer) {
-        yearMatrixResultContainer.onclick = () => openMatrixZoom('yearMatrixContainer');
-    }
+    document.querySelectorAll('#yearForecastResultView .matrix-svg-container').forEach(container => {
+        container.onclick = () => openMatrixZoom(container.firstElementChild.id);
+    });
 
     // Month Forecast Matrices
     const monthYearContainer = document.getElementById('monthYearMatrixContainer');
@@ -442,6 +441,9 @@ function initYearForecastForm() {
     if (!form) return;
 
     // Apply mask to date input if not already applied
+    const yearInput = document.getElementById('forecastYear');
+    if (yearInput && !yearInput.value) yearInput.value = new Date().getFullYear();
+
     const dateInput = document.getElementById('forecastDate');
     if (dateInput && !dateInput.dataset.masked) {
         dateInput.addEventListener('input', function (e) {
@@ -486,47 +488,50 @@ function initMonthForecastForm() {
 
 /**
  * Расчёт и отрисовка годового прогноза
- * Формат ввода: ДД.ММ.ГГГГ (день рожд., месяц рожд., искомый год)
+ * Ввод: полная дата рождения и отдельный искомый календарный год.
  */
 function performYearForecast() {
     const input = document.getElementById('forecastDate');
-    if (!input) return;
+    const yearInput = document.getElementById('forecastYear');
+    if (!input || !yearInput) return;
 
-    const val = input.value;
-    if (!/^\d{2}\.\d{2}\.\d{4}$/.test(val)) {
-        tg.showAlert('Пожалуйста, введите дату в формате ДД.ММ.ГГГГ');
+    if (!/^\d{2}\.\d{2}\.\d{4}$/.test(input.value)) {
+        tg.showAlert('Введите дату рождения в формате ДД.ММ.ГГГГ');
         return;
     }
-
-    const [dayStr, monthStr, yearStr] = val.split('.');
-    const d = parseInt(dayStr);
-    const m = parseInt(monthStr);
-    const y = parseInt(yearStr);
-
-    if (d < 1 || d > 31 || m < 1 || m > 12 || y < 1900) {
-        tg.showAlert('Проверьте корректность даты');
+    const [day, month, birthYear] = input.value.split('.').map(Number);
+    const birthDate = new Date(birthYear, month - 1, day);
+    if (birthYear < 1900 || birthDate.getFullYear() !== birthYear ||
+        birthDate.getMonth() !== month - 1 || birthDate.getDate() !== day || birthDate > new Date()) {
+        tg.showAlert('Проверьте корректность даты рождения');
+        return;
+    }
+    const year = Number(yearInput.value);
+    if (!/^\d{4}$/.test(yearInput.value) || !Number.isInteger(year) || year < birthYear || year < 1900 || year > 9998) {
+        tg.showAlert('Введите искомый год от 1900 до 9998, не раньше года рождения');
         return;
     }
 
     try {
-        // Calculate Age for the target year
-        // We use YearMatrixLogic.reduce(y - birthYear) usually, but here 'y' is the target.
-        // If we don't have birth year in this form, we assume 'y' is the year to calculate FOR.
-        // Actually, the app logic for "Year Forecast" usually assumes 'y' is the year the person is entering/in.
-        // To be safe and consistent with tests, we'll try to find an Age or calculate it.
-        // But the Yearly Forecast form only has ONE date input.
-        // Let's assume the standard behavior: just calculate the matrix for that date.
-        // However, if we want the "Age" logic, we need the Birth Date.
-        // In the YEAR FORECAST form, we only have ONE date. 
-        // Logic from previous sessions: in Year Forecast, the user enters Birth Day, Birth Month, and Current Year.
-        // So day=BD, month=BM, year=EY.
-        // We don't have Birth Year here. But we can assume age = EY - 1900? No.
-        // Actually, in the main matrix (performCalculation), we have the full birth date.
-        // For Year Forecast, let's keep it simple or use the year itself as age placeholder if not available.
-        // BUT, for the NEW Month Forecast, we HAVE both dates!
+        // calculate() starts its cycle one year before its input. Keep that
+        // contract for the monthly forecast and request both cycles here.
+        const previous = YearMatrixLogic.calculate(day, month, year);
+        const current = YearMatrixLogic.calculate(day, month, year + 1);
+        const today = new Date();
+        const activeMonth = data => data.months.findIndex(m => today >= m.d1 && today < new Date(m.d2.getFullYear(), m.d2.getMonth(), m.d2.getDate() + 1));
+        YearMatrixLogic.drawSVG(previous, 'yearMatrixContainer', activeMonth(previous));
+        YearMatrixLogic.drawSVG(current, 'yearCurrentMatrixContainer', activeMonth(current));
 
-        const result = YearMatrixLogic.calculate(d, m, y);
-        YearMatrixLogic.drawSVG(result, 'yearMatrixContainer');
+        const fmt = date => `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
+        const birthdayIn = y => new Date(y, month - 1, day);
+        const birthday = birthdayIn(year);
+        const beforeBirthday = new Date(birthday);
+        beforeBirthday.setDate(beforeBirthday.getDate() - 1);
+        document.getElementById('yearForecastSummary').textContent = `Дата рождения: ${input.value}. Прогноз на ${year} год.`;
+        document.getElementById('yearPreviousPeriod').textContent = month === 1 && day === 1
+            ? `Матрица ${year - 1} года — предыдущий цикл завершён`
+            : `До дня рождения: 01.01.${year}–${fmt(beforeBirthday)} · Матрица ${year - 1} года`;
+        document.getElementById('yearCurrentPeriod').textContent = `С дня рождения: ${fmt(birthday)}–31.12.${year} · Матрица ${year} года`;
         showView('yearForecastResultView');
         tg.HapticFeedback.notificationOccurred('success');
     } catch (err) {
@@ -545,67 +550,47 @@ function performMonthForecast() {
 
     const bVal = bInput.value;
     const eVal = eInput.value;
-
     if (!/^\d{2}\.\d{2}\.\d{4}$/.test(bVal) || !/^\d{2}\.\d{2}\.\d{4}$/.test(eVal)) {
-        tg.showAlert('Пожалуйста, введи даты в формате ДД.ММ.ГГГГ');
+        tg.showAlert('Введите дату рождения и данные расчёта в формате ДД.ММ.ГГГГ');
+        return;
+    }
+    const [bd, bm, by] = bVal.split('.').map(Number);
+    const [day, personalMonth, personalYear] = eVal.split('.').map(Number);
+    const birthDate = new Date(by, bm - 1, bd);
+    if (by < 1900 || birthDate.getFullYear() !== by || birthDate.getMonth() !== bm - 1 ||
+        birthDate.getDate() !== bd || birthDate > new Date()) {
+        tg.showAlert('Проверьте корректность даты рождения');
+        return;
+    }
+    // The second input is a personal-calendar code, not a calendar event date.
+    // For example, 31.02.2026 is valid for a birthday on the 31st and month 2.
+    if (day !== bd || personalMonth < 1 || personalMonth > 12 || personalYear < by || personalYear < 1900 || personalYear > 9998) {
+        tg.showAlert('В данных расчёта укажите день рождения, персональный месяц от 01 до 12 и персональный год не раньше года рождения');
         return;
     }
 
-    const [bd, bm, by] = bVal.split('.').map(Number);
-    const [ed, em, ey] = eVal.split('.').map(Number);
-
     try {
-        const eventDate = new Date(ey, em - 1, ed);
-        eventDate.setHours(0, 0, 0, 0);
-        const evtTime = eventDate.getTime();
-
-        // 1. Calculate Age (Same as in test)
-        const currentAge = ey - by;
-        const reducedAge = YearMatrixLogic.reduce(currentAge);
-
-        // 2. Top Matrix (Year Forecast)
-        // Match test logic: pass the event year directly.
-        // calculate() uses targetYear = inputYear - 1, so it will show the preceding cycle.
-        const dataYear = YearMatrixLogic.calculate(bd, bm, ey, reducedAge);
-
-        // Match test logic for highlighting: use the calendar month index of the event date.
-        const highlightMonthIndex = eventDate.getMonth(); // Jan=0, Feb=1...
-
-        let personalMonthRange = null;
-        let pMonthNumber = em; // fallback
-
-        if (dataYear.months && dataYear.months[highlightMonthIndex]) {
-            const m = dataYear.months[highlightMonthIndex];
-            personalMonthRange = { start: new Date(m.d1), end: new Date(m.d2) };
-            pMonthNumber = m.label;
-        }
-
-        // 3. Month Matrix (Bottom)
-        // Pillars (Following test logic exactly):
-        // Left: Birth Day (bd)
-        // Top: Personal Month Number (1-12)
-        // Right: Reduced Age (reducedAge)
-        const dataMonth = MonthMatrixLogic.calculate(bd, pMonthNumber, reducedAge, personalMonthRange);
-
-        // 4. Render
-        YearMatrixLogic.drawSVG(dataYear, 'monthYearMatrixContainer', highlightMonthIndex);
+        // calculate() subtracts one internally; request the explicitly selected cycle.
+        const dataYear = YearMatrixLogic.calculate(bd, bm, personalYear + 1);
+        const month = dataYear.months[personalMonth - 1];
+        const dataMonth = MonthMatrixLogic.calculate(bd, personalMonth, personalYear, {
+            start: month.d1, end: month.d2
+        });
+        YearMatrixLogic.drawSVG(dataYear, 'monthYearMatrixContainer', personalMonth - 1);
         MonthMatrixLogic.drawSVG(dataMonth, 'monthForecastMatrixContainer');
+        document.getElementById('monthYearTitle').textContent = `Матрица персонального года ${personalYear}`;
+        document.getElementById('monthForecastTitle').textContent = `Персональный месяц ${personalMonth} · ${dataMonth.days.length} ${dataMonth.days.length === 31 ? 'день' : 'дней'}`;
+        document.getElementById('monthForecastPeriod').textContent = `${month.dateStart}–${month.dateEnd}`;
 
-        // 5. Enable Zoom
-        const yearCont = document.getElementById('monthYearMatrixContainer');
-        if (yearCont) {
-            yearCont.style.cursor = 'pointer';
-            yearCont.onclick = () => openMatrixZoom('monthYearMatrixContainer');
+        for (const id of ['monthYearMatrixContainer', 'monthForecastMatrixContainer']) {
+            const container = document.getElementById(id);
+            if (container) {
+                container.style.cursor = 'pointer';
+                container.onclick = () => openMatrixZoom(id);
+            }
         }
-        const monthCont = document.getElementById('monthForecastMatrixContainer');
-        if (monthCont) {
-            monthCont.style.cursor = 'pointer';
-            monthCont.onclick = () => openMatrixZoom('monthForecastMatrixContainer');
-        }
-
         showView('monthForecastResultView');
         tg.HapticFeedback.notificationOccurred('success');
-
     } catch (err) {
         console.error('Month Forecast Error:', err);
         tg.showAlert('Ошибка при расчете: ' + err.message);

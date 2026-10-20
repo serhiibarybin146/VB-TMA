@@ -17,7 +17,7 @@ const MonthMatrixLogic = {
         return YearMatrixLogic.calculateBase(dateStr);
     },
 
-    calculate(birthDay, eventMonth, energyAgeRight, range = null) {
+    calculate(birthDay, personalMonth, personalYear, range = null) {
         const reduce = (n) => {
             let val = parseInt(n) || 0;
             if (val === 0) return 0;
@@ -27,8 +27,8 @@ const MonthMatrixLogic = {
 
         // 1. Calculate Custom Month Matrix Pillars
         const rDay = reduce(birthDay);             // Left pillar (Birth Day)
-        const rMonth = reduce(eventMonth);         // Top pillar (Event Month)
-        const rYear = reduce(energyAgeRight);      // Right pillar (Age)
+        const rMonth = reduce(personalMonth);      // Top pillar (Personal Month)
+        const rYear = reduce(personalYear);       // Right pillar (Energy of the selected year)
         const sumBottom = reduce(rDay + rMonth + rYear);
         const centerValue = reduce(rDay + rMonth + rYear + sumBottom);
 
@@ -59,31 +59,18 @@ const MonthMatrixLogic = {
             }
         };
 
-        // 2. Dates Ring logic
-        let startDate, endDate;
-        if (range && range.start && range.end) {
-            startDate = new Date(range.start);
-            endDate = new Date(range.end);
-            // endDate from YearMatrixLogic is the start of the next month, which is perfect for '<' loop
-        } else {
-            // Fallback
-            const now = new Date();
-            startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-            endDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-        }
-
+        // Personal-day numbers; the optional range has an INCLUSIVE end.
         const days = [];
-        const iterDate = new Date(startDate);
-        while (iterDate <= endDate) {
-            const d = iterDate.getDate();
-            const m = iterDate.getMonth() + 1;
-            const fmt = n => String(n).padStart(2, '0');
-            days.push({
-                dateFormatted: `${fmt(d)}.${fmt(m)}`,
-                fullDate: new Date(iterDate),
-                value: 0
-            });
-            iterDate.setDate(iterDate.getDate() + 1);
+        if (range && range.start && range.end) {
+            const endDate = new Date(range.end);
+            const iterDate = new Date(range.start);
+            while (iterDate <= endDate) {
+                days.push({ number: days.length + 1, fullDate: new Date(iterDate) });
+                iterDate.setDate(iterDate.getDate() + 1);
+            }
+        } else {
+            const count = new Date(personalYear, personalMonth, 0).getDate();
+            for (let number = 1; number <= count; number++) days.push({ number });
         }
 
         base.days = days;
@@ -193,7 +180,7 @@ const MonthMatrixLogic = {
                     'font-weight': 'bold',
                     transform: `rotate(${rotation}, ${tx}, ${ty})`
                 });
-                dateText.textContent = dayObj.dateFormatted;
+                dateText.textContent = dayObj.number;
 
                 textLayer.append(dateText);
             });

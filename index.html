@@ -128,20 +128,25 @@
             </div>
 
             <div class="form-header">
-                <h2>Таблица персональных дат</h2>
+                <h2>Прогноз на год</h2>
             </div>
 
             <div class="date-input-container">
                 <form id="forecastForm">
                     <div class="date-input-group" style="margin-bottom: 25px;">
                         <p style="font-size: 13px; color: var(--hint-color); margin-bottom: 8px; margin-left: 4px;">
-                            Дата (дата рождения, месяц рождения, искомый год):
+                            <label for="forecastDate">Дата рождения:</label>
                         </p>
                         <input type="text" id="forecastDate" class="tma-input" placeholder="ДД.ММ.ГГГГ"
                             inputmode="numeric" maxlength="10" required>
                     </div>
 
-                    <button type="submit" class="btn-primary full-width">Ввести данные</button>
+                    <div class="date-input-group" style="margin-bottom: 25px;">
+                        <label for="forecastYear" style="display: block; margin-bottom: 8px;">Искомый год:</label>
+                        <input type="number" id="forecastYear" class="tma-input" placeholder="ГГГГ"
+                            inputmode="numeric" min="1900" max="9998" step="1" required>
+                    </div>
+                    <button type="submit" class="btn-primary full-width">Рассчитать</button>
                 </form>
             </div>
         </section>
@@ -179,8 +184,14 @@
                 </div>
             </div>
 
+            <p id="yearForecastSummary" style="text-align: center;"></p>
+            <h3 id="yearPreviousPeriod" style="text-align: center;"></h3>
             <div class="matrix-svg-container">
                 <div id="yearMatrixContainer"></div>
+            </div>
+            <h3 id="yearCurrentPeriod" style="text-align: center;"></h3>
+            <div class="matrix-svg-container">
+                <div id="yearCurrentMatrixContainer"></div>
             </div>
         </section>
 
@@ -295,12 +306,12 @@
                 </div>
 
                 <div class="date-input-group" style="margin-bottom: 20px;">
-                    <p style="font-size: 13px; color: var(--hint-color); margin-bottom: 8px; margin-left: 4px;">Дата
-                        события:</p>
+                    <label for="monthForecastEventInput" style="display: block; font-size: 13px; color: var(--hint-color); margin-bottom: 8px; margin-left: 4px;">День рождения · персональный месяц · персональный год:</label>
                     <input type="text" id="monthForecastEventInput" class="tma-input" placeholder="ДД.ММ.ГГГГ"
                         inputmode="numeric" maxlength="10">
                 </div>
 
+                <p style="font-size: 12px; color: var(--hint-color);">Например: 06.12.2026 — день рождения 06, персональный месяц 12, персональный год 2026. Номер месяца определяется по таблице персональных дат.</p>
                 <button class="btn-primary full-width" onclick="performMonthForecast()">Рассчитать</button>
             </div>
         </section>
@@ -315,13 +326,14 @@
             </div>
 
             <div class="matrix-svg-container" style="margin-bottom: 20px;">
-                <h4 style="text-align: center; margin-bottom: 15px; color: var(--accent-color);">Матрица года (Возраст)
+                <h4 id="monthYearTitle" style="text-align: center; margin-bottom: 15px; color: var(--accent-color);">Матрица персонального года
                 </h4>
                 <div id="monthYearMatrixContainer"></div>
             </div>
 
             <div class="matrix-svg-container">
-                <h4 style="text-align: center; margin-bottom: 15px; color: var(--accent-color);">Прогноз на месяц</h4>
+                <h4 id="monthForecastTitle" style="text-align: center; margin-bottom: 15px; color: var(--accent-color);">Прогноз на месяц</h4>
+                <p id="monthForecastPeriod" style="text-align: center; color: var(--hint-color);"></p>
                 <div id="monthForecastMatrixContainer"></div>
             </div>
         </section>
@@ -524,11 +536,11 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="year-matrix.js?v=1.1.6"></script>
-    <script src="month-matrix.js?v=1.1.6"></script>
+    <script src="year-matrix.js?v=20261020.1"></script>
+    <script src="month-matrix.js?v=20261020.1"></script>
     <script src="matrix-logic.js?v=1.1.6"></script>
     <script src="supabase-client.js?v=1.1.6"></script>
-    <script src="app.js?v=1.1.6"></script>
+    <script src="app.js?v=20261020.1"></script>
 </body>
 
 </html>
