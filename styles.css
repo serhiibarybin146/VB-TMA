@@ -1580,9 +1580,8 @@ body, html, #appContent, .view {
     color: #111111 !important;
 }
 
-/* Visible insertion cursor in the year forecast form. */
-#forecastDate,
-#forecastYear {
+/* Consistent insertion cursor in every calculator input. */
+.tma-input {
     caret-color: #8b5cf6;
     cursor: text;
 }
@@ -1590,3 +1589,5 @@ body, html, #appContent, .view {
 /* Direct matrix pinch zoom. */
 .matrix-svg-container { overflow: hidden; touch-action: pan-y; cursor: default; }
 .matrix-svg-container > :first-child { will-change: transform; }
+
+.matrix-svg-container { cursor: zoom-in; }

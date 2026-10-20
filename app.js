@@ -210,6 +210,7 @@ function initEventListeners() {
     lockedModal.querySelector('.modal-overlay').addEventListener('click', hideLockedModal);
 
     initInlineMatrixZoom();
+    initZoomEvents();
 }
 
 /**
@@ -287,6 +288,8 @@ function openMatrixZoom(sourceId = 'matrixSvg') {
     zoomWrapper.innerHTML = '';
     const clonedSvg = originalSvg.cloneNode(true);
     clonedSvg.id = 'matrixSvgZoomed';
+    clonedSvg.style.transform = '';
+    clonedSvg.style.transformOrigin = '';
     zoomWrapper.appendChild(clonedSvg);
 
     // Reset state
@@ -1416,6 +1419,7 @@ function initInlineMatrixZoom() {
         if (viewport.dataset.inlineZoom) return;
         viewport.dataset.inlineZoom = 'true';
         let scale = 1, x = 0, y = 0, gesture = null;
+        let suppressClickUntil = 0;
         const content = () => viewport.firstElementChild;
         const point = touches => {
             const r = viewport.getBoundingClientRect();
@@ -1445,10 +1449,14 @@ function initInlineMatrixZoom() {
         };
         viewport.addEventListener('touchstart', e => {
             begin(e.touches);
-            if (gesture && e.cancelable) e.preventDefault();
+            if (gesture) {
+                suppressClickUntil = Date.now() + 500;
+                if (e.cancelable) e.preventDefault();
+            }
         }, {passive: false});
         viewport.addEventListener('touchmove', e => {
             if (!gesture) return;
+            suppressClickUntil = Date.now() + 500;
             if (e.cancelable) e.preventDefault();
             if (e.touches.length >= 2 && gesture.type === 'pinch') {
                 const p = point(e.touches);
@@ -1467,8 +1475,13 @@ function initInlineMatrixZoom() {
         // A newly calculated matrix always starts at its original size.
         new MutationObserver(() => { scale = 1; x = 0; y = 0; gesture = null; apply(); })
             .observe(content() || viewport, {childList: true});
-        viewport.onclick = null;
+        viewport.onclick = () => {
+            if (Date.now() < suppressClickUntil) return;
+            const svg = viewport.querySelector('svg');
+            if (!svg) return;
+            if (!svg.id) svg.id = `inlineMatrix-${Array.from(document.querySelectorAll('.matrix-svg-container')).indexOf(viewport)}`;
+            openMatrixZoom(svg.id);
+        };
         apply();
     });
 }
-
