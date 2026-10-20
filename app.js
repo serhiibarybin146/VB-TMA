@@ -209,28 +209,7 @@ function initEventListeners() {
     closeModal.addEventListener('click', hideLockedModal);
     lockedModal.querySelector('.modal-overlay').addEventListener('click', hideLockedModal);
 
-    // Make matrix clickable for zoom
-    const matrixContainer = document.querySelector('#resultView .matrix-svg-container');
-    if (matrixContainer) {
-        matrixContainer.onclick = () => openMatrixZoom('matrixSvg');
-    }
-
-    document.querySelectorAll('#yearForecastResultView .matrix-svg-container').forEach(container => {
-        container.onclick = () => openMatrixZoom(container.firstElementChild.id);
-    });
-
-    // Month Forecast Matrices
-    const monthYearContainer = document.getElementById('monthYearMatrixContainer');
-    if (monthYearContainer) {
-        monthYearContainer.parentElement.onclick = () => openMatrixZoom('monthYearMatrixContainer');
-        monthYearContainer.parentElement.style.cursor = 'pointer';
-    }
-
-    const monthForecastContainer = document.getElementById('monthForecastMatrixContainer');
-    if (monthForecastContainer) {
-        monthForecastContainer.parentElement.onclick = () => openMatrixZoom('monthForecastMatrixContainer');
-        monthForecastContainer.parentElement.style.cursor = 'pointer';
-    }
+    initInlineMatrixZoom();
 }
 
 /**
@@ -570,13 +549,6 @@ function performMonthForecast() {
         document.getElementById('monthForecastTitle').textContent = `Персональный месяц ${personalMonth} · ${dataMonth.days.length} ${dataMonth.days.length === 31 ? 'день' : 'дней'}`;
         document.getElementById('monthForecastPeriod').textContent = `${month.dateStart}–${month.dateEnd}`;
 
-        for (const id of ['monthYearMatrixContainer', 'monthForecastMatrixContainer']) {
-            const container = document.getElementById(id);
-            if (container) {
-                container.style.cursor = 'pointer';
-                container.onclick = () => openMatrixZoom(id);
-            }
-        }
         showView('monthForecastResultView');
         tg.HapticFeedback.notificationOccurred('success');
     } catch (err) {
@@ -1435,5 +1407,68 @@ function getAgeLabel(age) {
     return 'лет';
 }
 
-initZoomEvents();
+
 window.addEventListener('load', initTMA);
+
+// Pinch directly on each matrix; a single finger still scrolls at normal size.
+function initInlineMatrixZoom() {
+    document.querySelectorAll('.matrix-svg-container').forEach(viewport => {
+        if (viewport.dataset.inlineZoom) return;
+        viewport.dataset.inlineZoom = 'true';
+        let scale = 1, x = 0, y = 0, gesture = null;
+        const content = () => viewport.firstElementChild;
+        const point = touches => {
+            const r = viewport.getBoundingClientRect();
+            return {x: (touches[0].clientX + touches[1].clientX) / 2 - r.left - r.width / 2,
+                y: (touches[0].clientY + touches[1].clientY) / 2 - r.top - r.height / 2};
+        };
+        const distance = touches => Math.hypot(touches[0].clientX - touches[1].clientX,
+            touches[0].clientY - touches[1].clientY);
+        const apply = () => {
+            const limitX = viewport.clientWidth * (scale - 1) / 2;
+            const limitY = viewport.clientHeight * (scale - 1) / 2;
+            x = Math.max(-limitX, Math.min(limitX, x));
+            y = Math.max(-limitY, Math.min(limitY, y));
+            if (content()) {
+                content().style.transformOrigin = 'center center';
+                content().style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+            }
+            viewport.style.touchAction = scale > 1 ? 'none' : 'pan-y';
+        };
+        const begin = touches => {
+            if (touches.length >= 2) {
+                const p = point(touches);
+                gesture = {type: 'pinch', distance: distance(touches), scale, x, y, p};
+            } else if (touches.length === 1 && scale > 1) {
+                gesture = {type: 'pan', x, y, px: touches[0].clientX, py: touches[0].clientY};
+            } else gesture = null;
+        };
+        viewport.addEventListener('touchstart', e => {
+            begin(e.touches);
+            if (gesture && e.cancelable) e.preventDefault();
+        }, {passive: false});
+        viewport.addEventListener('touchmove', e => {
+            if (!gesture) return;
+            if (e.cancelable) e.preventDefault();
+            if (e.touches.length >= 2 && gesture.type === 'pinch') {
+                const p = point(e.touches);
+                scale = Math.max(1, Math.min(5, gesture.scale * distance(e.touches) / Math.max(1, gesture.distance)));
+                const ratio = scale / gesture.scale;
+                x = p.x - (gesture.p.x - gesture.x) * ratio;
+                y = p.y - (gesture.p.y - gesture.y) * ratio;
+            } else if (e.touches.length === 1 && gesture.type === 'pan') {
+                x = gesture.x + e.touches[0].clientX - gesture.px;
+                y = gesture.y + e.touches[0].clientY - gesture.py;
+            }
+            apply();
+        }, {passive: false});
+        viewport.addEventListener('touchend', e => begin(e.touches));
+        viewport.addEventListener('touchcancel', () => { gesture = null; });
+        // A newly calculated matrix always starts at its original size.
+        new MutationObserver(() => { scale = 1; x = 0; y = 0; gesture = null; apply(); })
+            .observe(content() || viewport, {childList: true});
+        viewport.onclick = null;
+        apply();
+    });
+}
+

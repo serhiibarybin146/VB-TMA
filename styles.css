@@ -1586,3 +1586,7 @@ body, html, #appContent, .view {
     caret-color: #8b5cf6;
     cursor: text;
 }
+
+/* Direct matrix pinch zoom. */
+.matrix-svg-container { overflow: hidden; touch-action: pan-y; cursor: default; }
+.matrix-svg-container > :first-child { will-change: transform; }
