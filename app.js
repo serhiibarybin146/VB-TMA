@@ -900,6 +900,33 @@ function hideChakraModal() {
 /**
  * FULL SVG DRAWING LOGIC (STRICTLY FROM original matrix.js)
  */
+function calculateAgePeriod(data, today = new Date()) {
+    const r = n => MatrixLogic.reduce(n);
+    const energies = {};
+    const positions = {};
+    for (let i = 0; i < 8; i++) {
+        const a = data.values[i], b = data.values[(i + 1) % 8];
+        const mid = r(a + b), left = r(a + mid), right = r(mid + b);
+        const numbers = [a, r(a + left), left, r(left + mid), null, mid, r(mid + right), right, r(right + b), null];
+        const ts = [0, 1/6, 5/18, 7/18, null, 1/2, 11/18, 13/18, 5/6, null];
+        numbers.forEach((value, j) => { if (value !== null) { energies[i*10+j] = value; positions[i*10+j] = {side:i,t:ts[j]}; } });
+    }
+    energies[80] = energies[0];
+    for (let a = 4; a < 80; a += 5) {
+        energies[a] = r(energies[a-1] + energies[a+1]);
+        const side = Math.floor(a/10);
+        const before = positions[a-1].t;
+        const after = a % 10 === 9 ? 1 : positions[a+1].t;
+        positions[a] = {side,t:(before+after)/2, inferred:true};
+    }
+    const {day,month,year} = data.date;
+    let age = today.getFullYear() - year;
+    if (today.getMonth()+1 < month || (today.getMonth()+1 === month && today.getDate() < day)) age--;
+    if (age < 0 || age >= 80) return null;
+    const mirror = age < 40 ? age+40 : age-40;
+    return {age,mirror,current:energies[age],opposite:energies[mirror],total:r(energies[age]+energies[mirror]),positions};
+}
+
 function drawFullMatrixSVG(data) {
     const svg = document.getElementById('matrixSvg');
     svg.innerHTML = '';
@@ -1251,6 +1278,38 @@ function drawFullMatrixSVG(data) {
             // textLayer.append(...) mAges label removed
         }
     });
+
+    const period = calculateAgePeriod(data);
+    if (period) {
+        const periodLabel = createSVGElement('text', {
+            x: 28, y: 30, fill: '#000', 'font-size': 16,
+            'font-weight': 600, 'font-family': 'Manrope, sans-serif',
+            'class': 'matrix-period-label'
+        });
+        periodLabel.textContent = `Период: ${period.current}, ${period.opposite}, ${period.total}`;
+        svg.append(periodLabel);
+        const highlight = createSVGElement('g', {'class':'current-age-highlights'});
+        for (const [age,energy,color] of [[period.age,period.current,'#e53935'],[period.mirror,period.opposite,'#e53935']]) {
+            const {side,t,inferred} = period.positions[age];
+            if (inferred) continue; // Calculated gap ages appear only in the period summary.
+            const p = outerPoints[side], q = outerPoints[(side+1)%8];
+            let x, y;
+            if (age % 10 === 0) {
+                x=p.x; y=p.y;
+                highlight.append(createSVGElement('circle',{cx:x,cy:y,r:32,fill:'none',stroke:color,'stroke-width':4}));
+            } else {
+                const dx=q.x-p.x,dy=q.y-p.y,len=Math.hypot(dx,dy);
+                let nx=-dy/len,ny=dx/len;
+                if(nx*((p.x+q.x)/2-cx)+ny*((p.y+q.y)/2-cy)<0){nx=-nx;ny=-ny;}
+                x=p.x+dx*t+nx*48; y=p.y+dy*t+ny*48;
+                highlight.append(createSVGElement('circle',{cx:x,cy:y,r:14,fill:color,stroke:'#fff','stroke-width':2}));
+                const text=createSVGElement('text',{x,y,'text-anchor':'middle','dominant-baseline':'central',fill:'#fff','font-size':15,'font-weight':700});
+                text.textContent=energy;highlight.append(text);
+
+            }
+        }
+        svg.append(highlight);
+    }
 
     // Final text content reassignment for safety
     svg.querySelectorAll('text').forEach(t => { if (t.getAttribute('content')) { t.textContent = t.getAttribute('content'); t.removeAttribute('content'); } });
