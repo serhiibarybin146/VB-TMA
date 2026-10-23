@@ -1,57 +1,23 @@
-/* Local money code: personal finance card. */
-#moneyResultView .money-code-container { gap: 14px; padding-bottom: 28px; }
-#moneyResultView .money-header { text-align: left; padding: 16px 2px 8px; }
-#moneyResultView .money-eyebrow { display: block; color: #c8f765; font-size: 9px; font-weight: 700; letter-spacing: 2px; margin-bottom: 12px; }
-#moneyResultView .money-header h2 { color: #f7f8f2 !important; -webkit-text-fill-color: #f7f8f2; font-size: 32px; line-height: 1.12; letter-spacing: -1.2px; font-weight: 700; margin: 0 0 12px; }
-#moneyResultView .money-header p { color: #92968c; font-size: 12px; line-height: 1.6; max-width: 255px; margin: 0; }
-#moneyResultView .money-star-box { position: relative; width: 100%; margin: 0; padding: 32px; aspect-ratio: 1; border-radius: 30px; background-color: #20251d; background-image: radial-gradient(#b5d68b17 1px, transparent 1px), radial-gradient(ellipse at 70% 20%, #526b2630, transparent 65%); background-size: 16px 16px, 100% 100%; border: 1px solid #c8f76522; box-shadow: none; overflow: hidden; }
-#moneyResultView .money-star-box::before { content: '01 — 05'; position: absolute; top: 17px; left: 21px; color: #9ca98e; font-size: 9px; letter-spacing: 2px; }
-#moneyResultView .money-star-box::after { content: 'ПЕРСОНАЛЬНЫЙ КОД'; position: absolute; bottom: 16px; right: 20px; color: #9ca98e; font-size: 8px; letter-spacing: 1.6px; }
-#moneyResultView .star-visualization, #moneyResultView .star-wrapper { width: 100%; height: 100%; }
-#moneyResultView .star-wrapper svg { display: block; width: 100%; height: 100%; overflow: visible; }
-#moneyResultView #mainStar { fill: #c8f7650b; stroke: #c8f765; stroke-width: 1; stroke-linejoin: round; filter: none; }
-#moneyResultView .money-nodes circle { fill: #c8f765; stroke: #20251d; stroke-width: 3; }
-#moneyResultView .star-val { fill: #20251d !important; font-family: inherit; font-size: 14px; font-weight: 700; }
-#moneyResultView .star-code { fill: #f4f8eb !important; font-family: inherit; font-size: 19px; font-weight: 700; letter-spacing: 1px; }
-#moneyResultView .money-final-box { position: relative; width: 100%; margin: 0; border: 0; border-radius: 24px; padding: 22px 24px; background: #c8f765; box-shadow: none; text-align: left; }
-#moneyResultView .money-final-box::after { content: '↗'; position: absolute; top: 18px; right: 22px; font-size: 29px; line-height: 1; color: #263519; }
-#moneyResultView .money-final-box span { display: block; color: #4b612b !important; font-size: 9px; font-weight: 700; letter-spacing: 2px; margin-bottom: 13px; }
-#moneyResultView .money-final-box strong { display: block; color: #202b16 !important; font-size: 48px; letter-spacing: 7px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
-#moneyResultView .money-desc-box { margin: 0; padding: 8px 5px; border: 0; background: none; box-shadow: none; color: #93998c !important; font-size: 12px; font-weight: 400; line-height: 1.8; text-align: left; }
-#moneyResultView .money-desc-box p { margin: 0; }
+/* Money code: selected gold and plum design. Scoped to the result screen. */
 
-/* Digital talisman variation. */
-#moneyResultView .money-header { text-align: center; }
-#moneyResultView .money-eyebrow { color: #a99ac8; letter-spacing: 2.2px; }
-#moneyResultView .money-header h2 { font-size: 30px; }
-#moneyResultView .money-header p { margin: auto; color: #a29aaE; }
-#moneyResultView .money-star-box { background-color: #1d1926; background-image: radial-gradient(ellipse at 50% 45%, #7947c644, transparent 65%), repeating-radial-gradient(circle at 50% 50%, transparent 0 38px, #c9b8f409 39px 40px); background-size: 100% 100%; border-color: #a78bda26; border-radius: 32px; padding: 34px; box-shadow: inset 0 1px 0 #ffffff0a; }
-#moneyResultView .money-star-box::before { content: 'ЛИЧНЫЙ ТАЛИСМАН'; color: #8c7bA5; font-size: 8px; }
-#moneyResultView .money-star-box::after { content: '✦'; color: #c7acef; font-size: 16px; }
-#moneyResultView #mainStar { fill: #ae83ef09; stroke: #b78df0; stroke-width: .75; filter: drop-shadow(0 0 4px #ad7bea55); }
-#moneyResultView .money-nodes circle { fill: url(#moneyNodeGradient); stroke: #d9baff; stroke-width: .7; filter: drop-shadow(0 3px 4px #00000055); }
-#moneyResultView .star-val { fill: #fff5ff !important; font-size: 15px; }
-#moneyResultView .star-code { fill: #f4eaff !important; font-size: 20px; letter-spacing: 1px; }
-#moneyResultView .money-final-box { background: transparent; padding: 15px 16px 21px; text-align: center; border-bottom: 1px solid #ad86d52b; border-radius: 0; }
-#moneyResultView .money-final-box::after { content: none; }
-#moneyResultView .money-final-box span { color: #a394b5 !important; font-size: 9px; letter-spacing: 2.7px; margin-bottom: 16px; }
-#moneyResultView .money-final-box strong { color: #e5ceff !important; font-size: 54px; font-weight: 500; letter-spacing: 11px; padding-left: 11px; text-shadow: 0 0 25px #a66cef33; }
-#moneyResultView .money-desc-box { text-align: center; color: #a49aaf !important; padding: 4px 12px; }
+#moneyResultView .money-code-container { gap:18px;padding-bottom:28px; }
+#moneyResultView .money-header { padding:16px 8px 6px;text-align:center; }
+#moneyResultView .money-eyebrow { display:block;color:#bba1f3;font-size:9px;font-weight:700;letter-spacing:2px;margin-bottom:12px; }
+#moneyResultView .money-header h2 { color:#f6f1ff !important;-webkit-text-fill-color:#f6f1ff;font-size:27px;letter-spacing:-.8px;font-weight:700;margin:0 0 10px; }
+#moneyResultView .money-header p { color:#a9a3b6;font-size:13px;line-height:1.6;max-width:260px;margin:auto; }
+#moneyResultView .money-star-box { width:100%;margin:0;border-radius:28px;background:radial-gradient(ellipse at 50% 42%,#38274b 0%,#221c2c 55%,#1c1922 100%);border:1px solid #ffffff12;box-shadow:inset 0 1px 0 #ffffff08;padding:25px;aspect-ratio:1;overflow:hidden; }
+#moneyResultView .star-visualization,#moneyResultView .star-wrapper {width:100%;height:100%;}
+#moneyResultView .star-wrapper svg {display:block;width:100%;height:100%;overflow:visible;}
+#moneyResultView #mainStar {filter:drop-shadow(0 5px 12px #d5aa4d22);}
+#moneyResultView .money-nodes circle {fill:#292132;stroke:#bfa16e;stroke-width:1;}
+#moneyResultView .star-val {fill:#fff1d3 !important;font-family:inherit;font-size:15px;font-weight:700;}
+#moneyResultView .star-code {fill:#28202c !important;font-family:inherit;font-size:16px;font-weight:700;letter-spacing:1px;}
+#moneyResultView .money-final-box {margin:0;width:100%;padding:23px 16px 25px;border-radius:24px;background:#27202f;border:1px solid #b998e729;text-align:center;box-shadow:none;}
+#moneyResultView .money-final-box span {display:block;font-size:10px;font-weight:600;color:#b5a5c9 !important;letter-spacing:2px;margin-bottom:14px;}
+#moneyResultView .money-final-box strong {display:block;color:#f4dfb3 !important;font-size:48px;font-weight:600;letter-spacing:10px;padding-left:10px;line-height:1.15;}
+#moneyResultView .money-desc-box {padding:4px 12px;margin:0;background:none;border:0;box-shadow:none;color:#a9a3b6 !important;font-size:12px;line-height:1.8;font-weight:400;text-align:center;}
+#moneyResultView .money-desc-box p {margin:0;}
 
-/* Cream and ink variation. */
-#moneyResultView .money-header { text-align: left; padding: 12px 2px 9px; }
-#moneyResultView .money-eyebrow { color: #bda6ee; font-size: 9px; letter-spacing: 1.8px; }
-#moneyResultView .money-header h2 { font-size: 33px; letter-spacing: -1.4px; }
-#moneyResultView .money-header p { margin: 0; }
-#moneyResultView .money-star-box { background: #f1eee7; border: 0; border-radius: 28px 28px 0 0; padding: 38px 32px 27px; box-shadow: none; margin-bottom: -14px; }
-#moneyResultView .money-star-box::before { content: 'ВАША ФИНАНСОВАЯ ФОРМУЛА'; color: #77716a; font-size: 8px; letter-spacing: 1.6px; top: 21px; left: 24px; }
-#moneyResultView .money-star-box::after { content: '✳'; color: #7950bf; font-size: 23px; right: 21px; bottom: 10px; }
-#moneyResultView #mainStar { fill: #ded6ef; stroke: #28222f; stroke-width: 1; filter: none; }
-#moneyResultView .money-nodes circle { fill: #28222f; stroke: #f1eee7; stroke-width: 3; filter: none; }
-#moneyResultView .star-val { fill: #f6f2eb !important; font-size: 14px; }
-#moneyResultView .star-code { fill: #30233e !important; font-size: 19px; font-weight: 700; }
-#moneyResultView .money-final-box { background: #f1eee7; border: 0; border-radius: 0 0 28px 28px; padding: 16px 24px 27px; text-align: left; }
-#moneyResultView .money-final-box span { color: #7a726f !important; font-size: 8px; letter-spacing: 2px; margin-bottom: 12px; }
-#moneyResultView .money-final-box strong { color: #28222f !important; font-size: 56px; letter-spacing: 7px; padding: 0; font-weight: 700; text-shadow: none; line-height: 1; }
-#moneyResultView .money-final-box::after { content: '↗'; color: #7c51bc; display: block; top: auto; bottom: 30px; right: 24px; font-size: 34px; }
-#moneyResultView .money-desc-box { text-align: left; padding: 10px 5px; }
+#moneyResultView .money-code-container { padding: 16px; }
+#moneyResultView .money-star-box { display:block; min-height:0; height:auto !important; padding:25px !important; }
+#moneyResultView .money-final-box { padding:23px 16px 25px !important; gap:0; }
