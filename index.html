@@ -21,7 +21,7 @@
     <!-- Icons -->
     <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
 
-    <link rel="stylesheet" href="styles.css?v=20261020.6">
+    <link rel="stylesheet" href="styles.css?v=20261023.1">
     <link rel="stylesheet" href="money-design.css?v=20261020.1">
 </head>
 
@@ -361,15 +361,18 @@
                 </div>
             </div>
 
-            <div class="matrix-svg-container" style="margin-bottom: 20px;">
-                <h4 id="monthYearTitle" style="text-align: center; margin-bottom: 15px; color: var(--accent-color);">Матрица персонального года
-                </h4>
+            <div class="month-matrix-heading">
+                <h4 id="monthYearTitle">Матрица персонального года</h4>
+            </div>
+            <div class="matrix-svg-container">
                 <div id="monthYearMatrixContainer"></div>
             </div>
 
+            <div class="month-matrix-heading">
+                <h4 id="monthForecastTitle">Прогноз на месяц</h4>
+                <p id="monthForecastPeriod"></p>
+            </div>
             <div class="matrix-svg-container">
-                <h4 id="monthForecastTitle" style="text-align: center; margin-bottom: 15px; color: var(--accent-color);">Прогноз на месяц</h4>
-                <p id="monthForecastPeriod" style="text-align: center; color: var(--hint-color);"></p>
                 <div id="monthForecastMatrixContainer"></div>
             </div>
         </section>
