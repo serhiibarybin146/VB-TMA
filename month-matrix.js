@@ -161,7 +161,7 @@ const MonthMatrixLogic = {
                 const textAngleRad = textAngleDeg * Math.PI / 180;
 
                 // Position text at R=65 (closer to center, replacing month circles)
-                const rText = 65;
+                const rText = dayObj.fullDate ? 85 : 65;
                 const tx = cx + rText * Math.cos(textAngleRad);
                 const ty = cy + rText * Math.sin(textAngleRad);
 
@@ -180,7 +180,16 @@ const MonthMatrixLogic = {
                     'font-weight': 'bold',
                     transform: `rotate(${rotation}, ${tx}, ${ty})`
                 });
-                dateText.textContent = dayObj.number;
+                if (dayObj.fullDate) {
+                    const date = dayObj.fullDate;
+                    dateText.textContent = `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}`;
+                    dateText.setAttribute('data-personal-day', dayObj.number);
+                    const title = createSVGElement('title');
+                    title.textContent = `${dateText.textContent}.${date.getFullYear()} · персональный день ${dayObj.number}`;
+                    dateText.appendChild(title);
+                } else {
+                    dateText.textContent = dayObj.number;
+                }
 
                 textLayer.append(dateText);
             });
