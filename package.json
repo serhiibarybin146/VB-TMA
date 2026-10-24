@@ -3,5 +3,8 @@
     "version": "1.0.0",
     "engines": {
         "node": "24.x"
+    },
+    "scripts": {
+        "test:security": "node --test tests/telegram-private-api.cjs"
     }
 }

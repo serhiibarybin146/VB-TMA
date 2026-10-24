@@ -1,3 +1,4 @@
+import { verifyTelegram } from '../_shared/telegram.mjs'
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import Stripe from 'https://esm.sh/stripe@11.1.0?target=deno'
@@ -23,13 +24,17 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     )
 
-    const { user_id, feature_key } = await req.json()
+    const { initData, feature_key } = await req.json()
+    const user = await verifyTelegram(initData, Deno.env.get('TELEGRAM_BOT_TOKEN') || Deno.env.get('BOT_TOKEN'))
+    const user_id = user.id
+    if (typeof feature_key !== 'string' || !/^[a-z_]{1,64}$/.test(feature_key)) throw new Error('INVALID_PRODUCT')
 
     // 1. Get product from DB
     const { data: product, error: productError } = await supabaseClient
       .from('products')
       .select('*')
       .eq('id', feature_key)
+      .eq('active', true)
       .single()
 
     if (productError || !product) {
@@ -53,8 +58,8 @@ serve(async (req) => {
         },
       ],
       mode: 'payment',
-      success_url: `https://t.me/your_bot_name?start=success_${feature_key}`, // User should update with their bot name
-      cancel_url: `https://t.me/your_bot_name?start=cancel`,
+      success_url: `https://t.me/My_NumerologistBot?start=success_${feature_key}`,
+      cancel_url: `https://t.me/My_NumerologistBot?start=cancel`,
       metadata: {
         user_id: user_id.toString(),
         feature_key: feature_key,
@@ -69,7 +74,7 @@ serve(async (req) => {
   } catch (error) {
     return new Response(
       JSON.stringify({ error: error.message }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: error.message === 'UNAUTHORIZED' ? 401 : error.message === 'AUTH_NOT_CONFIGURED' ? 503 : 400 }
     )
   }
 })

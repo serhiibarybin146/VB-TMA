@@ -9,3 +9,18 @@ if (window.supabase) {
 } else {
     console.error('Supabase library not found!');
 }
+
+// No caller-provided user ID is sent to the private data API.
+async function privateApi(action, payload = {}) {
+    const initData = window.Telegram?.WebApp?.initData;
+    if (!initData) throw new Error('TELEGRAM_REQUIRED');
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/user-api`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', apikey: SUPABASE_KEY },
+        body: JSON.stringify({ ...payload, action, initData }),
+        cache: 'no-store'
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'REQUEST_FAILED');
+    return data;
+}

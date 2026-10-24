@@ -113,26 +113,16 @@ async function initTMA() {
                 userAvatar.style.display = 'block';
             }
 
-            // --- Supabase User Sync ---
-            if (typeof supabaseClient !== 'undefined' && supabaseClient) {
-                try {
-                    // Upsert user to Supabase
-                    const { error: userError } = await supabaseClient
-                        .from('users')
-                        .upsert({
-                            id: u.id,
-                            username: u.username,
-                            first_name: u.first_name,
-                            last_name: u.last_name,
-                            language_code: u.language_code
-                        });
-                    if (userError) console.error('Supabase User Sync Error:', userError);
-
-                    // Fetch Permissions
-                    await fetchUserPermissions(u.id);
-                } catch (e) {
-                    console.error('Supabase Init Failed:', e);
-                }
+            // Identity is established only by the server using signed Telegram initData.
+            try {
+                const session = await privateApi('session');
+                currentState.user = session.user;
+                await fetchUserPermissions();
+            } catch (e) {
+                currentState.user = null;
+                currentState.permissions = [];
+                console.error('Verified Telegram session unavailable:', e.message);
+                tg.showAlert('Не удалось подтвердить вход. Закройте приложение и откройте его заново через Telegram.');
             }
         } else {
             console.warn('Telegram User Data not found, using Guest mode');
@@ -564,39 +554,29 @@ function performMonthForecast() {
 /**
  * HISTORY FEATURE
  */
-const RECENT_DATES_KEY = 'tma_recent_dates';
+const recentDatesKey = () => currentState.user ? `tma_recent_dates_${currentState.user.id}` : 'tma_recent_dates_guest';
 
 async function getRecentDates() {
     if (!currentState.user) {
         try {
-            const stored = localStorage.getItem(RECENT_DATES_KEY);
+            const stored = localStorage.getItem(recentDatesKey());
             return stored ? JSON.parse(stored).slice(0, 3) : [];
         } catch (e) {
             return [];
         }
     }
 
-    if (typeof supabaseClient !== 'undefined' && supabaseClient) {
-        try {
-            const { data, error } = await supabaseClient
-                .from('calculations')
-                .select('birth_date') // Select only birth_date
-                .eq('user_id', currentState.user.id)
-                .order('created_at', { ascending: false })
-                .limit(10);
-
-            if (error) throw error;
-            // Map to expected format (DD.MM.YYYY)
-            return data.slice(0, 3).map(item => {
-                const [y, m, d] = item.birth_date.split('-');
-                return `${d}.${m}.${y}`;
-            });
-        } catch (e) {
-            console.warn('Supabase getHistory failed, falling back to LocalStorage', e);
-        }
+    try {
+        const { data } = await privateApi('history');
+        return data.map(item => {
+            const [y, m, d] = item.birth_date.split('-');
+            return `${d}.${m}.${y}`;
+        });
+    } catch (e) {
+        console.warn('Private history unavailable:', e.message);
     }
 
-    const saved = localStorage.getItem(RECENT_DATES_KEY);
+    const saved = localStorage.getItem(recentDatesKey());
     return saved ? JSON.parse(saved).slice(0, 3) : [];
 }
 
@@ -604,41 +584,21 @@ async function saveRecentDate(date) {
     const dateStr = `${String(date.day).padStart(2, '0')}.${String(date.month).padStart(2, '0')}.${date.year}`;
 
     // LocalStorage fallback for Guest or if Supabase fails
-    let dates = JSON.parse(localStorage.getItem(RECENT_DATES_KEY) || '[]');
+    let dates = JSON.parse(localStorage.getItem(recentDatesKey()) || '[]');
     // Remove if exists to move to top
     dates = dates.filter(d => d !== dateStr);
     // Add to front
     dates.unshift(dateStr);
     // Keep the three most recent dates.
     dates = dates.slice(0, 3);
-    localStorage.setItem(RECENT_DATES_KEY, JSON.stringify(dates));
+    localStorage.setItem(recentDatesKey(), JSON.stringify(dates));
 
-    // Supabase Store if logged in
-    if (currentState.user && typeof supabaseClient !== 'undefined' && supabaseClient) {
+    if (currentState.user) {
         try {
             const isoDate = `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`;
-            // Check if this date already exists for the user to avoid duplicates
-            const { data: existing, error: fetchError } = await supabaseClient
-                .from('calculations')
-                .select('id')
-                .eq('user_id', currentState.user.id)
-                .eq('birth_date', isoDate)
-                .limit(1);
-
-            if (fetchError) throw fetchError;
-
-            if (existing && existing.length === 0) { // Only insert if not already present
-                const { error: insertError } = await supabaseClient
-                    .from('calculations')
-                    .insert({
-                        user_id: currentState.user.id,
-                        birth_date: isoDate,
-                        data: { day: date.day, month: date.month, year: date.year } // Minimal data for now
-                    });
-                if (insertError) console.error('Supabase Save Error:', insertError);
-            }
+            await privateApi('save', { birth_date: isoDate });
         } catch (e) {
-            console.error('Supabase Save Failed:', e);
+            console.error('Private save unavailable:', e.message);
         }
     }
 
@@ -1353,7 +1313,7 @@ async function purchaseFeature(featureKey) {
         // Call Supabase Edge Function
         const { data, error } = await supabaseClient.functions.invoke('create-checkout', {
             body: { 
-                user_id: currentState.user?.id || tg.initDataUnsafe.user?.id,
+                initData: tg.initData,
                 feature_key: featureKey 
             }
         });
@@ -1379,15 +1339,10 @@ async function purchaseFeature(featureKey) {
 /**
  * Re-fetch permissions and update UI
  */
-async function fetchUserPermissions(userId) {
-    if (!supabaseClient) return;
+async function fetchUserPermissions() {
+    if (!currentState.user) return;
     try {
-        const { data: permData, error: permError } = await supabaseClient
-            .from('user_permissions')
-            .select('permission_key')
-            .eq('user_id', userId);
-
-        if (permError) throw permError;
+        const { data: permData } = await privateApi('permissions');
 
         if (permData) {
             const oldPermsCount = currentState.permissions.length;
@@ -1413,9 +1368,8 @@ async function fetchUserPermissions(userId) {
 // Auto-check on app resume
 document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible' && localStorage.getItem('pending_purchase')) {
-        const userId = currentState.user?.id || tg.initDataUnsafe.user?.id;
-        if (userId) {
-            fetchUserPermissions(userId);
+        if (currentState.user) {
+            fetchUserPermissions();
         }
     }
 });
