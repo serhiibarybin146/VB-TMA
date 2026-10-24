@@ -1,8 +1,7 @@
 module.exports = async (req, res) => {
     const token = process.env.BOT_TOKEN;
 
-    // Log request for debugging (visible in Vercel Logs)
-    console.log('Bot request body:', JSON.stringify(req.body));
+    const welcomeVersion = '20261024.2';
 
     if (!token) {
         console.error('BOT_TOKEN is not defined in environment variables');
@@ -17,7 +16,7 @@ module.exports = async (req, res) => {
 
             if (message && message.text === '/start') {
                 const chatId = message.chat.id;
-                const text = "✨ Добро пожаловать в ваше Личное Пространство.\n\nЯ помогу вам расшифровать коды вашей даты рождения и создать территорию для глубокого анализа вашей личности. Без лишних глаз, только вы и ваша Матрица.\n\nГотовы начать? Нажмите «Личное пространство ✨🔮» ниже. 👇";
+                const text = '<b>Мой личный Нумеролог</b>\nЛичное пространство от Виктории Барыбиной ✨\n\nВаша матрица, прогнозы и персональные разборы — в одном месте.\n\nНачните с <b>основной матрицы</b>: откройте приложение и введите дату рождения.\n\nВаши сохранённые расчёты и приобретённые продукты будут доступны здесь при следующих входах.';
 
                 const response = await fetch(`${baseUrl}/sendMessage`, {
                     method: 'POST',
@@ -25,10 +24,11 @@ module.exports = async (req, res) => {
                     body: JSON.stringify({
                         chat_id: chatId,
                         text: text,
+                        parse_mode: 'HTML',
                         reply_markup: {
                             inline_keyboard: [[
                                 {
-                                    text: "Личное пространство ✨🔮",
+                                    text: "Открыть личное пространство →",
                                     web_app: { url: "https://tma.viktoriibarybina.com/" }
                                 }
                             ]]
@@ -37,7 +37,10 @@ module.exports = async (req, res) => {
                 });
 
                 const result = await response.json();
-                console.log('Telegram API response:', JSON.stringify(result));
+                if (!response.ok || !result.ok) {
+                    console.error('Telegram welcome delivery failed:', result.error_code);
+                    return res.status(502).send('Delivery Error');
+                }
             }
 
             return res.status(200).send('OK');
@@ -46,6 +49,6 @@ module.exports = async (req, res) => {
             return res.status(500).send('Internal Error');
         }
     } else {
-        return res.status(200).send(`Bot is running. Token status: ${token ? 'Loaded' : 'Missing'}`);
+        return res.status(200).send(`Bot is running. Welcome version: ${welcomeVersion}`);
     }
 };
