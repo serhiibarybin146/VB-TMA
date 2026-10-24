@@ -5,3 +5,7 @@ verify_jwt = false
 [functions.create-checkout]
 # Uses the same Telegram signature verifier as user-api.
 verify_jwt = false
+
+[functions.telegram-admin]
+# A private DB job plus a short-lived one-use execution capability is required.
+verify_jwt = false
