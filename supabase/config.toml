@@ -1,0 +1,7 @@
+[functions.user-api]
+# Telegram initData is authenticated in the function, not a Supabase JWT.
+verify_jwt = false
+
+[functions.create-checkout]
+# Uses the same Telegram signature verifier as user-api.
+verify_jwt = false

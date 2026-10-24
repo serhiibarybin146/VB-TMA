@@ -26,3 +26,24 @@ after cutover. Old local history is not migrated because its owner cannot be ver
 Never roll back by reopening anonymous policies. Fix the authenticated path instead.
 The change does not add products or execute payments, or validate Stripe configuration.
 Client-side calculators remain public code; hiding a card is not DRM for those formulas.
+
+## Release verification, 2026-10-24
+
+- GitHub release d18276f is being served by the production domain (all three client files checked).
+- The configured bot token was checked server-side with getMe and matches My_NumerologistBot.
+- user-api and create-checkout reject unsigned requests with HTTP 401.
+- The protect_telegram_private_tables migration was applied successfully.
+- Anonymous REST reads to users, calculations and user_permissions return HTTP 401;
+  products remains readable (HTTP 200). Both anon and authenticated have no private
+  table grants. service_role retains the required server privileges.
+- Existing counts stayed unchanged during cutover: 7 users, 296 calculations,
+  4 products and 7 permissions. No payments were initiated.
+- Five automated security tests pass, including two synthetic signed identities and
+  checkout owner substitution. Year and month calculation regressions pass.
+- A real user session and history save through Telegram still require the user's
+  device check; synthetic tests are not a substitute for that final end-to-end check.
+- The Supabase advisor reports INFO for RLS without policies on the three private
+  tables. This is intentional server-only, default-deny access; see
+  https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy
+- Vercel management API denied deployment listing and no CLI was installed; release
+  verification used the public production files rather than claiming dashboard access.
