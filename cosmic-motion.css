@@ -1,0 +1,53 @@
+/* The existing Cosmic composition gains depth, light and a spring-like response. */
+.cosmic-motion.home-redesign .matrix-card,
+.cosmic-motion.home-redesign .nav-item,
+.cosmic-motion.home-redesign .cosmic-shortcut-list button {
+    --tilt-x:0deg; --tilt-y:0deg; --glow-x:50%; --glow-y:50%;
+    position:relative;
+    transition:transform .55s cubic-bezier(.22,1.35,.36,1),box-shadow .4s,border-color .4s,background-color .3s;
+    -webkit-tap-highlight-color:transparent;
+}
+.cosmic-motion.home-redesign .matrix-card::after {
+    content:''; position:absolute; inset:0; pointer-events:none; border-radius:inherit;
+    background:radial-gradient(ellipse at var(--glow-x) var(--glow-y),#c4dcff24,transparent 65%);
+    opacity:0; transition:opacity .4s;
+}
+.cosmic-motion.home-redesign .matrix-card .home-card-art {
+    transition:transform .7s cubic-bezier(.22,1.25,.36,1),filter .5s;
+}
+.cosmic-motion.home-redesign .card-footer { transition:transform .45s cubic-bezier(.22,1.35,.36,1),box-shadow .3s; }
+.cosmic-motion.home-redesign .nav-item iconify-icon { transition:transform .45s cubic-bezier(.22,1.5,.36,1),filter .3s; }
+@media (hover:hover) and (pointer:fine) {
+    .cosmic-motion.home-redesign .matrix-card:hover {
+        transform:perspective(900px) translateY(-4px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+        border-color:#bad9ff70; box-shadow:0 18px 32px #0005,0 0 25px #8bbaff13,inset 0 1px #ffffff18;
+    }
+    .cosmic-motion.home-redesign .matrix-card:hover::after { opacity:1; }
+    .cosmic-motion.home-redesign .matrix-card:hover .home-card-art { transform:translateY(-3px) scale(1.045); filter:drop-shadow(0 0 9px #9dc8ff44); }
+    .cosmic-motion.home-redesign .matrix-card:hover .card-footer { transform:translateX(3px); }
+    .cosmic-motion.home-redesign .nav-item:hover { transform:translateY(-3px); background-color:#bad6ff12; }
+    .cosmic-motion.home-redesign .nav-item:hover iconify-icon { transform:translateY(-2px) rotate(-7deg); filter:drop-shadow(0 0 5px #bad6ff80); }
+    .cosmic-motion.home-redesign .cosmic-shortcut-list button:hover { transform:translateY(-3px); }
+}
+.cosmic-motion.home-redesign .matrix-card.cosmic-pressed {
+    transform:perspective(900px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) scale(.975);
+    border-color:#d0e2ff99; box-shadow:0 3px 10px #0004,inset 0 0 30px #a6cbff15;
+    transition-duration:.14s;
+}
+.cosmic-motion.home-redesign .cosmic-pressed::after { opacity:1; }
+.cosmic-motion.home-redesign .nav-item.cosmic-pressed,
+.cosmic-motion.home-redesign .cosmic-shortcut-list button.cosmic-pressed { transform:scale(.92); background-color:#bad6ff25; transition-duration:.12s; }
+.cosmic-motion.home-redesign .matrix-card:focus-visible,
+.cosmic-motion.home-redesign .nav-item:focus-visible { outline:2px solid #bad6ff; outline-offset:4px; }
+@media (prefers-reduced-motion:no-preference) {
+    .cosmic-motion.home-redesign .matrix-card { animation:cosmic-arrive .65s both; animation-delay:var(--arrival); }
+    .cosmic-motion.home-redesign .cosmic-year-orbit { animation:cosmic-orbit-breathe 8s ease-in-out infinite; }
+}
+@keyframes cosmic-arrive { from { opacity:0; translate:0 12px; } to { opacity:1; translate:0 0; } }
+@keyframes cosmic-orbit-breathe { 50% { scale:1.08; opacity:.65; } }
+@media (prefers-reduced-motion:reduce) {
+    .cosmic-motion.home-redesign .matrix-card,.cosmic-motion.home-redesign .nav-item,
+    .cosmic-motion.home-redesign .cosmic-shortcut-list button,
+    .cosmic-motion.home-redesign .matrix-card .home-card-art,
+    .cosmic-motion.home-redesign .card-footer { animation:none !important; transition:none !important; transform:none !important; }
+}

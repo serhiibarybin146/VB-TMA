@@ -23,6 +23,12 @@
 
     <link rel="stylesheet" href="styles.css?v=20261023.1">
     <link rel="stylesheet" href="money-design.css?v=20261023.3">
+    <link rel="stylesheet" href="home-design.css?v=20261025.1">
+    <link rel="stylesheet" href="home-premium.css?v=20261025.1">
+    <link rel="stylesheet" href="premium-directions.css?v=20261025.1">
+    <link rel="stylesheet" href="motion-pages.css?v=20261025.1">
+    <link rel="stylesheet" href="cosmic-motion.css?v=20261025.1">
+
 </head>
 
 <body class="loading">
@@ -58,7 +64,7 @@
                 <div class="matrix-card primary" onclick="navigateTo('calculate')">
                     <div class="card-glass"></div>
                     <div class="card-content">
-                        <h3>Личная Матрица</h3>
+                        <h3>Основная матрица</h3>
                         <p>Базовый разбор личности и талантов</p>
                         <div class="card-footer">
                             <span>Рассчитать</span>
@@ -149,30 +155,6 @@
                     </div>
                     <button type="submit" class="btn-primary full-width">Рассчитать</button>
                 </form>
-            </div>
-        </section>
-
-        <!-- HISTORY VIEW -->
-        <section id="historyView" class="view">
-            <div class="form-header">
-                <h2>Мои Расчеты</h2>
-                <p>Здесь будут сохраняться твои недавние расчеты для быстрого доступа.</p>
-            </div>
-            <div class="empty-state" style="text-align: center; margin-top: 50px; color: var(--hint-color);">
-                <iconify-icon icon="solar:history-broken" style="font-size: 64px; margin-bottom: 20px; opacity: 0.5;"></iconify-icon>
-                <p>Твоя история пока пуста. <br> Начни с Личной Матрицы!</p>
-            </div>
-        </section>
-
-        <!-- SERVICES VIEW -->
-        <section id="servicesView" class="view">
-            <div class="form-header">
-                <h2>Услуги</h2>
-                <p>Профессиональные консультации и глубокие разборы.</p>
-            </div>
-            <div class="empty-state" style="text-align: center; margin-top: 50px; color: var(--hint-color);">
-                <iconify-icon icon="solar:chat-round-dots-broken" style="font-size: 64px; margin-bottom: 20px; opacity: 0.5;"></iconify-icon>
-                <p>Раздел в разработке. <br> Здесь скоро появятся глубокие разборы.</p>
             </div>
         </section>
 
@@ -377,6 +359,41 @@
             </div>
         </section>
 
+        <section id="compatibilityView" class="view">
+            <div class="back-link" onclick="navigateTo('home')">← Назад</div>
+            <h2>Совместимость</h2>
+            <p style="color:var(--hint-color);line-height:1.6">Две личности. Одна общая матрица.</p>
+            <form id="compatibilityForm">
+                <div class="compat-partner-form">
+                    <h3>Первый партнёр</h3>
+                    <label for="partnerName1">Имя</label>
+                    <input id="partnerName1" class="tma-input" type="text" maxlength="60" placeholder="Имя партнёра" autocomplete="off" required>
+                    <label for="partnerDate1">Дата рождения</label>
+                    <input id="partnerDate1" class="tma-input" type="text" inputmode="numeric" maxlength="10" placeholder="ДД.ММ.ГГГГ" autocomplete="off" required>
+                </div>
+                <div class="compat-partner-form">
+                    <h3>Второй партнёр</h3>
+                    <label for="partnerName2">Имя</label>
+                    <input id="partnerName2" class="tma-input" type="text" maxlength="60" placeholder="Имя партнёра" autocomplete="off" required>
+                    <label for="partnerDate2">Дата рождения</label>
+                    <input id="partnerDate2" class="tma-input" type="text" inputmode="numeric" maxlength="10" placeholder="ДД.ММ.ГГГГ" autocomplete="off" required>
+                </div>
+                <button class="btn-primary full-width" type="submit">Рассчитать совместимость</button>
+            </form>
+        </section>
+        <section id="compatibilityResultView" class="view">
+            <div class="back-link" onclick="showView('compatibilityView')">← К данным партнёров</div>
+            <h3 id="compatTitle1" class="compat-title"></h3>
+            <p id="compatSubtitle1" class="compat-subtitle"></p>
+            <div class="matrix-svg-container"><svg id="compatSvg1" viewBox="0 0 700 700"></svg></div>
+            <h3 id="compatTitle2" class="compat-title"></h3>
+            <p id="compatSubtitle2" class="compat-subtitle"></p>
+            <div class="matrix-svg-container"><svg id="compatSvg2" viewBox="0 0 700 700"></svg></div>
+            <h3 id="compatTitle3" class="compat-title"></h3>
+            <p id="compatSubtitle3" class="compat-subtitle"></p>
+            <div class="matrix-svg-container"><svg id="compatSvg3" viewBox="0 0 700 700"></svg></div>
+        </section>
+
         <!-- RESULT VIEW -->
         <section id="resultView" class="view">
             <div class="result-top-row">
@@ -489,17 +506,17 @@
 
     <!-- BOTTOM NAVIGATION -->
     <nav class="tma-nav">
-        <button class="nav-item" onclick="switchTab('history', this)">
-            <iconify-icon icon="solar:history-linear"></iconify-icon>
-            <span>История</span>
-        </button>
-        <button class="nav-item active" onclick="switchTab('home', this)">
+<button class="nav-item active" onclick="switchTab('home', this)">
             <iconify-icon icon="solar:magic-stick-3-linear"></iconify-icon>
             <span>Матрица</span>
         </button>
         <button class="nav-item" onclick="switchTab('services', this)">
             <iconify-icon icon="solar:chat-round-dots-linear"></iconify-icon>
             <span>Услуги</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('profile', this)">
+            <iconify-icon icon="solar:user-rounded-linear"></iconify-icon>
+            <span>Профиль</span>
         </button>
     </nav>
 
@@ -527,21 +544,10 @@
                     <iconify-icon icon="solar:star-fall-minimalistic-bold-duotone"></iconify-icon>
                 </div>
                 <h3 id="modalTitle">Раздел заблокирован</h3>
-                <p id="modalDesc">Этот глубокий разбор доступен в Premium версии. Откройте все возможности своего
-                    предназначения.</p>
+                <p id="modalDesc">Этот продукт доступен после приобретения доступа.</p>
                 <div class="modal-price-tag">
                     <span class="price-val" id="modalPrice">0.00</span>
                     <span class="price-cur">EUR</span>
-                </div>
-                <div class="modal-benefits">
-                    <div class="benefit-item">
-                        <iconify-icon icon="solar:check-circle-bold"></iconify-icon>
-                        <span>Полная расшифровка</span>
-                    </div>
-                    <div class="benefit-item">
-                        <iconify-icon icon="solar:check-circle-bold"></iconify-icon>
-                        <span>PDF-отчет в Telegram</span>
-                    </div>
                 </div>
                 <button class="btn-primary full-width" id="buyBtn">Купить доступ</button>
                 <button class="btn-secondary full-width" id="closeModal">Позже</button>
@@ -574,13 +580,16 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="year-matrix.js?v=20261020.1"></script>
+<script src="year-matrix.js?v=20261020.1"></script>
     <script src="month-matrix.js?v=20261023.2"></script>
     <script src="matrix-logic.js?v=20261023.3"></script>
-    <script src="supabase-client.js?v=20261024.1"></script>
-    <script src="app.js?v=20261024.1"></script>
+    <script src="supabase-client.js?v=20261025.1"></script>
+    <script src="app.js?v=20261025.1"></script>
+    <script src="compatibility.js?v=20261025.1"></script>
+    <script src="home-design.js?v=20261025.1"></script>
+    <script src="premium-directions.js?v=20261025.1"></script>
+    <script src="app-pages.js?v=20261025.1"></script>
+    <script src="cosmic-motion.js?v=20261025.1"></script>
 </body>
 
 </html>
-```

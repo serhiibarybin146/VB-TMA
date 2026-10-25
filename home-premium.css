@@ -1,0 +1,109 @@
+/* Refinements for the selected directions, 01 and 03 only. */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap');
+
+body.home-redesign[data-home-design="atlas"] {
+    --home-bg: #f6f3ee;
+    --home-surface: #fdfcf9;
+    --home-ink: #29252b;
+    --home-muted: #777078;
+    --home-line: #e5dfd7;
+    --home-accent: #725b86;
+    background: radial-gradient(ellipse at 100% 0%, #e9e2ee66, transparent 42%), #f6f3ee;
+}
+[data-home-design="atlas"].home-redesign .tma-header { padding: 24px 23px 17px; }
+[data-home-design="atlas"].home-redesign .user-profile { gap: 10px; }
+[data-home-design="atlas"].home-redesign .avatar-placeholder { width: 34px; height: 34px; border: 1px solid #d9ccdf; background: #eae3ee; color: #725b86; font-size: 21px; }
+[data-home-design="atlas"].home-redesign .user-name { font-size: 12px; }
+[data-home-design="atlas"].home-redesign .icon-btn { width: 34px; height: 34px; border-color: #ddd5dd; }
+[data-home-design="atlas"].home-redesign .tma-main { padding: 0 21px 24px; }
+[data-home-design="atlas"].home-redesign .welcome-card { margin: 14px 2px 26px; }
+[data-home-design="atlas"].home-redesign .welcome-card h2 {
+    font: 500 46px/.96 'Cormorant Garamond', Georgia, serif;
+    letter-spacing: -.035em; max-width: 315px; margin-bottom: 18px;
+}
+[data-home-design="atlas"].home-redesign .welcome-card h2 em { font-weight: 400; display: block; color: #806585; }
+[data-home-design="atlas"].home-redesign .welcome-card p { font-size: 11px; line-height: 1.7; max-width: 275px; }
+[data-home-design="atlas"].home-redesign .matrix-grid { gap: 12px; }
+[data-home-design="atlas"].home-redesign .matrix-card {
+    border-radius: 19px; background: #fdfcf9; border-color: #e8e1da;
+    box-shadow: 0 5px 20px #4c3f3010, inset 0 1px #fff;
+    padding: 18px; min-height: 181px;
+}
+[data-home-design="atlas"].home-redesign .matrix-card h3 { font-size: 15px; font-weight: 600; letter-spacing: -.025em; }
+[data-home-design="atlas"].home-redesign .matrix-card p { font-size: 10px; line-height: 1.6; color: #756e76; }
+[data-home-design="atlas"].home-redesign .home-card-art { display: inline-flex; width: 35px; height: 35px; border-radius: 11px; background: #f0eaf3; align-items: center; justify-content: center; font-size: 19px; margin-bottom: 15px; }
+[data-home-design="atlas"].home-redesign [data-card="month"] .home-card-art { background: #e9edee; color: #657787; }
+[data-home-design="atlas"].home-redesign .card-footer { font-size: 11px; color: #6e5b7c; }
+[data-home-design="atlas"].home-redesign .card-footer iconify-icon { border: 1px solid #e2dce6; border-radius: 50%; width: 25px; height: 25px; display: grid; place-items: center; font-size: 15px; }
+[data-home-design="atlas"].home-redesign [data-card="main"] {
+    min-height: 230px; padding: 23px;
+    border: 1px solid #d8c9df;
+    background: radial-gradient(ellipse at 100% 0%, #d7c5e76e, transparent 65%), linear-gradient(135deg, #f0e9f5, #e9e1ee);
+    box-shadow: inset 0 1px #fff, 0 8px 28px #745d8414;
+}
+[data-home-design="atlas"].home-redesign [data-card="main"] .card-content { max-width: none; }
+[data-home-design="atlas"].home-redesign [data-card="main"] h3 { font-size: 22px; line-height: 1.16; font-weight: 500; max-width: 140px; margin-bottom: 10px; }
+[data-home-design="atlas"].home-redesign [data-card="main"] p { font-size: 11px; max-width: 134px; color: #6c5e76; }
+[data-home-design="atlas"].home-redesign [data-card="main"] .home-card-art { top: 12px; right: 9px; width: 140px; height: 140px; background: transparent; border-radius: 50%; color: #997caa; box-shadow: 0 0 0 1px #a898b42b, 0 0 0 8px #e9e0f000; margin: 0; }
+[data-home-design="atlas"].home-redesign [data-card="main"] .home-card-art svg { opacity: .75; }
+[data-home-design="atlas"].home-redesign [data-card="main"] .card-footer { margin-top: 24px; width: 100%; background: #302936; color: #fdf9ff; border-radius: 11px; padding: 12px 15px; font-size: 11px; letter-spacing: .015em; box-shadow: 0 4px 9px #2e23311a; }
+[data-home-design="atlas"].home-redesign [data-card="main"] .card-footer iconify-icon { border-color: #ffffff24; }
+[data-home-design="atlas"].home-redesign [data-card="money"], [data-home-design="atlas"].home-redesign [data-card="compatibility"] { min-height: 93px; padding: 20px 19px 20px 72px; }
+[data-home-design="atlas"].home-redesign [data-card="money"] .home-card-art, [data-home-design="atlas"].home-redesign [data-card="compatibility"] .home-card-art { top: 23px; left: 18px; }
+[data-home-design="atlas"].home-redesign [data-card="compatibility"] { border-style: solid; background: #efebe680; box-shadow: none; }
+[data-home-design="atlas"].home-redesign .card-tag.gold { border: 1px solid #cfc2ab; color: #7b6c51; background: #f1ece2; letter-spacing: .025em; }
+[data-home-design="atlas"].home-redesign .tma-nav { background: #fdfcf9ed; border: 1px solid #e2dbd6; border-radius: 20px; padding: 7px; bottom: 13px; box-shadow: 0 6px 30px #46374b17; }
+[data-home-design="atlas"].home-redesign .nav-item { border-radius: 14px; }
+[data-home-design="atlas"].home-redesign .nav-item.active { background: #302936; color: #f9f5fd; }
+
+/* Cosmic has a real background texture rather than repeated procedural dots. */
+body.home-redesign[data-home-design="cosmic"] {
+    --home-bg: #07101b; --home-ink: #f6f1ee; --home-muted: #b3bac9; --home-accent: #ddd6ea;
+    background: #07101b;
+}
+[data-home-design="cosmic"].home-redesign::before {
+    background-image: linear-gradient(180deg, #07101b22, #07101b33 75%, #07101baa), url('assets/cosmic-premium-v1.png');
+    background-size: cover; background-position: center top; opacity: 1;
+}
+[data-home-design="cosmic"].home-redesign .tma-header { padding: 23px 22px 7px; }
+[data-home-design="cosmic"].home-redesign .avatar-placeholder { background: #cbbde515; border-color: #b9a7d446; color: #dfd2ef; }
+[data-home-design="cosmic"].home-redesign .user-name { font-size: 12px; font-weight: 500; }
+[data-home-design="cosmic"].home-redesign .tma-main { padding: 0 19px 28px; }
+[data-home-design="cosmic"].home-redesign .welcome-card { margin: 14px 2px 21px; }
+[data-home-design="cosmic"].home-redesign .welcome-card h2 { font: 500 39px/1.02 'Cormorant Garamond', Georgia, serif; letter-spacing: -.025em; max-width: 310px; margin-bottom: 12px; }
+[data-home-design="cosmic"].home-redesign .welcome-card h2 em { display: block; color: #d0bfdf; font-weight: 400; }
+[data-home-design="cosmic"].home-redesign .welcome-card p { font-size: 11px; line-height: 1.65; max-width: 285px; color: #bcc0ce; }
+[data-home-design="cosmic"] .cosmic-shortcuts { border-radius: 14px; border-color: #bfb2dd28; background: #111a29b3; box-shadow: inset 0 1px #ddcfef09; padding: 12px 14px; margin-bottom: 15px; }
+[data-home-design="cosmic"] .cosmic-shortcut-title { font-size: 11px; letter-spacing: .035em; }
+[data-home-design="cosmic"] .cosmic-shortcut-title time { color: #c1b9d0; font-size: 10px; }
+[data-home-design="cosmic"] .cosmic-shortcut-list button { background: #ccbce509; border-color: #ccbce51a; color: #e1daed; border-radius: 7px; min-height: 35px; }
+[data-home-design="cosmic"].home-redesign .matrix-card { border-radius: 16px; border-color: #b8a9d32b; background: linear-gradient(145deg, #253147ae, #182032c7); box-shadow: inset 0 1px #f3e9ff0b, 0 8px 24px #0000001c; }
+[data-home-design="cosmic"].home-redesign [data-card="main"] { min-height: 234px; padding: 21px; border-color: #b8a3d346; background: radial-gradient(ellipse at 85% 20%, #6b51722f, transparent 70%), linear-gradient(135deg, #202538cf, #172333c7); box-shadow: inset 0 1px #fff2, 0 8px 25px #0003; }
+[data-home-design="cosmic"].home-redesign [data-card="main"] .card-content { max-width: none; }
+[data-home-design="cosmic"].home-redesign [data-card="main"] h3 { font: 500 22px/1.17 'Cormorant Garamond', Georgia, serif; max-width: 140px; margin-bottom: 12px; }
+[data-home-design="cosmic"].home-redesign [data-card="main"] p { max-width: 127px; font-size: 11px; line-height: 1.6; color: #bec1d0; }
+[data-home-design="cosmic"].home-redesign [data-card="main"] .home-card-art { width: 171px; height: 171px; top: 13px; right: 5px; color: #c6b4df; filter: drop-shadow(0 0 14px #ceb2ee10); }
+[data-home-design="cosmic"].home-redesign [data-card="main"] .home-card-art svg { opacity: 1; stroke-width: .65; }
+[data-home-design="cosmic"].home-redesign [data-card="main"] .card-footer { width: 100%; margin-top: 30px; border-radius: 9px; background: linear-gradient(110deg, #e3d8ef, #cbbddc); color: #211d2b; padding: 12px 15px; font-size: 11px; }
+[data-home-design="cosmic"].home-redesign [data-card="year"], [data-home-design="cosmic"].home-redesign [data-card="month"] { min-height: 190px; padding: 17px; }
+[data-home-design="cosmic"].home-redesign .matrix-card h3 { font-size: 15px; font-weight: 500; }
+[data-home-design="cosmic"].home-redesign .matrix-card p { color: #b9c0d1; font-size: 10px; line-height: 1.6; }
+[data-home-design="cosmic"].home-redesign .card-footer { color: #ddd4eb; font-size: 11px; }
+[data-home-design="cosmic"].home-redesign .card-footer iconify-icon { border: 1px solid #d2c1e333; border-radius: 50%; width: 25px; height: 25px; display: grid; place-items: center; font-size: 15px; }
+[data-home-design="cosmic"].home-redesign [data-card="main"] .card-footer iconify-icon { border-color: #46365233; }
+[data-home-design="cosmic"] .cosmic-year { color: #d6c9e5; font-size: 33px; letter-spacing: -.06em; }
+[data-home-design="cosmic"] .cosmic-moon { width: 45px; height: 45px; box-shadow: -7px 0 20px #a8b1f51f, inset -13px -2px 8px #0a1720d9; }
+[data-home-design="cosmic"].home-redesign [data-card="compatibility"] { background: #171d2a9c; border-style: solid; }
+[data-home-design="cosmic"].home-redesign .tma-nav { border-radius: 17px; padding: 7px; background: #101625e8; border-color: #bfb2dd38; box-shadow: inset 0 1px #dac5f015, 0 8px 30px #0005; }
+[data-home-design="cosmic"].home-redesign .nav-item { border-radius: 11px; }
+[data-home-design="cosmic"].home-redesign .nav-item.active { background: #b6a2cc21; color: #e6dbf0; box-shadow: inset 0 0 0 1px #d9c3f127; }
+[data-home-design="cosmic"].home-redesign [data-card="main"] h3 { font-size: 22px; }
+@media (max-width: 350px) {
+    [data-home-design="atlas"].home-redesign .welcome-card h2 { font-size: 41px; }
+    [data-home-design="cosmic"].home-redesign .welcome-card h2 { font-size: 35px; }
+    [data-home-design="atlas"].home-redesign [data-card="main"], [data-home-design="cosmic"].home-redesign [data-card="main"] { padding: 19px; }
+    [data-home-design="atlas"].home-redesign [data-card="main"] .home-card-art { width: 125px; height: 125px; right: 5px; }
+    [data-home-design="cosmic"].home-redesign [data-card="main"] .home-card-art { width: 144px; height: 144px; right: 0; }
+    [data-home-design="cosmic"].home-redesign [data-card="main"] h3 { max-width: 120px; }
+    [data-home-design="cosmic"].home-redesign [data-card="main"] p { max-width: 112px; }
+}

@@ -30,10 +30,14 @@ Deno.serve(async req=>{
         const owner=String(user.id);
         if(body.action==='session') {
             await database('users?on_conflict=id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates'},body:JSON.stringify({id:user.id,username:user.username||null,first_name:user.first_name||null,last_name:user.last_name||null,language_code:user.language_code||null})});
-            return reply({user:{id:user.id,username:user.username,first_name:user.first_name,last_name:user.last_name}});
+            return reply({user:{id:user.id,username:user.username,first_name:user.first_name,last_name:user.last_name,photo_url:user.photo_url}});
         }
         if(body.action==='permissions') {
-            const data=await database(`user_permissions?user_id=eq.${owner}&status=eq.granted&select=permission_key`);
+            const data=await database(`user_permissions?user_id=eq.${owner}&status=eq.granted&select=permission_key,granted_at`);
+            return reply({data});
+        }
+        if(body.action==='products') {
+            const data=await database('products?active=eq.true&select=id,name,description,price_cents,currency');
             return reply({data});
         }
         if(body.action==='history') {

@@ -18,7 +18,9 @@ const moneyDateInput = document.getElementById('moneyDateInput');
 let currentState = {
     activeTab: 'home',
     user: null,
-    permissions: [] // Array of permission_key strings
+    permissions: [],
+    products: [],
+    permissionDetails: []
 };
 
 // Stripe Configuration
@@ -89,8 +91,7 @@ async function initTMA() {
     try {
                 tg.ready();
         tg.expand();
-        tg.setHeaderColor('#F7F8FA');
-        tg.setBackgroundColor('#F7F8FA');
+
         if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
 
         // Request true fullscreen for deeper immersion (SDK 7.10+)
@@ -99,8 +100,9 @@ async function initTMA() {
         }
 
         // Sync with Telegram theme colors
-        tg.setHeaderColor('bg_color');
-        tg.setBackgroundColor('bg_color');
+        const appColor = document.body.dataset.homeDesign === 'obsidian' ? '#171918' : '#06111e';
+        tg.setHeaderColor(appColor);
+        tg.setBackgroundColor(appColor);
 
         // Get User Data
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
@@ -133,6 +135,7 @@ async function initTMA() {
     } finally {
         // Alway remove loading state no matter what
         if (body) body.classList.remove('loading');
+        document.dispatchEvent(new Event('app:state'));
     }
 
     initEventListeners();
@@ -175,7 +178,7 @@ function initEventListeners() {
     // Locked Cards Click
     const featureViewMap = {
         'money_code': 'moneyCalc',
-        'compatibility': null, // Not yet implemented
+        'compatibility': 'compatibility',
         'year_forecast': 'yearForecast',
         'month_forecast': 'monthForecast'
     };
@@ -208,6 +211,7 @@ function initEventListeners() {
  * View Management
  */
 function showView(viewId) {
+    document.body.classList.toggle('money-result-page', viewId === 'moneyResultView');
     // Hide all views
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
 
@@ -229,7 +233,7 @@ function showView(viewId) {
 
     // Nav logic (hide on anything that is not a main tab: Home, History, Services)
     if (nav) {
-        const isTab = viewId === 'homeView' || viewId === 'historyView' || viewId === 'servicesView';
+        const isTab = viewId === 'homeView' || viewId === 'profileView' || viewId === 'servicesView';
         if (isTab) {
             nav.style.display = 'flex';
             document.body.style.paddingBottom = 'calc(80px + var(--safe-area-bottom))';
@@ -387,6 +391,8 @@ function initZoomEvents() {
 }
 
 function navigateTo(pageId) {
+    const feature = {moneyCalc:'money_code',yearForecast:'year_forecast',monthForecast:'month_forecast',compatibility:'compatibility'}[pageId];
+    if (feature && !checkPermission(feature)) { showLockedModal(feature); return; }
     tg.HapticFeedback.impactOccurred('light');
     if (pageId === 'calculate') showView('calcView');
     else if (pageId === 'moneyCalc') showView('moneyCalcView');
@@ -398,6 +404,7 @@ function navigateTo(pageId) {
         showView('monthForecastView');
         initMonthForecastForm();
     }
+    else if (pageId === 'compatibility') showView('compatibilityView');
     else if (pageId === 'home') {
         // --- History Logic Init ---
         initHistoryEvents();
@@ -887,8 +894,8 @@ function calculateAgePeriod(data, today = new Date()) {
     return {age,mirror,current:energies[age],opposite:energies[mirror],total:r(energies[age]+energies[mirror]),positions};
 }
 
-function drawFullMatrixSVG(data) {
-    const svg = document.getElementById('matrixSvg');
+function drawFullMatrixSVG(data, targetId = 'matrixSvg') {
+    const svg = document.getElementById(targetId);
     svg.innerHTML = '';
     const reduce = MatrixLogic.reduce;
     const cx = 350, cy = 350, radius = 270;
@@ -1071,16 +1078,16 @@ function drawFullMatrixSVG(data) {
     }
 
     // Mids
-    const midU1 = reduce(U[0] + data.points.centerValue);
-    const midU2 = reduce(U[2] + data.points.centerValue);
+    const midU1 = data.extra?.greenLeft ?? reduce(U[0] + data.points.centerValue);
+    const midU2 = data.extra?.greenTop ?? reduce(U[2] + data.points.centerValue);
     const radMid = innerRadius2 / 2;
     drawNode(cx + radMid * Math.cos(angles[0]), cy + radMid * Math.sin(angles[0]), 15, "#73b55f", "#000", midU1, "#fff", 14);
     drawNode(cx + radMid * Math.cos(angles[2]), cy + radMid * Math.sin(angles[2]), 15, "#73b55f", "#000", midU2, "#fff", 14);
 
     // Extra Icons Logic
-    const innerA = reduce(U[4] + U[6]);
-    const innerB = reduce(U[4] + innerA);
-    const innerC = reduce(U[6] + innerA);
+    const innerA = data.extra?.innerA ?? reduce(U[4] + U[6]);
+    const innerB = data.extra?.innerB ?? reduce(U[4] + innerA);
+    const innerC = data.extra?.innerC ?? reduce(U[6] + innerA);
 
     function drawExtra(angleIdx, offX, offY, val, letter, lOffX, lOffY, col, dol, hrt) {
         const rad = innerRadius2 * 0.5;
@@ -1193,7 +1200,7 @@ function drawFullMatrixSVG(data) {
         drawGenericLine({ x: p1.x + nx * offsetLine - ux * 15, y: p1.y + ny * offsetLine - uy * 15 }, { x: p2.x + nx * offsetLine + ux * 15, y: p2.y + ny * offsetLine + uy * 15 }, "#000", 1.5, 0.6);
 
         const p4 = reduce(v1 + v2), p2_ = reduce(p4 + v1), p1_ = reduce(p2_ + v1), p3 = reduce(p2_ + p4), p6 = reduce(p4 + v2), p5 = reduce(p4 + p6), p7 = reduce(p6 + v2);
-        const vals = [null, p1_, p2_, p3, p4, p5, p6, p7];
+        const vals = data.contour ? [null, ...data.contour[i1]] : [null, p1_, p2_, p3, p4, p5, p6, p7];
 
         for (let j = 1; j <= 7; j++) {
             const t = 0.5 + (j - 4) / 9;
@@ -1239,7 +1246,7 @@ function drawFullMatrixSVG(data) {
         }
     });
 
-    const period = calculateAgePeriod(data);
+    const period = data.date ? calculateAgePeriod(data) : null;
     if (period) {
         const periodLabel = createSVGElement('text', {
             x: 28, y: 30, fill: '#000', 'font-size': 16,
@@ -1295,7 +1302,10 @@ function showLockedModal(feature) {
     
     modalTitle.textContent = featureNames[feature] || 'Premium';
     if (modalPrice) {
-        modalPrice.textContent = FEATURE_PRICES[feature] || '0.00';
+        const product = currentState.products.find(item => item.id === feature);
+        modalPrice.textContent = product ? (product.price_cents / 100).toFixed(2) : FEATURE_PRICES[feature] || '0.00';
+        const currency = document.querySelector('.price-cur');
+        if (currency) currency.textContent = (product?.currency || 'eur').toUpperCase();
     }
 
     lockedModal.classList.add('active');
@@ -1310,15 +1320,8 @@ async function purchaseFeature(featureKey) {
         buyBtn.disabled = true;
         buyBtn.textContent = 'Загрузка...';
         
-        // Call Supabase Edge Function
-        const { data, error } = await supabaseClient.functions.invoke('create-checkout', {
-            body: { 
-                initData: tg.initData,
-                feature_key: featureKey 
-            }
-        });
+        const data = await backendRequest('create-checkout', { initData: tg.initData, feature_key: featureKey });
 
-        if (error) throw error;
         if (data && data.url) {
             // Set flag for auto-check on return
             localStorage.setItem('pending_purchase', featureKey);
@@ -1342,12 +1345,14 @@ async function purchaseFeature(featureKey) {
 async function fetchUserPermissions() {
     if (!currentState.user) return;
     try {
-        const { data: permData } = await privateApi('permissions');
+        const [{ data: permData }, { data: products }] = await Promise.all([privateApi('permissions'), privateApi('products')]);
+        currentState.products = products;
 
         if (permData) {
             const oldPermsCount = currentState.permissions.length;
             currentState.permissions = permData.map(p => p.permission_key);
-            console.log('Updated Permissions:', currentState.permissions);
+            currentState.permissionDetails = permData;
+            document.dispatchEvent(new Event('app:state'));
             
             updatePremiumUI();
 
@@ -1379,7 +1384,7 @@ function hideLockedModal() { lockedModal.classList.remove('active'); }
 function updatePremiumUI() {
     const featureViewMap = {
         'money_code': 'moneyCalc',
-        'compatibility': null,
+        'compatibility': 'compatibility',
         'year_forecast': 'yearForecast',
         'month_forecast': 'monthForecast'
     };
@@ -1404,15 +1409,7 @@ function updatePremiumUI() {
                 cardContent.appendChild(footer);
             }
 
-            // Add click to navigate
-            const viewName = featureViewMap[feature];
-            card.onclick = () => {
-                if (viewName) {
-                    navigateTo(viewName);
-                } else {
-                    tg.showAlert('Этот раздел сейчас в разработке, он скоро будет готов для тебя!');
-                }
-            };
+
         }
     });
 }
@@ -1508,10 +1505,11 @@ function initInlineMatrixZoom() {
 // Keep browser autofill separate from the app's three recent values.
 function initRecentInputSuggestions() {
     document.querySelectorAll('input.tma-input').forEach(input => {
+        if (input.getAttribute('inputmode') !== 'numeric' && input.type !== 'number') return;
         input.autocomplete = 'off';
         if (input.form) input.form.autocomplete = 'off';
         if (input.id === 'birthDateInput') return; // Existing history dropdown.
-        const key = `tma_recent_input_${input.id}`;
+        const key = `tma_recent_input_${currentState.user?.id || 'guest'}_${input.id}`;
         const list = document.createElement('datalist');
         list.id = `${input.id}-recent-values`;
         input.setAttribute('list', list.id);

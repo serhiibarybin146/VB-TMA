@@ -16,9 +16,10 @@ function signed(id,when=Math.floor(Date.now()/1000)) {
 async function setup() {
  const {verifyTelegram}=await import('../supabase/functions/_shared/telegram.mjs');
  let handler;const requests=[];
- const source=stripTypeScriptTypes(fs.readFileSync(path.join(root,'supabase/functions/user-api/index.ts'),'utf8').replace(/^import .*\n/,''));
+ const source=stripTypeScriptTypes(fs.readFileSync(path.join(root,'supabase/functions/user-api/index.ts'),'utf8').replace(/^import .*\r?\n/,''));
  vm.runInNewContext(source,{verifyTelegram,Response,Request,Date,Map,JSON,Number,Error,crypto:webcrypto,Deno:{env:{get:key=>({TELEGRAM_BOT_TOKEN:token,SUPABASE_SERVICE_ROLE_KEY:'test-server-only',SUPABASE_URL:'https://test.invalid'})[key]},serve:fn=>handler=fn},fetch:async(url,options)=>{
   requests.push({url,options});
+  if(url.includes('products?'))return Response.json([{id:'money_code',name:'Денежный код',price_cents:100,currency:'eur'}]);
   if(url.includes('user_permissions?'))return Response.json([{permission_key:'money_code'}]);
   if(url.includes('select=id'))return Response.json([]);
   if(url.includes('select=birth_date'))return Response.json([{birth_date:'1988-11-06'}]);
@@ -33,7 +34,7 @@ test('signature, altered identity, expiration and malformed initData',async()=>{
 });
 test('all private actions reject forged identity before accessing database',async()=>{
  const {call,requests}=await setup();
- for(const action of ['session','history','permissions','save']){assert.equal((await call({action,initData:signed(101).replace('101','202'),user_id:202})).status,401);}
+ for(const action of ['session','history','permissions','save','products']){assert.equal((await call({action,initData:signed(101).replace('101','202'),user_id:202})).status,401);}
  assert.equal(requests.length,0);
 });
 test('two users can only query their verified owner; submitted owner and table ignored',async()=>{
@@ -63,4 +64,10 @@ test('checkout takes verified owner and rejects unsigned purchase before Stripe'
  assert.equal((await call({user_id:999,feature_key:'money_code'})).status,401);assert.equal(lookups,0);assert.equal(sessions.length,0);
  assert.equal((await call({initData:signed(101),user_id:999,feature_key:'money_code'})).status,200);
  assert.equal(sessions[0].metadata.user_id,'101');
+});
+
+test('verified users receive the public product catalogue without private data',async()=>{
+ const {call}=await setup();const r=await call({action:'products',initData:signed(101)});assert.equal(r.status,200);
+ const payload=await r.json();assert.equal(payload.data[0].id,'money_code');assert.equal(payload.data[0].price_cents,100);
+ assert.ok(!JSON.stringify(payload).includes('user_id'));
 });

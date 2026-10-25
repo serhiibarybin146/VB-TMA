@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Мобильный предпросмотр</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 14px 8px; background: #171923; color: #e9e7f0; font: 13px system-ui, sans-serif; height: 100dvh; display: flex; flex-direction: column; }
+        header { text-align: center; margin-bottom: 12px; flex: none; }
+        header span { display: block; color: #a4abbc; margin-top: 4px; font-size: 11px; }
+        .variants { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin: 10px auto 0; max-width: 420px; }
+        button { border: 1px solid #ffffff20; background: #ffffff05; color: #bbb9c6; border-radius: 20px; padding: 8px 12px; font: inherit; font-size: 11px; cursor: pointer; }
+        button[aria-pressed="true"] { background: #e8dff5; border-color: #e8dff5; color: #292330; }
+        .selection-link { display: inline-block; color: #e8dff5; margin-top: 10px; font-size: 11px; text-underline-offset: 3px; }
+        details { margin-top: 9px; }
+        summary { color: #ddd3ec; font-size: 11px; cursor: pointer; }
+        iframe { display: block; margin: 0 auto; width: min(390px, 100%); flex: 1; min-height: 320px; border: 1px solid #424655; border-radius: 24px; background: #fff; }
+    </style>
+</head>
+<body>
+    <header><strong id="variantTitle">03 · Космос — выбранный вариант</strong><span>Локальный мобильный предпросмотр · автообновление</span>
+        <div class="variants" aria-label="Оформление">
+            <button data-design="cosmic" aria-pressed="true">03 · Космос</button>
+            <button data-design="obsidian" aria-pressed="false">13 · Obsidian</button>
+        </div>
+        <div class="variants" aria-label="Тестовый доступ">
+            <button data-role="basic" aria-pressed="false">Обычный пользователь</button>
+            <button data-role="owner" aria-pressed="true">Владелец</button>
+        </div>
+        <span>Общий код приложения · тестовые данные · оплата отключена</span>
+    </header>
+    <iframe src="index.html?design=cosmic&amp;previewRole=owner" title="Мой личный Нумеролог — мобильная версия"></iframe>
+    <script>
+        const frame=document.querySelector('iframe');
+        let design='cosmic',role='owner';
+        const open=()=>{frame.src='index.html?design='+design+'&previewRole='+role;document.getElementById('variantTitle').textContent=design==='cosmic'?'03 · Космос':'13 · Obsidian';};
+        document.querySelectorAll('[data-design]').forEach(button=>button.addEventListener('click',()=>{design=button.dataset.design;document.querySelectorAll('[data-design]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));open();}));
+        document.querySelectorAll('[data-role]').forEach(button=>button.addEventListener('click',()=>{role=button.dataset.role;document.querySelectorAll('[data-role]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));open();}));
+    </script>
+</body>
+</html>

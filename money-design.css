@@ -1,4 +1,6 @@
 /* Money code: selected gold and plum design. Scoped to the result screen. */
+body.money-result-page, body.money-result-page #appContent, body.money-result-page #moneyResultView { background:#19151f !important; color:#f6f1ff !important; }
+body.money-result-page .back-link { color:#d0c1e3 !important; }
 
 #moneyResultView .money-code-container { gap:18px;padding-bottom:28px; }
 #moneyResultView .money-header { padding:16px 8px 6px;text-align:center; }
@@ -21,3 +23,6 @@
 #moneyResultView .money-code-container { padding: 16px; }
 #moneyResultView .money-star-box { display:block; min-height:0; height:auto !important; padding:25px !important; }
 #moneyResultView .money-final-box { padding:23px 16px 25px !important; gap:0; }
+#moneyResultView .money-star-box { background:radial-gradient(ellipse at 50% 42%,#38274b 0%,#221c2c 55%,#1c1922 100%) !important; border:1px solid #ffffff12 !important; border-radius:28px !important; }
+#moneyResultView .money-final-box { background:#27202f !important; border:1px solid #b998e729 !important; box-shadow:none !important; }
+#moneyResultView .money-desc-box { background:transparent !important; border:0 !important; box-shadow:none !important; }

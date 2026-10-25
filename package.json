@@ -5,6 +5,7 @@
         "node": "24.x"
     },
     "scripts": {
-        "test:security": "node --test tests/telegram-private-api.cjs tests/telegram-admin.cjs"
+        "test:security": "node --test tests/telegram-private-api.cjs tests/telegram-admin.cjs tests/unified-app.cjs",
+        "dev": "python dev/server.py 8081"
     }
 }

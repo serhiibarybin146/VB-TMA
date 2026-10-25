@@ -1,0 +1,6 @@
+# Development-only identity/checkout mocks must never be deployed.
+dev/
+tests/
+supabase/
+*.md
+.git/
