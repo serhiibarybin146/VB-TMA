@@ -92,10 +92,10 @@ async function initTMA() {
                 tg.ready();
         tg.expand();
 
-        if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
+        if (tg.disableVerticalSwipes && (!tg.isVersionAtLeast || tg.isVersionAtLeast('7.7'))) tg.disableVerticalSwipes();
 
-        // Request true fullscreen for deeper immersion (SDK 7.10+)
-        if (tg.requestFullscreen) {
+        // Fullscreen is available in Telegram Mini Apps 8.0 and newer.
+        if (tg.requestFullscreen && tg.isVersionAtLeast?.('8.0')) {
             try { tg.requestFullscreen(); } catch (e) { }
         }
 
