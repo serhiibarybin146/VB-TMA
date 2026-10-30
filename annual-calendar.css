@@ -2,6 +2,11 @@
 .calendar-home-card span,.calendar-eyebrow{font-size:9px;letter-spacing:.15em;color:#cbbddc}.calendar-home-card strong{font-size:21px;font-weight:500}.calendar-home-card small{color:#b3bac9}
 body.calendar-page{isolation:isolate;background:#07101b!important;color:#f6f1ee!important;padding-bottom:30px}
 body.calendar-page::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(#07101b44,#07101b99),url('assets/cosmic-premium-v1.png') center top/cover}
+body.calendar-page::after,.calendar-wide::before{content:'';position:fixed;left:50%;top:50%;width:max(580px,90vh);height:max(580px,90vh);transform:translate(-10%,-50%);background:url('assets/calendar-matrix-outline.svg') center/contain no-repeat;opacity:.2;pointer-events:none;z-index:-1}
+.calendar-wide{isolation:isolate}
+.calendar-month-controls{display:flex;gap:10px;align-items:center;margin-top:24px}.calendar-month-controls button,.calendar-month-picker{background:#253047;color:#f0eaf7;border:1px solid #cbbddc38;border-radius:12px;min-height:44px;font:500 14px 'Manrope',sans-serif;padding:8px 14px;color-scheme:dark}.calendar-month-controls button{font-size:24px;cursor:pointer}.calendar-month-controls button:disabled{opacity:.3;cursor:default}.calendar-month-picker{flex:1;min-width:0}.calendar-month-controls+ .calendar-toolbar{margin-top:18px}
+.calendar-grid .calendar-weekday{display:grid;place-items:center;min-height:32px;margin-bottom:5px;padding:7px 2px;border:1px solid #cbbddc38;border-radius:9px;background:#273248ed;color:#f0eaf7;font-size:11px;font-weight:700;letter-spacing:.02em}
+.calendar-grid .calendar-weekday:nth-child(6),.calendar-grid .calendar-weekday:nth-child(7){background:#49364ce8;border-color:#d5acc34d;color:#f1d5e6}
 .calendar-page #appContent,.calendar-page #annualCalendarView{background:transparent!important;color:#f6f1ee!important}.calendar-page .tma-header{display:none!important}
 #annualCalendarView{padding:10px 0 30px}.calendar-back,.calendar-expand{font:500 12px 'Manrope',sans-serif;color:#dfd2ef;border:1px solid #cbbddc30;background:#192437c9;border-radius:12px;padding:11px 13px;cursor:pointer}
 .calendar-back{margin:0 0 27px}.calendar-eyebrow{margin-bottom:12px}#annualCalendarView h2{font-size:28px;letter-spacing:-.04em;font-weight:500;color:#f6f1ee;margin:0 0 10px}.calendar-person{color:#b3bac9;font-size:12px}

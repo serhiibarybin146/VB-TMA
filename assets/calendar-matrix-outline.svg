@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 660" fill="none" stroke="white" stroke-width="1.8">
+ <path d="M330 28 520 106 600 330 520 520 330 630 106 520 28 330 106 106Z"/>
+ <path d="M160 160H500V500H160Z M330 90 570 330 330 570 90 330Z M330 150V302 M330 358V500 M150 330H302 M358 330H500"/>
+ <circle cx="330" cy="330" r="170"/><circle cx="330" cy="330" r="28"/>
+ <circle cx="330" cy="56" r="28"/><circle cx="330" cy="104" r="18"/><circle cx="330" cy="136" r="13"/>
+ <circle cx="138" cy="138" r="28"/><circle cx="178" cy="178" r="18"/><circle cx="204" cy="204" r="13"/>
+ <circle cx="56" cy="330" r="28"/><circle cx="104" cy="330" r="18"/><circle cx="136" cy="330" r="13"/>
+ <circle cx="138" cy="520" r="28"/><circle cx="178" cy="480" r="18"/><circle cx="204" cy="454" r="13"/>
+ <circle cx="330" cy="594" r="28"/><circle cx="330" cy="546" r="18"/><circle cx="330" cy="514" r="13"/>
+ <circle cx="520" cy="520" r="28"/><circle cx="480" cy="480" r="18"/><circle cx="454" cy="454" r="13"/>
+ <circle cx="594" cy="330" r="28"/><circle cx="546" cy="330" r="18"/><circle cx="514" cy="330" r="13"/>
+ <circle cx="520" cy="138" r="28"/><circle cx="480" cy="178" r="18"/><circle cx="454" cy="204" r="13"/>
+</svg>
