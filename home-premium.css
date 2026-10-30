@@ -57,11 +57,14 @@ body.home-redesign[data-home-design="atlas"] {
 [data-home-design="atlas"].home-redesign .nav-item.active { background: #302936; color: #f9f5fd; }
 
 /* Cosmic has a real background texture rather than repeated procedural dots. */
+[data-home-design="cosmic"].local-secondary-page {
+    isolation: isolate;
+}
 body.home-redesign[data-home-design="cosmic"] {
     --home-bg: #07101b; --home-ink: #f6f1ee; --home-muted: #b3bac9; --home-accent: #ddd6ea;
     background: #07101b;
 }
-[data-home-design="cosmic"].home-redesign::before {
+[data-home-design="cosmic"]:is(.home-redesign, .local-secondary-page, .cosmic-input-page, .cosmic-matrix-background)::before {
     background-image: linear-gradient(180deg, #07101b22, #07101b33 75%, #07101baa), url('assets/cosmic-premium-v1.png');
     background-size: cover; background-position: center top; opacity: 1;
 }

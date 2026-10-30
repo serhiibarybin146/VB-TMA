@@ -178,3 +178,64 @@
 body.home-redesign, body.local-secondary-page { background-color:var(--home-bg) !important; color:var(--home-ink) !important; }
 body.home-redesign #appContent, body.local-secondary-page #appContent,
 body.home-redesign #homeView, body.local-secondary-page .local-page { background-color:transparent !important; color:var(--home-ink) !important; }
+
+/* The five calculator entry screens share the Cosmos home palette. */
+/* Background-only trial: preserve every matrix and result card. */
+body.cosmic-matrix-background { isolation:isolate; background:#07101b !important; }
+.cosmic-matrix-background #appContent, .cosmic-matrix-background #resultView { background:transparent !important; }
+.cosmic-matrix-background #resultView .result-top-row { background:transparent; }
+.cosmic-matrix-background #resultView .result-top-row .back-link,
+.cosmic-matrix-background #resultView .result-top-row .result-info,
+.cosmic-matrix-background #resultView .result-top-row .result-date { color:#f0eaf7 !important; }
+.cosmic-matrix-background #resultView .result-top-row .result-age,
+.cosmic-matrix-background #resultView .result-top-row .result-separator { color:#bdb7cb !important; }
+.cosmic-matrix-background #resultView .result-top-row .back-link iconify-icon {
+    background:#cbbde512 !important; color:#dfd2ef; border:1px solid #b9a7d430;
+    box-shadow:none !important;
+}
+body.cosmic-input-page {
+    isolation:isolate;
+    background:#07101b !important;
+    color:#f6f1ee !important;
+    --hint-color:#b3bac9 !important;
+}
+.cosmic-input-page #appContent, .cosmic-input-page .view {
+    background:transparent !important;
+    color:#f6f1ee !important;
+}
+.cosmic-input-page .tma-header { position:relative; background:transparent; backdrop-filter:none; }
+.cosmic-input-page .user-name { color:#f6f1ee; }
+.cosmic-input-page .avatar-placeholder { background:#cbbde515; border:1px solid #b9a7d446; color:#dfd2ef; box-shadow:none; }
+.cosmic-input-page .icon-btn { background:#111a2970; border:1px solid #b9a7d430; color:#dfd2ef; }
+.cosmic-input-page .back-link { color:#c5bed3 !important; margin-bottom:28px; }
+.cosmic-input-page .back-link iconify-icon { background:#cbbde512 !important; color:#dfd2ef; border:1px solid #b9a7d430; box-shadow:none !important; }
+.cosmic-input-page .form-header { margin-bottom:24px; }
+.cosmic-input-page .form-header h2, .cosmic-input-page #compatibilityView>h2 {
+    color:#f6f1ee !important; font-size:28px; line-height:1.2; font-weight:500; letter-spacing:-.035em;
+}
+.cosmic-input-page .form-header p { color:#b3bac9 !important; font-size:13px; line-height:1.7; margin-top:10px; }
+.cosmic-input-page .date-input-group label { color:#c5bed3; font-size:13px; }
+.cosmic-input-page .tma-input {
+    background:#182335d9 !important; color:#f6f1ee !important;
+    border:1px solid #b8a9d33b !important; border-radius:16px;
+    caret-color:#e3d8ef; box-shadow:inset 0 1px #ffffff08 !important;
+    min-height:56px; transition:border-color .2s,box-shadow .2s;
+    color-scheme:dark;
+}
+.cosmic-input-page .tma-input::placeholder { color:#a0a5b7 !important; opacity:1; }
+.cosmic-input-page .tma-input:focus { border-color:#cbbddc !important; outline:none; box-shadow:0 0 0 3px #cbbddc1c !important; }
+.cosmic-input-page .btn-primary {
+    background:linear-gradient(110deg,#e3d8ef,#cbbddc) !important; color:#211d2b !important;
+    border:1px solid #ece3f033; border-radius:14px; box-shadow:0 8px 24px #0003;
+    min-height:52px; font-size:14px; transition:transform .2s,filter .2s;
+}
+.cosmic-input-page .btn-primary:active { transform:scale(.98); }
+.cosmic-input-page .btn-primary:focus-visible { outline:2px solid #f6f1ee; outline-offset:4px; }
+.cosmic-input-page .icon-circle { display:grid; place-items:center; width:48px; height:48px; margin-bottom:18px; border-radius:15px; font-size:24px; background:#cbbde515; color:#dfd2ef; border:1px solid #b9a7d430; box-shadow:none; }
+.cosmic-input-page .compat-partner-form { background:#182335d9; border-color:#b8a9d33b; }
+.cosmic-input-page .compat-partner-form h3 { color:#e3d8ef; font-size:16px; }
+.cosmic-input-page .history-dropdown { background:#182335 !important; color:#f6f1ee; border-color:#b8a9d33b !important; }
+.cosmic-input-page .history-item { color:#f6f1ee !important; border-color:#b8a9d324 !important; }
+.cosmic-input-page .history-item:is(:hover,:active) { background:#29364c !important; }
+@media (hover:hover) { .cosmic-input-page .btn-primary:hover { filter:brightness(1.06); } }
+@media (prefers-reduced-motion:reduce) { .cosmic-input-page .tma-input,.cosmic-input-page .btn-primary { transition:none; } }

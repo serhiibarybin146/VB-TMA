@@ -141,7 +141,7 @@ body.home-redesign[data-home-design="cosmic"] {
     background: radial-gradient(ellipse at 90% 45%, #283c703b, transparent 58%), radial-gradient(ellipse at 10% 12%, #24596b30, transparent 50%), #06111e;
     isolation: isolate;
 }
-[data-home-design="cosmic"].home-redesign::before {
+[data-home-design="cosmic"]:is(.home-redesign, .local-secondary-page, .cosmic-input-page, .cosmic-matrix-background)::before {
     content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
     background-image: url('assets/home-stars.svg'); background-size: 390px 760px; opacity: .8;
 }
