@@ -182,7 +182,17 @@ body.home-redesign #homeView, body.local-secondary-page .local-page { background
 /* The five calculator entry screens share the Cosmos home palette. */
 /* Background-only trial: preserve every matrix and result card. */
 body.cosmic-matrix-background { isolation:isolate; background:#07101b !important; }
-.cosmic-matrix-background #appContent, .cosmic-matrix-background #resultView { background:transparent !important; }
+.cosmic-matrix-background #appContent, .cosmic-matrix-background .view.active { background:transparent !important; }
+.cosmic-matrix-background .view.active>.back-link,
+.cosmic-matrix-background .result-top-row .back-link,
+.cosmic-matrix-background .compat-title { color:#f0eaf7 !important; }
+.cosmic-matrix-background .compat-subtitle,
+.cosmic-matrix-background #yearForecastSummary,
+.cosmic-matrix-background #monthForecastPeriod { color:#bdb7cb !important; }
+.cosmic-matrix-background .month-matrix-heading h4 { color:#dfd2ef !important; }
+.cosmic-matrix-background .result-top-row .back-link iconify-icon {
+    background:#cbbde512 !important; color:#dfd2ef; border:1px solid #b9a7d430; box-shadow:none !important;
+}
 .cosmic-matrix-background #resultView .result-top-row { background:transparent; }
 .cosmic-matrix-background #resultView .result-top-row .back-link,
 .cosmic-matrix-background #resultView .result-top-row .result-info,

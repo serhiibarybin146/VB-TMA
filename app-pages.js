@@ -73,7 +73,7 @@
  });
  const pageObserver=new MutationObserver(()=>{
   const active=document.querySelector('.view.active');
-  body.classList.toggle('cosmic-matrix-background',theme==='cosmic'&&active?.id==='resultView');
+  body.classList.toggle('cosmic-matrix-background',theme==='cosmic'&&['resultView','yearForecastResultView','monthForecastResultView','compatibilityResultView'].includes(active?.id));
   body.classList.toggle('cosmic-input-page',theme==='cosmic'&&['calcView','moneyCalcView','yearForecastView','monthForecastView','compatibilityView'].includes(active?.id));
   body.classList.toggle('local-secondary-page',Boolean(active?.classList.contains('local-page')));
   const tab=active?.id==='homeView'?'home':active?.classList.contains('local-page')?active.id.replace(/View$/,''):null;
